@@ -1,0 +1,6 @@
+/etc/hibernate/common.conf
+/etc/hibernate/#common.conf#
+/sudo:root@Iago.localdomain:/var/log/hibernate.log
+#_asudo_broot@Iago.localdomain_b_avar_alog_ahibernate.log#
+/etc/hibernate/suspend2.conf
+/etc/hibernate/#suspend2.conf#
