@@ -1,42 +1,12 @@
-(server-start)
-
-(erc :server "irc.freenode.net" :full-name "Ben Beecher")
-;; turn off that annoying start up screen - yes I know what gnu is.
-(setq inhibit-startup-echo-area-messagee t)
-(setq inhibit-startup-message t)
-;; turn off that annoying ~ file
-(setq make-backup-files nil)
-;;change the font to something readable
-;;(set-face-font 'default "-outline-Consolas-normal-r-normal-normal-19-14-96-96-c-*-iso8859-1")
-
-(setq tramp-default-method "ssh")
-
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-
 (remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function)
 
-(add-to-list 'load-path "~/elisp")
-(add-to-list 'load-path "/usr/share/emacs22/site-lisp/")
-(put 'upcase-region 'disabled nil)
-
-
-;custom keys
-(global-set-key (kbd "M-p") 'align-regexp)
-(global-set-key (kbd "C-'") 'other-frame)
-(global-set-key (kbd "C-;") 'other-window)
-(global-set-key (kbd "s-i") 'clipboard-yank)
-(global-set-key (kbd "<f8>") 'apropos)
-
-;custom-modes
+;set variables
+(setq inhibit-startup-echo-area-messagee t)
+(setq inhibit-startup-message t)
+(setq tramp-default-method "ssh")
 (setq auto-mode-alist (cons '("\\.tac$" . python-mode) auto-mode-alist))
-(menu-bar-mode nil)
-;;line numbers 
-(line-number-mode t)
-(global-linum-mode t)
-(column-number-mode t)
-;; show clock in modeline
-(display-time)
 (setq display-time-24hr-format t)
 ;; scroll line by line, smoothly
 (setq scroll-step 1)
@@ -44,45 +14,16 @@
 (setq next-line-add-newlines nil)
 ;; make mouse yank at point
 (setq mouse-yank-at-point t)
-(global-set-key [(shift tab)] 'next-multiframe-window)
-;; paren matching
-(show-paren-mode t)
-(setq show-paren-style 'expression)
-;; useful highlights
 (setq search-highlight t)
 (setq query-replace-highlight t)
-;; highlight region, somewhat ugly
-(transient-mark-mode nil)
-
-(global-font-lock-mode t)
-
-(defun untab-all ()
-  "transmogrify all tabs to spaces"
-  (interactive)
-  (save-excursion
-    (untabify (point-min) (point-max))
-    (message "transmogrified")))
-
-;; we don't want no stinkin tabs
-;(setq c-basic-offset 4)
-;(setq-default indent-tabs-mode t)
-;(setq-default default-tab-width 4)
-
-(put 'narrow-to-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-
-;; assignField - used at IFS for setting the field variables are pulled from.
-(fset 'assignField
-   "\C-e = ucase(trim(Fields(\"Field\C-u\C-xq\")))\C-a\C-n")
-
-
-
-(load-library "cheetah-mode.el")
-
-;(load-library "python-mode.el")
-;(load-library "python.el")
-(add-hook 'python-mode-hook
-		  (setq py-smart-indentation nil))
+(setq c-basic-offset 4)
+(setq-default default-tab-width 4)
+(setq global-show-trailing-whitespace t)
+(setq browse-url-browser-function 'browse-url-generic
+	  browse-url-generic-program "google-chrome")
+;load
+(add-to-list 'load-path "~/.emacs.d")
+(load-library "python-mode.el")
 (load-library "psvn.el")
 (load-library "ansi-color.el")
 (load-library "espresso.elc")
@@ -94,14 +35,117 @@
 (load-library "trac-wiki.el")
 (load-library "tidy.el")
 (load-library "multi-mode.el")
+(load-library "twisted.el")
+(load-file "/usr/share/emacs/site-lisp/cedet/common/cedet.el")
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/ecb")
+
+;custom keys
+(global-set-key (kbd "M-p") 'align-regexp)
+(global-set-key (kbd "C-'") 'other-frame)
+(global-set-key (kbd "C-;") 'other-window)
+(global-set-key (kbd "s-y") 'clipboard-yank)
+(global-set-key (kbd "s-k") 'clipboard-kill-ring-save)
+(global-set-key (kbd "<f8>") 'apropos)
+(global-set-key (kbd "s-m") 'clean-sql)
+
+;disabled
+(put 'upcase-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+
+;custom-modes
+(menu-bar-mode nil)
+;;line numbers 
+(line-number-mode t)
+(global-linum-mode t)
+(column-number-mode t)
+;; show clock in modeline
+(display-time)
+;; paren matching
+(show-paren-mode t)
+(setq show-paren-style 'expression)
+;; useful highlights
+(transient-mark-mode nil)
+(global-font-lock-mode t)
+
+
+;font
+(set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
+
+;color;
 (require 'color-theme)
+(color-theme-initialize)
 (eval-after-load "color-theme"
-     (color-theme-hober))
-(load "~/elisp/haskell-mode-2.4/haskell-site-file.el")
+     (color-theme-arjen))
+
+;haskel
+(load "~/.emacs.d/haskell-mode-2.4/haskell-site-file.el")
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
 
+;python
+(require 'pymacs)
+(require 'pythoscope)
+(defun twisted-dev-debug ()
+  (interactive)
+  (twisted-dev-runtests 't))
 
+(add-hook 'python-mode-hook (lambda ()
+			      (define-key py-mode-map (kbd "s-u") 'python-send-buffer)
+			      (require 'twisted-dev)
+			      (define-key py-mode-map (kbd "<f5>") 'twisted-dev-runtests)
+				  (define-key py-mode-map (kbd "<f6>") 'twisted-dev-debug)))
+
+(require 'auto-complete)
+(global-auto-complete-mode t)
+(define-key ac-complete-mode-map "\C-n" 'ac-next)
+(define-key ac-complete-mode-map "\C-p" 'ac-previous)
+
+(require 'yasnippet)
+(yas/initialize)
+(yas/load-directory "~/.emacs.d/snippets")
+(require 'auto-complete-yasnippet)
+
+(load-library "init_python")
+
+
+;processing
+;keep these around, but cold storage it - I'm not doing much processing
+;(autoload 'processing-mode "processing-mode" "Processing mode" t)
+;(add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
+;(setq processing-location "~/workspace/processing/processing-1.1/")
+
+
+
+;clojure
+;(add-to-list 'load-path "~/workspace/clojure/clojure-mode")
+;(require 'clojure-mode)
+;clojure-swank
+;(add-to-list 'load-path "~/workspace/clojure/swank-clojure/src/emacs")
+;(setq swank-clojure-jar-path "~/.clojure/clojure.jar"
+;      swank-clojure-extra-classpaths (list
+;									  "~/workspace/clojure/swank-clojure/src/main/clojure"
+;									  "~/.clojure/clojure-contrib-1.2.0-SNAPSHOT.jar"))
+;(require 'swank-clojure-autoload)
+
+;slimep
+(add-to-list 'load-path "~/.emacs.d/slime/")
+(setq inferior-lisp-program "sbcl")
+(setq slime-backend
+      "/home/bbeecher/.emacs.d/slime/swank-loader.lisp")
+(load "/home/bbeecher/.emacs.d/slime/slime-autoloads")
+(eval-after-load "slime"
+  '(progn
+    (slime-setup '(slime-fancy slime-asdf slime-banner))
+    (setq slime-complete-symbol*-fancy t)
+    (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol)))
+(require 'slime)
+(slime-setup '(slime-repl))
+(slime-setup)
+(add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
+(add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
+
+;dired-single
 (require 'dired-single)
 (defun my-dired-init ())
 (add-hook 'dired-mode-hook
@@ -120,31 +164,13 @@
         ;; it's not loaded yet, so add our bindings to the load-hook
         (add-hook 'dired-load-hook 'my-dired-init)))
 
-;; Turn on tabs
-(set-variable 'py-indent-offset 4)
-(setq indent-tabs-mode t)
-(setq-default indent-tabs-mode t)
-(setq tab-stop-list (list 4 8 12 16 20 24 28 32 36 40 44 48 52 56))
-
-;; Set the tab width
-(setq default-tab-width 4)
-(setq global-tab-width 4)
-(setq c-basic-indent 4)
-
-;(require 'auto-complete)
-;(global-auto-complete-mode t)
-;(define-key ac-complete-mode-map "\C-n" 'ac-next)
-;(define-key ac-complete-mode-map "\C-p" 'ac-previous)
-
-;(require 'yasnippet)
-;(yas/initialize)
-;(yas/load-directory "~/elisp/snippets")
-;(require 'auto-complete-yasnippet)
-
-;(load-library "init_python")
-(load-library "pymacs.elc")
-(require 'pymacs)
-
+;functions
+(defun untab-all ()
+  "transmogrify all tabs to spaces"
+  (interactive)
+  (save-excursion
+    (untabify (point-min) (point-max))
+    (message "transmogrified")))
 
 (defun docstrings (&optional buffer)
   "Changes all doc strings in the buffer (default current) into the correct format."
@@ -162,44 +188,21 @@
 	  (goto-char (- (point) 3))
 	  (newline-and-indent))))
 
+(defun clean-sql (start stop)
+  "cleans a region of text stolen from a console - replaing \t and \n"
+  (interactive "r")
+  (defun replace (from to)
+	(goto-char start)
+	(while (search-forward from stop t)
+	  (replace-match to nil t)))
+  (save-excursion 
+	(replace "\\n" "\n")
+	(replace "\\t" "\t")))
+			   
 
-
-(setq global-show-trailing-whitespace t)
-(setq whitespace-style '(tab-mark))
-(whitespace-mode)
-
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(focus-follows-mouse nil)
- '(nxml-child-indent 4)
- '(nxml-outline-child-indent 4)
- '(py-indent-offset 4)
- '(python-indent 8)
- '(safe-local-variable-values (quote ((folded-file . t) (test-case-name . twisted\.test\.test_abstract) (test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_factories) (test-case-name . twisted\.test\.test_newcred) (test-case-name . twisted\.test\.test_defer) (test-case-name . twisted\.test\.test_protocols) (test-case-name . twisted\.test\.test_banana) (test-case-name . twisted\.test\.test_pb) (test-case-name . twisted\.test\.test_reflect) (test-case-name . twisted\.test\.test_persisted) (test-case-name . twisted\.test\.test_jelly)))))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
-;gnus!
-(setq gnus-select-method '(nntp "news.giganews.com"))
-;(setq gnus-startup-hook  (list (add-to-list 'gnus-secondary-select-methods '(nnimap "gmail"
-				   ;; 														(nnimap-address "imap.gmail.com")
-				   ;; 														(nnimap-server-port 993)
-				   ;; 														(nnimap-stream ssl)))
-				   ;; (setq message-send-mail-function 'smtpmail-send-it
-				   ;; 		 smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-				   ;; 		 smtpmail-auth-credentails '(("smtp.gmail.com" 587 "benbeecher@gmail.com" nil))
-				   ;; 		 smptmail-default-smtp-server "smtp.gmail.com"
-				   ;; 		 smtpmail-smtp-server "smtp.gmail.com"
-				   ;; 		 smtpmail-smtp-service 587
-				   ;; 		 smtpmail-local-domain "newworldrecords.org")))
-
-
-
-
-(load-library "twit.el")
+(defun blankit ()
+  (interactive "")
+  "prints ', blank=True' - using this for the cph project since every freaking field needs it"
+  (insert ", blank=True"))
+; this should really check to see if the last char was (, and if so omit the ","
+; also should check to see if we have a ) at the end, and add it if not
