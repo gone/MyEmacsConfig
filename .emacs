@@ -1,3 +1,15 @@
+(server-start)
+
+;; turn off that annoying start up screen - yes I know what gnu is.
+(setq inhibit-startup-echo-area-messagee t)
+(setq inhibit-startup-message t)
+;; turn off that annoying ~ file
+(setq make-backup-files nil)
+;;change the font to something readable
+;;(set-face-font 'default "-outline-Consolas-normal-r-normal-normal-19-14-96-96-c-*-iso8859-1")
+
+(setq tramp-default-method "ssh")
+
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function)
@@ -23,6 +35,7 @@
 	  browse-url-generic-program "google-chrome")
 ;load
 (add-to-list 'load-path "~/.emacs.d")
+(add-to-list 'load-path "~/elisp")
 (load-library "python-mode.el")
 (load-library "psvn.el")
 (load-library "ansi-color.el")
@@ -38,6 +51,7 @@
 (load-library "twisted.el")
 (load-file "/usr/share/emacs/site-lisp/cedet/common/cedet.el")
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/ecb")
+(add-to-list 'load-path "/usr/share/emacs/23.1/site-lisp/")
 
 ;custom keys
 (global-set-key (kbd "M-p") 'align-regexp)
@@ -52,8 +66,16 @@
 (put 'upcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+
 
 ;custom-modes
+(setq auto-mode-alist
+      (append auto-mode-alist
+	      '(("\\.[hg]s$"  . haskell-mode)
+		("\\.hi$"     . haskell-mode)
+		("\\.tac$"    . python-mode)
+		("\\.l[hg]s$" . literate-haskell-mode))))
 (menu-bar-mode nil)
 ;;line numbers 
 (line-number-mode t)
@@ -79,9 +101,32 @@
      (color-theme-arjen))
 
 ;haskel
-(load "~/.emacs.d/haskell-mode-2.4/haskell-site-file.el")
-(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;; (load "~/.emacs.d/haskell-mode-2.4/haskell-site-file.el")
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
+;; (autoload 'haskell-mode "haskell-mode"
+;;   "Major mode for editing Haskell scripts." t)
+;; (autoload 'literate-haskell-mode "haskell-mode"
+;;   "Major mode for editing literate Haskell scripts." t)
+;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+
+(load-library "cheetah-mode.el")
+
+;(load-library "python-mode.el")
+;(load-library "python.el")
+(add-hook 'python-mode-hook
+		  (setq py-smart-indentation nil))
+(load-library "psvn.el")
+(load-library "ansi-color.el")
+(load-library "espresso.elc")
+(load-library "js2.elc")
+(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
+(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
+(load-library "xml-rpc.el")
+(load-library "trac-wiki.el")
+(load-library "tidy.el")
+(load-library "multi-mode.el")
 
 ;python
 (require 'pymacs)
@@ -206,3 +251,20 @@
   (insert ", blank=True"))
 ; this should really check to see if the last char was (, and if so omit the ","
 ; also should check to see if we have a ) at the end, and add it if not
+
+(setq global-show-trailing-whitespace t)
+(setq whitespace-style '(tab-mark))
+(whitespace-mode)
+
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(focus-follows-mouse nil)
+ '(nxml-child-indent 4)
+ '(nxml-outline-child-indent 4)
+ '(py-indent-offset 4 t)
+ '(python-indent 8)
+ '(safe-local-variable-values (quote ((folded-file . t) (test-case-name . twisted\.test\.test_abstract) (test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_factories) (test-case-name . twisted\.test\.test_newcred) (test-case-name . twisted\.test\.test_defer) (test-case-name . twisted\.test\.test_protocols) (test-case-name . twisted\.test\.test_banana) (test-case-name . twisted\.test\.test_pb) (test-case-name . twisted\.test\.test_reflect) (test-case-name . twisted\.test\.test_persisted) (test-case-name . twisted\.test\.test_jelly))))
+ '(tool-bar-mode nil))
