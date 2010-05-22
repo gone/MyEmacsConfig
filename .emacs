@@ -1,4 +1,3 @@
-(server-start)
 
 
 ;; turn off that annoying start up screen - yes I know what gnu is.
@@ -193,13 +192,8 @@
  '(py-indent-offset 4 t)
  '(python-indent 8)
  '(safe-local-variable-values (quote ((folded-file . t) (test-case-name . twisted\.test\.test_abstract) (test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_factories) (test-case-name . twisted\.test\.test_newcred) (test-case-name . twisted\.test\.test_defer) (test-case-name . twisted\.test\.test_protocols) (test-case-name . twisted\.test\.test_banana) (test-case-name . twisted\.test\.test_pb) (test-case-name . twisted\.test\.test_reflect) (test-case-name . twisted\.test\.test_persisted) (test-case-name . twisted\.test\.test_jelly))))
+ '(slime-complete-symbol-function (quote slime-fuzzy-complete-symbol))
  '(tool-bar-mode nil))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
 ;gnus!
 ;(setq gnus-select-method '(nntp "news.giganews.com"))
 ;(setq gnus-startup-hook  (list (add-to-list 'gnus-secondary-select-methods '(nnimap "gmail"
@@ -214,14 +208,7 @@
 				   ;; 		 smtpmail-smtp-service 587
 				   ;; 		 smtpmail-local-domain "newworldrecords.org")))
 
-
-
-
-(load-library "twit.el")
-
-
-
-(eval-when-compile    (require 'color-theme))
+(require 'color-theme)
 (defun my-color-theme ()
   "Color theme by benbeecher, created 2009-09-25."
   (interactive)
@@ -334,3 +321,51 @@
      (widget-inactive ((t (:foreground "light gray"))))
      (widget-single-line-field ((t (:background "dim gray")))))))
 (my-color-theme)
+
+;clj
+;; (add-to-list 'load-path "~/workspace/clojure/clojure-mode/")
+;; (require 'clojure-mode)
+
+;; (add-to-list 'load-path "~/workspace/clojure/swank-clojure/src/emacs/")
+
+;; (setq swank-clojure-jar-path "/usr/share/clojure/clojure.jar"
+;; 	  swank-clojure-extra-classpaths (list "~/workspace/clojure/swank-clojure/src/main/clojure/"
+;; 									  "/home/benbeecher/workspace/clojure/contrib/clojure-contrib.jar"
+;; 									  "~/workspace/clojure/compojure/compojure.jar"
+;; 									  ))
+
+;; (require 'swank-clojure-autoload)
+
+;;slime
+(require 'w3m-load)
+(setq slime-path "/usr/share/emacs/site-lisp/slime/")
+
+(setq inferior-lisp-program "/usr/bin/sbcl --noinform"
+	  cltl2-url "file:///usr/local/share/doc/cltl/clm/node1.html"
+      hyperspec-prog (concat slime-path "hyperspec")
+      hyperspec-path "/usr/local/share/doc/HyperSpec/")
+
+(setq lisp-indent-function 'common-lisp-indent-function
+      ;slime-complete-symbol-function 'slime-fuzzy-complete-symbol
+      slime-startup-animation nil
+      common-lisp-hyperspec-root (concat "file://" hyperspec-path)
+      common-lisp-hyperspec-symbol-table (concat hyperspec-path "Data/Map_Sym.txt")
+      w3m-default-homepage common-lisp-hyperspec-root
+      ;browse-url-browser-function 'w3m
+      w3m-symbol 'w3m-default-symbol
+      w3m-key-binding 'info
+      w3m-coding-system 'utf-8
+      w3m-default-coding-system 'utf-8
+      w3m-file-coding-system 'utf-8
+      w3m-file-name-coding-system 'utf-8
+      w3m-terminal-coding-system 'utf-8)
+
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/slime/")
+(require 'slime)
+(slime-setup '(slime-repl))
+(add-hook 'lisp-mode-hook 'slime)
+(add-hook 'lisp-mode-hook 'slime-mode)
+(setq browse-url-generic-program "google-chrome"
+	  browse-url-browser-function 
+	  '(("file:///usr/local/share/doc/." . w3m-browse-url)
+	   ("." . browse-url-generic)))
