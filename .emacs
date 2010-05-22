@@ -3,8 +3,6 @@
 (setq inhibit-startup-message t)
 ;; turn off that annoying ~ file
 (setq make-backup-files nil)
-;;change the font to something readable
-;;(set-face-font 'default "-outline-Consolas-normal-r-normal-normal-19-14-96-96-c-*-iso8859-1")
 
 (setq tramp-default-method "ssh")
 
@@ -87,7 +85,6 @@
 ;; useful highlights
 (transient-mark-mode nil)
 (global-font-lock-mode t)
-
 
 ;font
 (set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
@@ -267,6 +264,7 @@
  '(safe-local-variable-values (quote ((folded-file . t) (test-case-name . twisted\.test\.test_abstract) (test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_factories) (test-case-name . twisted\.test\.test_newcred) (test-case-name . twisted\.test\.test_defer) (test-case-name . twisted\.test\.test_protocols) (test-case-name . twisted\.test\.test_banana) (test-case-name . twisted\.test\.test_pb) (test-case-name . twisted\.test\.test_reflect) (test-case-name . twisted\.test\.test_persisted) (test-case-name . twisted\.test\.test_jelly))))
  '(slime-complete-symbol-function (quote slime-fuzzy-complete-symbol))
  '(tool-bar-mode nil))
+
 (require 'w3m-load)
 (setq slime-path "/usr/share/emacs/site-lisp/slime/")
 
