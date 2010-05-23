@@ -124,7 +124,7 @@
 (load-library "multi-mode.el")
 
 ;python
-(require 'pymacs)
+;(require 'pymacs)
 (require 'pythoscope)
 (defun twisted-dev-debug ()
   (interactive)
@@ -172,8 +172,8 @@
 (add-to-list 'load-path "~/.emacs.d/slime/")
 (setq inferior-lisp-program "sbcl")
 (setq slime-backend
-      "/home/bbeecher/.emacs.d/slime/swank-loader.lisp")
-(load "/home/bbeecher/.emacs.d/slime/slime-autoloads")
+      "~/.emacs.d/slime/swank-loader.lisp")
+(load "~/.emacs.d/slime/slime-autoloads.el")
 (eval-after-load "slime"
   '(progn
     (slime-setup '(slime-fancy slime-asdf slime-banner))
