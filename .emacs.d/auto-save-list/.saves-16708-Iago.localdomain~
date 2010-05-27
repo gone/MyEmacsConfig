@@ -1,8 +1,0 @@
-/sudo:root@Iago.localdomain:/etc/hosts
-#_asudo_broot@Iago.localdomain_b_aetc_ahosts#
-/etc/resolv.conf
-/etc/#resolv.conf#
-/sudo:root@Iago.localdomain:/etc/openvpn/ben.conf
-#_asudo_broot@Iago.localdomain_b_aetc_aopenvpn_aben.conf#
-/sudo:root@Iago.localdomain:/etc/openvpn/ben.conf.old
-#_asudo_broot@Iago.localdomain_b_aetc_aopenvpn_aben.conf.old#

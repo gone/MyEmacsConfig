@@ -26,9 +26,11 @@
 (setq query-replace-highlight t)
 (setq c-basic-offset 4)
 (setq-default default-tab-width 4)
+(setq-default indent-tabs-mode 'nil)
+(setq indent-tabs-mode 'nil)
 (setq global-show-trailing-whitespace t)
 (setq browse-url-browser-function 'browse-url-generic
-	  browse-url-generic-program "google-chrome")
+      browse-url-generic-program "google-chrome")
 ;load
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/elisp")
@@ -68,10 +70,10 @@
 ;custom-modes
 (setq auto-mode-alist
       (append auto-mode-alist
-	      '(("\\.[hg]s$"  . haskell-mode)
-		("\\.hi$"     . haskell-mode)
-		("\\.tac$"    . python-mode)
-		("\\.l[hg]s$" . literate-haskell-mode))))
+          '(("\\.[hg]s$"  . haskell-mode)
+        ("\\.hi$"     . haskell-mode)
+        ("\\.tac$"    . python-mode)
+        ("\\.l[hg]s$" . literate-haskell-mode))))
 (menu-bar-mode nil)
 ;;line numbers 
 (line-number-mode t)
@@ -110,7 +112,7 @@
 ;(load-library "python-mode.el")
 ;(load-library "python.el")
 (add-hook 'python-mode-hook
-		  (setq py-smart-indentation nil))
+          (setq py-smart-indentation nil))
 (load-library "psvn.el")
 (load-library "ansi-color.el")
 (load-library "espresso.elc")
@@ -131,10 +133,10 @@
   (twisted-dev-runtests 't))
 
 (add-hook 'python-mode-hook (lambda ()
-			      (define-key py-mode-map (kbd "s-u") 'python-send-buffer)
-			      (require 'twisted-dev)
-			      (define-key py-mode-map (kbd "<f5>") 'twisted-dev-runtests)
-				  (define-key py-mode-map (kbd "<f6>") 'twisted-dev-debug)))
+                  (define-key py-mode-map (kbd "s-u") 'python-send-buffer)
+                  (require 'twisted-dev)
+                  (define-key py-mode-map (kbd "<f5>") 'twisted-dev-runtests)
+                  (define-key py-mode-map (kbd "<f6>") 'twisted-dev-debug)))
 
 (require 'auto-complete)
 (global-auto-complete-mode t)
@@ -164,8 +166,8 @@
 ;(add-to-list 'load-path "~/workspace/clojure/swank-clojure/src/emacs")
 ;(setq swank-clojure-jar-path "~/.clojure/clojure.jar"
 ;      swank-clojure-extra-classpaths (list
-;									  "~/workspace/clojure/swank-clojure/src/main/clojure"
-;									  "~/.clojure/clojure-contrib-1.2.0-SNAPSHOT.jar"))
+;                                     "~/workspace/clojure/swank-clojure/src/main/clojure"
+;                                     "~/.clojure/clojure-contrib-1.2.0-SNAPSHOT.jar"))
 ;(require 'swank-clojure-autoload)
 
 ;slimep
@@ -189,18 +191,18 @@
 (require 'dired-single)
 (defun my-dired-init ())
 (add-hook 'dired-mode-hook
-	  '(lambda ()
+      '(lambda ()
         ;; <add other stuff here>
         (define-key dired-mode-map [return] 'dired-single-buffer)
         (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
         (define-key dired-mode-map "^"
-      	(function
-      	 (lambda nil (interactive) (dired-single-buffer "..")))))
+        (function
+         (lambda nil (interactive) (dired-single-buffer "..")))))
 
       ;; if dired's already loaded, then the keymap will be bound
       (if (boundp 'dired-mode-map)
-      	;; we're good to go; just add our bindings
-      	(my-dired-init)
+        ;; we're good to go; just add our bindings
+        (my-dired-init)
         ;; it's not loaded yet, so add our bindings to the load-hook
         (add-hook 'dired-load-hook 'my-dired-init)))
 
@@ -216,29 +218,29 @@
   "Changes all doc strings in the buffer (default current) into the correct format."
   (interactive)
   (when (not buffer)
-	(setq buffer (current-buffer)))
+    (setq buffer (current-buffer)))
   (save-excursion
-	(set-buffer buffer)
-	(goto-char (point-min))
-	(while (re-search-forward "def .*:
+    (set-buffer buffer)
+    (goto-char (point-min))
+    (while (re-search-forward "def .*:
 \[^\"]*\"\"\"." 'nil 't)
-	  (goto-char (- (point) 1))
-	  (newline-and-indent)
-	  (re-search-forward "\"\"\"" 'nil 't)
-	  (goto-char (- (point) 3))
-	  (newline-and-indent))))
+      (goto-char (- (point) 1))
+      (newline-and-indent)
+      (re-search-forward "\"\"\"" 'nil 't)
+      (goto-char (- (point) 3))
+      (newline-and-indent))))
 
 (defun clean-sql (start stop)
   "cleans a region of text stolen from a console - replaing \t and \n"
   (interactive "r")
   (defun replace (from to)
-	(goto-char start)
-	(while (search-forward from stop t)
-	  (replace-match to nil t)))
+    (goto-char start)
+    (while (search-forward from stop t)
+      (replace-match to nil t)))
   (save-excursion 
-	(replace "\\n" "\n")
-	(replace "\\t" "\t")))
-			   
+    (replace "\\n" "\n")
+    (replace "\\t" "\t")))
+               
 
 (defun blankit ()
   (interactive "")
@@ -269,7 +271,7 @@
 (setq slime-path "/usr/share/emacs/site-lisp/slime/")
 
 (setq inferior-lisp-program "/usr/bin/sbcl --noinform"
-	  cltl2-url "file:///usr/local/share/doc/cltl/clm/node1.html"
+      cltl2-url "file:///usr/local/share/doc/cltl/clm/node1.html"
       hyperspec-prog (concat slime-path "hyperspec")
       hyperspec-path "/usr/local/share/doc/HyperSpec/")
 
@@ -294,6 +296,6 @@
 (add-hook 'lisp-mode-hook 'slime)
 (add-hook 'lisp-mode-hook 'slime-mode)
 (setq browse-url-generic-program "google-chrome"
-	  browse-url-browser-function 
-	  '(("file:///usr/local/share/doc/." . w3m-browse-url)
-	   ("." . browse-url-generic)))
+      browse-url-browser-function 
+      '(("file:///usr/local/share/doc/." . w3m-browse-url)
+        ("." . browse-url-generic)))

@@ -1,8 +1,0 @@
-/etc/hosts.deny
-/etc/#hosts.deny#
-/etc/hosts.allow
-/etc/#hosts.allow#
-/etc/host.conf
-/etc/#host.conf#
-/var/log/auth.log
-/var/log/#auth.log#
