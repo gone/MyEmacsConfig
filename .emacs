@@ -132,15 +132,19 @@
   (interactive)
   (twisted-dev-runtests 't))
 
+(require 'twisted-dev)
+
 (add-hook 'python-mode-hook (lambda ()
                   (define-key py-mode-map (kbd "s-u") 'python-send-buffer)
-                  (require 'twisted-dev)
+                  (define-key py-mode-map (kbd "<f2>") 'flymake-display-err-menu-for-current-line)
                   (define-key py-mode-map (kbd "<f5>") 'twisted-dev-runtests)
                   (define-key py-mode-map (kbd "<f6>") 'twisted-dev-debug)))
 
+
 (require 'auto-complete)
 (global-auto-complete-mode t)
-(define-key ac-complete-mode-map "\C-n" 'ac-next)
+(define-key
+ ac-complete-mode-map "\C-n" 'ac-next)
 (define-key ac-complete-mode-map "\C-p" 'ac-previous)
 
 (require 'yasnippet)
@@ -240,6 +244,8 @@
   (save-excursion 
     (replace "\\n" "\n")
     (replace "\\t" "\t")))
+
+
                
 
 (defun blankit ()
@@ -261,9 +267,9 @@
  '(focus-follows-mouse nil)
  '(nxml-child-indent 4)
  '(nxml-outline-child-indent 4)
- '(py-indent-offset 4 t)
+ '(py-indent-offset 4)
  '(python-indent 8)
- '(safe-local-variable-values (quote ((folded-file . t) (test-case-name . twisted\.test\.test_abstract) (test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_factories) (test-case-name . twisted\.test\.test_newcred) (test-case-name . twisted\.test\.test_defer) (test-case-name . twisted\.test\.test_protocols) (test-case-name . twisted\.test\.test_banana) (test-case-name . twisted\.test\.test_pb) (test-case-name . twisted\.test\.test_reflect) (test-case-name . twisted\.test\.test_persisted) (test-case-name . twisted\.test\.test_jelly))))
+ '(safe-local-variable-values (quote ((test-case-name . slader\.test\.test_common) (test-case-name . "slader.test.test_common") (test-case-name . "slader.test.test_common.py") (test-case-name . solutions\.tests) (folded-file . t) (test-case-name . twisted\.test\.test_abstract) (test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_factories) (test-case-name . twisted\.test\.test_newcred) (test-case-name . twisted\.test\.test_defer) (test-case-name . twisted\.test\.test_protocols) (test-case-name . twisted\.test\.test_banana) (test-case-name . twisted\.test\.test_pb) (test-case-name . twisted\.test\.test_reflect) (test-case-name . twisted\.test\.test_persisted) (test-case-name . twisted\.test\.test_jelly))))
  '(slime-complete-symbol-function (quote slime-fuzzy-complete-symbol))
  '(tool-bar-mode nil))
 
@@ -299,3 +305,16 @@
       browse-url-browser-function 
       '(("file:///usr/local/share/doc/." . w3m-browse-url)
         ("." . browse-url-generic)))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )
+
+
+(defun browse-django-docs ()
+  (interactive)
+  (w3m-browse-url "file://home/benbeecher/django/docs/_build/html/index.html"))
+
+

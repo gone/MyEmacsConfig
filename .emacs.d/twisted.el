@@ -18,7 +18,8 @@
 
 (defvar twisted-dev-scratch-directory "~/Scratch/Test")
 
-(defvar twisted-dev-directory "/home/bbeecher/workspace/python/twisted-dev/trunk/")
+(defvar twisted-dev-directory "~/workspace/python/twisted/trunk")
+
 
 (defmacro with-cd (dirname &rest code)
   `(let ((old-dirname default-directory)
