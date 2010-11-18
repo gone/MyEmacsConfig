@@ -10,7 +10,7 @@
 ;; Modified: 2008-11-28 Fri
 ;; X-URL:   http://php-mode.sourceforge.net/
 
-(defconst php-mode-version-number "1.5.0-nxhtml"
+(defconst php-mode-version-number "1.5.0-nxhtml-1.94"
   "PHP Mode version number.")
 
 ;;; License
@@ -70,6 +70,8 @@
 
 ;;; Changelog:
 
+;; 1.5.0-nxhtml-1.88 (Lennart Borgman)
+;;   Don't indent heredoc end mark
 ;; 1.5.0-nxhtml-1.61 (Lennart Borgman)
 ;;   Added php-mode-to-use.
 ;;   Made underscore be part of identifiers.
@@ -123,6 +125,7 @@
   (require 'regexp-opt))
 
 ;; Local variables
+;;;###autoload
 (defgroup php nil
   "Major mode `php-mode' for editing PHP code."
   :prefix "php-"
@@ -220,7 +223,7 @@ Turning this on will force PEAR rules on all PHP files."
   :type 'boolean
   :group 'php)
 
-(defconst php-mode-modified "2008-11-28 Fri"
+(defconst php-mode-modified "2009-08-12"
   "PHP Mode build date.")
 
 (defun php-mode-version ()
@@ -271,6 +274,10 @@ See `php-beginning-of-defun'."
         (here (point)))
     (goto-char (line-beginning-position))
     (if (or (when (boundp 'mumamo-multi-major-mode) mumamo-multi-major-mode)
+            (let ((stat (syntax-ppss (point))))
+              ;; like parse-partial-sexp, but not 2nd or 6th so
+              ;; testing 8th is ok. Non-nil means in comment or string.
+              (nth 8 stat))
             ;; Fix-me: no idea how to check for mmm or multi-mode
             (save-match-data
               (not (or (re-search-forward html-tag-re (line-end-position) t)
@@ -345,7 +352,16 @@ example `html-mode'.  Known such libraries are:\n\t"
 (defun php-cautious-indent-line ()
   (if (or php-warned-bad-indent
           (php-check-html-for-indentation))
-      (funcall 'c-indent-line)))
+      (let ((here (point))
+            doit)
+        (move-beginning-of-line nil)
+        ;; Don't indent heredoc end mark
+        (save-match-data
+          (unless (looking-at "[a-zA-Z0-9_]+;\n")
+            (setq doit t)))
+        (goto-char here)
+        (when doit
+          (funcall 'c-indent-line)))))
 
 (defconst php-tags '("<?php" "?>" "<?" "<?="))
 (defconst php-tags-key (regexp-opt php-tags))

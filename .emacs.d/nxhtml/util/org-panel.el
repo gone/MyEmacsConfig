@@ -107,7 +107,9 @@ active.)"
 ;; Fix-me: add org-mode-map
 ;; (memq 'org-self-insert-command orgpan-org-mode-commands)
 ;; (memq 'org-self-insert-command orgpan-org-commands)
-(defconst orgpan-org-mode-commands nil)
+(defvar orgpan-org-mode-commands nil)
+(setq orgpan-org-mode-commands nil)
+
 (defconst orgpan-org-commands
   '(
     orgpan-copy-subtree
@@ -116,7 +118,7 @@ active.)"
     undo
     save-buffer
     ;;
-    ;orgpan-occur
+                                        ;orgpan-occur
     orgpan-find-org-file
     ;;
     org-cycle
@@ -251,9 +253,9 @@ There can be only one such buffer at any time.")
   (interactive)
   (let ((buf (window-buffer orgpan-org-window))
         (last-buf orgpan-last-org-buffer))
-;;     (when (with-current-buffer buf
-;;             (derived-mode-p 'org-mode))
-;;       (setq orgpan-last-org-buffer buf))
+    ;;     (when (with-current-buffer buf
+    ;;             (derived-mode-p 'org-mode))
+    ;;       (setq orgpan-last-org-buffer buf))
     (when (eq last-buf buf)
       (setq last-buf nil))
     (if (not last-buf)
@@ -301,7 +303,8 @@ This refers to the functions `orgpan-paste-subtree',
   (let ((heading (progn
                    (org-back-to-heading)
                    (buffer-substring (point) (line-end-position))
-                   )))
+                   ))
+        (resize-mini-windows (or resize-mini-windows t)))
     (if orgpan-cautious-cut-copy-paste
         (if (y-or-n-p (format "Do you want to cut the subtree\n%s\n? " heading))
             (org-cut-subtree)
@@ -312,8 +315,8 @@ This refers to the functions `orgpan-paste-subtree',
   (interactive)
   (let ((heading (progn
                    (org-back-to-heading)
-                   (buffer-substring (point) (line-end-position))
-                   )))
+                   (buffer-substring (point) (line-end-position))))
+        (resize-mini-windows (or resize-mini-windows t)))
     (if orgpan-cautious-cut-copy-paste
         (if (y-or-n-p (format "Do you want to copy the subtree\n%s\n? " heading))
             (org-copy-subtree)
@@ -383,9 +386,9 @@ This refers to the functions `orgpan-paste-subtree',
   (let ((start-level (funcall outline-level)))
     (if (<= start-level 1)
         (message "Already at top level of the outline")
-      (outline-up-heading (arg invisible-ok)))))
+      (outline-up-heading arg invisible-ok))))
 
-(defconst orgpan-mode-map
+(defvar orgpan-mode-map
   ;; Fix-me: clean up here!
   ;; Fix-me: viper support
   (let ((map (make-sparse-keymap)))
@@ -490,7 +493,7 @@ r      Show entries matching a regular expression"
     (add-hook 'pre-command-hook 'orgpan-mode-pre-command nil t)
     (add-hook 'post-command-hook 'orgpan-mode-post-command t))
   (set (make-local-variable 'cursor-type) nil)
-  (setq yas/dont-activate t)
+  (when (boundp 'yas/dont-activate) (setq yas/dont-activate t))
   ;; Avoid emulation modes here (cua, viper):
   (set (make-local-variable 'emulation-mode-map-alists) nil))
 
@@ -713,6 +716,13 @@ button changes the binding of the arrow keys."
     (orgpan-panel-minor-mode 1)
     (add-hook 'post-command-hook 'orgpan-minor-post-command t)))
 
+(define-minor-mode orgpan-panel-minor-mode
+  "Minor mode used in `org-mode' buffer when showing panel."
+  :keymap orgpan-mode-map
+  :lighter " PANEL"
+  :group 'orgpan
+  )
+
 (defun orgpan-minor-post-command ()
   ;; Check org window and buffer
   (if (and (windowp orgpan-org-window)
@@ -729,13 +739,6 @@ button changes the binding of the arrow keys."
            orgpan-panel-minor-mode)
       (setq cursor-type nil)
     (orgpan-delete-panel)))
-
-(define-minor-mode orgpan-panel-minor-mode
-  "Minor mode used in `org-mode' buffer when showing panel."
-  :keymap orgpan-mode-map
-  :lighter " PANEL"
-  :group 'orgpan
-  )
 
 
 (provide 'org-panel)
