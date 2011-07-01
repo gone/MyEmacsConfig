@@ -1,8 +1,0 @@
-/sudo:root@Iago.localdomain:/etc/smb.conf
-#_asudo_broot@Iago.localdomain_b_aetc_asmb.conf#
-/sudo:root@Iago.localdomain:/etc/hosts.allow
-#_asudo_broot@Iago.localdomain_b_aetc_ahosts.allow#
-/sudo:root@Iago.localdomain:/etc/exports
-#_asudo_broot@Iago.localdomain_b_aetc_aexports#
-/etc/exports
-/etc/#exports#
