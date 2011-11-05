@@ -1,7 +1,0 @@
-import unittest
-from fixtures import demos
-
-class TestListFieldScalarData(unittest.TestCase):
-    def setUp(self):
-        class TestDocument(Document):
-            the_list = ListField(IntField())
