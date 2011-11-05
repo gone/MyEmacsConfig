@@ -1,0 +1,17 @@
+from django.db import models
+
+class MessageData(models.Model):
+    message_data_id = models.IntegerField(null=True, primary_key=True, blank=True)
+    data = models.TextField(blank=True) # This field type is a guess.
+    class Meta:
+        db_table = u'message_data'
+
+class Messages(models.Model):
+    message_id = models.IntegerField(null=True, primary_key=True, blank=True)
+    sender = models.TextField(blank=True) # This field type is a guess.
+    subject = models.TextField(blank=True) # This field type is a guess.
+    _to = models.TextField(blank=True) # This field type is a guess.
+    cc = models.TextField(blank=True) # This field type is a guess.
+    bcc = models.TextField(blank=True) # This field type is a guess.
+    class Meta:
+        db_table = u'messages'

@@ -1,0 +1,16 @@
+from django.utils.translation import ugettext_lazy as _
+
+# Constants for Profile instances
+
+OZ     = 1
+ZOMBIE = 2
+HUMAN  = 3
+CORPSE = 4
+
+# reverse mapping
+STATES = (
+  (OZ, _('Original Zombie')),
+  (ZOMBIE, _('Zombie')),
+  (HUMAN, _('Human')),
+  (CORPSE, _('Corpse')),
+)

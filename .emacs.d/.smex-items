@@ -1,0 +1,54 @@
+
+;; ----- smex-history -----
+(
+ eshell
+ auto-fill-mode
+ make-directory
+ grep
+ display-local-help
+ re-builder
+ comment-region
+)
+
+;; ----- smex-data -----
+(
+ (package-install . 4)
+ (dired . 1)
+ (paredit-backward-barf-sexp . 1)
+ (comment-region . 14)
+ (run-lisp . 1)
+ (package-list-packages . 5)
+ (slime . 30)
+ (slime-connect . 4)
+ (eval-buffer . 9)
+ (debug-on-entry . 2)
+ (elisp-slime-nav-mode . 1)
+ (grep . 20)
+ (eshell . 2)
+ (uncomment-region . 4)
+ (slime-abort-connection . 1)
+ (inferior-lisp . 6)
+ (clojure-jack-in . 1)
+ (elein-swank . 3)
+ (clojure-enable-slime-on-existing-buffers . 1)
+ (slime-compile-file . 2)
+ (slime-eval-buffer . 1)
+ (paredit-forward-slurp-sexp . 1)
+ (rainbow-delimiters-mode . 3)
+ (yas/about . 1)
+ (yas/global-mode . 2)
+ (deft . 1)
+ (auto-save-mode . 2)
+ (auto-fill-mode . 5)
+ (js-mode . 1)
+ (javascript-mode . 2)
+ (nxml-mode . 1)
+ (django-mode . 1)
+ (django-html-mumamo-mode . 1)
+ (python-mode . 1)
+ (espresso-mode . 1)
+ (make-directory . 2)
+ (re-builder . 1)
+ (display-local-help . 1)
+ (deft-mode . 1)
+)

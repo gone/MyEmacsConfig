@@ -1,0 +1,148 @@
+machine learning notes
+
+What is machine learning? a program that learns from exeperiance e with respect to some task t and some performace  measure P,
+      if it's performace on T  as measured by P imporoves with experiance E
+so, classifying email as spam: watching you classify email would be E, the task would be the classification of email, and the P would be the ratio of 
+correcty to inclorrectly classified emails
+
+
+regression problem - produce a reccomendation on a continuious line of options 
+classification problem - produce a descrete output           
+
+
+
+2
+
+Notation:
+ m = Number of training examples
+ x's = input variable/features 
+y's = output variable / target variable 
+
+goal of ML is to create an hypthosis, that takes x, and produces y
+
+How do we represent h?
+
+h subscript theta of x = theta 0 + theata 1 x   ---- straight line,
+or a linear regression with one variable or a univariate linear
+regression
+
+The idea: choose theata0, theata1 such that h(x) is close to y for our
+training example 
+
+We want to minimize the summation of 1 to m of (h(x) - y)squared
+
+J = 1/2m * the summation,
+
+So J is our cost function or squared error function - the goal is to
+minimize the cost function
+
+Q:
+Why do we square the sums?
+contour plots, contour figures
+
+
+
+Gradenent decent:
+used for minimizing functions
+
+given Some cost function J(theta0, theta1) and you want min(J(theta0, theta1))
+
+
+outline:
+ Start with some theta0, theta1
+ keep changing  theta0 theta1 to reduce J
+   until we hopefully end up at a minimum 
+
+Algo:
+ repeat until convergernce {
+        theta j := theta j - alpha * (d / (d * theta j)) * J(theta0, theata1)
+ 0, theta 1)    ( for j = 0 and j = 1)
+
+
+d/d == calculus :( 
+       General thinking, gives slope of line tangent at point
+
+:= == assignment 
+alpha = the learning rate, or the rate at which we step downhill
+
+The subtly of implentation is that j = 0 and j= 1 need to be updated
+at the same time. You must compute the next step for both while
+keeping the position constant.
+
+Wrong 
+temp1 = gradent decent
+theta0 = temp1
+temp2 = gradent decent
+theta1 = temp2
+
+Right
+temp1 = gradent decent
+temp2 = gradent decent
+theta0 = temp1
+theta1 = temp2
+
+
+
+simple example, minimize j theta1
+theta1 := theta1 - alpha (d / (d*theta1)) J(theta1)
+As you get closer to local min, alpha * dirv gets smaller before
+ending @ 0
+
+
+More complex: 
+
+the dirivitaves work out to 
+
+j=0 : 1/m * summation i -> m (h theta (x ith) - y ith)
+j=1 : 1/m * summation i -> m (h theta (x ith) - y ith) * x ith
+
+repeat until convergance (make sure to update theta 0 and theta1 at
+the same time)
+
+
+----Linear Regression with multpile variables----
+New hypothsis forumula:
+Where before we had theta0 + theta1*x - now we have:
+
+Htheta(x) = theta0 + theta1*x1 + theta2*x2 + theta3*x3
+
+For convenious X subscript 0 = 1 - now the hypothsis formula becomes
+
+x sub n * theata sub n for all n
+ (since x sub 0 =1, that becomes theata 0 * 1 or theata 0)
+
+Now imagine you have two vectors - x subscript 0 through n, and theata
+subscript 0 to n  
+
+The hypothis formula can be written as vector multiplicatio:n
+H(x) = Theta Transpose * x
+
+this leads to new gradent decent formula - replace j=0 with x 0 - or
+one. so:
+
+jith : 1/m * summation i -> m (h theta (x ith) - y ith) * x ith
+ 
+
+
+Feature scaling:
+idea: make sure features are on a similar scale, so gradent decent can
+converge quicker
+
+
+Get every feature into a range approx  -1 <= x <= 1
+
+EG size = 1-2000, 
+   rooms =1-5
+
+xsub 1 = size/2000
+
+xsub 2 = size/5
+
+
+Better way - take the mean average
+
+x - mu
+\ 
+size
+
+where mu is the ave value of x 

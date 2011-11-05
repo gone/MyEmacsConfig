@@ -112,9 +112,7 @@ The third argument DOC is a documentation string for the widget."
       (setq wbutton (get-char-property pos 'button))
       (setq doc (get-char-property pos 'widget-doc))
       (setq button (button-at pos))
-      ;;(setq widget (or field wbutton doc))
-      (setq widget (widget-at pos))
-      )
+      (setq widget (or field wbutton doc)))
     (cond ((and widget
                 (if (symbolp widget)
                     (get widget 'widget-type)

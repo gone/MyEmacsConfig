@@ -1,0 +1,127 @@
+import datetime
+import time
+
+from django import forms
+from django.db import connection
+from django.db.models.fields import DateField as NaiveDateField
+from django.utils.encoding import smart_unicode, smart_str
+from django.utils import datetime_safe
+from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+
+from recaptcha.client import captcha
+
+from widgets import ReCaptcha
+
+from south.modelsinspector import add_introspection_rules
+
+add_introspection_rules([], ["^util\.fields\.DateField"])
+add_introspection_rules([], ["^util\.fields\.DateTimeField"])
+add_introspection_rules([], ["^util\.fields\.ReCaptchaField"])
+add_introspection_rules([], ["^timezones\.fields\.TimeZoneField"])
+
+
+
+
+
+class DateField(NaiveDateField):
+    """Hijack Django's DateField - it uses datetime.now
+    (which returns a server's local time), instead of datetime.utcnow
+    
+    This wouldn't be a problem if every server were set to UTC in the first
+    place.
+    """
+
+    def pre_save(self, model_instance, add):
+        if self.auto_now or (self.auto_now_add and add):
+            value = datetime.datetime.utcnow()
+            setattr(model_instance, self.attname, value)
+            return value
+        else:
+            return super(DateField, self).pre_save(model_instance, add)
+
+class DateTimeField(DateField):
+    """This is exactly the same as Django 1.1.1's DateTimeField, only
+    it uses the above DateField as its base"""
+
+    def get_internal_type(self):
+        return "DateTimeField"
+
+    def to_python(self, value):
+        if value is None:
+            return value
+        if isinstance(value, datetime.datetime):
+            return value
+        if isinstance(value, datetime.date):
+            return datetime.datetime(value.year, value.month, value.day)
+
+        # Attempt to parse a datetime:
+        value = smart_str(value)
+        # split usecs, because they are not recognized by strptime.
+        if '.' in value:
+            try:
+                value, usecs = value.split('.')
+                usecs = int(usecs)
+            except ValueError:
+                raise exceptions.ValidationError(
+                    _('Enter a valid date/time in YYYY-MM-DD HH:MM[:ss[.uuuuuu]] format.'))
+        else:
+            usecs = 0
+        kwargs = {'microsecond': usecs}
+        try: # Seconds are optional, so try converting seconds first.
+            return datetime.datetime(*time.strptime(value, '%Y-%m-%d %H:%M:%S')[:6],
+                                     **kwargs)
+
+        except ValueError:
+            try: # Try without seconds.
+                return datetime.datetime(*time.strptime(value, '%Y-%m-%d %H:%M')[:5],
+                                         **kwargs)
+            except ValueError: # Try without hour/minutes/seconds.
+                try:
+                    return datetime.datetime(*time.strptime(value, '%Y-%m-%d')[:3],
+                                             **kwargs)
+                except ValueError:
+                    raise exceptions.ValidationError(
+                        _('Enter a valid date/time in YYYY-MM-DD HH:MM[:ss[.uuuuuu]] format.'))
+
+
+    def get_db_prep_value(self, value):
+        # Casts dates into the format expected by the backend
+        return connection.ops.value_to_db_datetime(self.to_python(value))
+
+    def value_to_string(self, obj):
+        val = self._get_val_from_obj(obj)
+        if val is None:
+            data = ''
+        else:
+            d = datetime_safe.new_datetime(val)
+            data = d.strftime('%Y-%m-%d %H:%M:%S')
+        return data
+
+    def formfield(self, **kwargs):
+        defaults = {'form_class': forms.DateTimeField}
+        defaults.update(kwargs)
+        return super(DateTimeField, self).formfield(**defaults)
+
+
+
+
+class ReCaptchaField(forms.CharField):
+    default_error_messages = {
+        'captcha_invalid': _(u'Invalid captcha')
+    }
+
+    def __init__(self, *args, **kwargs):
+        self.widget = ReCaptcha
+        self.required = True
+        super(ReCaptchaField, self).__init__(*args, **kwargs)
+
+    def clean(self, values):
+        super(ReCaptchaField, self).clean(values[1])
+        recaptcha_challenge_value = smart_unicode(values[0])
+        recaptcha_response_value = smart_unicode(values[1])
+        check_captcha = captcha.submit(recaptcha_challenge_value, 
+            recaptcha_response_value, settings.RECAPTCHA_PRIVATE_KEY, {})
+        if settings.RECAPTCHA_ON and not check_captcha.is_valid:
+            raise forms.util.ValidationError(self.error_messages['captcha_invalid'])
+        return values[0]

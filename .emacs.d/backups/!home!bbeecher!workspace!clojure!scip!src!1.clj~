@@ -1,0 +1,140 @@
+;code and answers 
+;1.2
+(/ (+ 4 5 (- 2 (- 3 (+ 6 (/ 4 3)))))
+   (* 3 (- 6 2) (- 2 7)))
+
+;1.3
+(defn square
+  [x]
+  (* x x))
+
+(defn sum-of-squares
+  [x y]
+  (+ (square x) (square y) ))
+
+(defn three-args-square
+  [x y z]
+  (cond
+   (= z (min x y z)) (sum-of-squares x y)
+   (= y (min x y z)) (sum-of-squares z y)
+   (= x (min x y z)) (sum-of-squares y z)
+   ))
+
+
+;1.4
+;The if expression controls the function used in the expression.
+;We either get (+ a b) or (- a b)
+
+;1.5
+; commented since this will prevent the buffer from evaling
+;; (defn p
+;;   []
+;;   (p))
+
+
+;; (defn test
+;;   [x y]
+;;   (if (= x 0)
+;;     0 y)
+;;   )
+
+;; (test 0 (p))
+
+;in applicitave order 0 is returned, in normal order stack overflow
+
+
+;section 1.7 code
+(defn abs
+  "Finds the aboslute value of a number"
+  [n]
+  (if (> 0 n)
+    (- n)
+    n))
+
+(defn avg
+  "finds the avg of two  numbers"
+  [x y]
+  (/ (+ x y) 2))
+
+(defn improve [guess x]
+  (avg guess (/ x guess)))
+
+(defn good-enough?
+  [guess x]
+  (< (abs (- (square guess) x)) 0.0001))
+
+(defn sq-iter
+  ([x] (sq-iter 1.0 x))
+  ([guess x]
+     (if (good-enough? guess x)
+       guess
+       (recur (improve guess x ) x)
+       )))
+
+
+;1.6 
+; it overflows the stack?
+
+
+;1.7
+;Since good enough relies on the change being under a threshold,
+;numbers you can never solve for numbers under that threshhold
+;Since addition is used as part of the check, if you do not add
+;corectly, good-enough will not act as a proper huristic
+
+(defn good-enough2?
+  [guess lastguess]
+  (let [ change  (abs (- guess lastguess))]
+    (< change (* 1/10000 guess))
+    ))
+
+(defn sq-iter2
+  ([x]
+     (loop [guess 1.0 lastguess x]
+         (if (good-enough2? guess lastguess)
+           guess
+           (recur (improve guess x ) guess)
+           ))))
+
+
+;1.8
+(defn improvecube
+  [guess x]
+  (/ (+ (/ x (* guess guess)) (* guess 2)) 3)) ()
+
+(defn cube-iter
+  ([x]
+     (loop [guess 1.0 lastguess x]
+         (if (good-enough2? guess lastguess)
+           guess
+           (recur (improvecube guess x ) guess)
+           ))))
+
+;1.10
+(defn ackerman
+  [x y]
+  (cond (= y 0)  0
+        (= x 0) (* 2 y)
+        (= y 1) 2
+        :else (ackerman (- x 1) (ackerman x (- y 1)))))
+;; user> (ackerman 1 10)
+;; 1024
+;; user> (ackerman 2 4)
+;; 65536
+;; user> (ackerman 3 3)
+;; 65536
+;; user>
+; f returns 2n ( since x will always be 0
+
+
+;1.11
+;recursive process
+(defn f-recur
+  [n]
+  (if (> 3 n) n
+      (+ (f-recur (- n 1))
+         (* 2 (f-recur (- n 2)))
+         (* 3 (f-recur (- n 3))))))
+
+
+

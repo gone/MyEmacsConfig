@@ -1,0 +1,115 @@
+# -*- test-case-name: solutions.tests -*-
+# Copyright 2010 by Gerrity Labs. All Rights Reserved.
+from django.core import urlresolvers
+from django.db import models
+from django.template.defaultfilters import slugify
+
+from taggit.managers import TaggableManager
+
+from slader.common.models import AbstractBase, LiveContentBase
+from slader.solutions.models.solution import Solution, SolutionDataCell
+
+
+class Exercise(AbstractBase, LiveContentBase):
+    """
+    The actual exercise.
+
+    We cannot store what is in the textbook, so this is just a placeholder, which contains no data other than name
+    
+    """
+
+    objects = models.Manager()  
+    tags = TaggableManager(blank=True)
+
+    class Meta:
+        app_label = 'solutions'
+
+    def __unicode__(self):
+        if self.exerciseingroup_set.filter(page__textbook__display_textbook__isnull=False).count():
+            eig = self.exerciseingroup_set.filter(page__textbook__display_textbook__isnull=False)[0]
+            return '%s' %(unicode(eig))
+        else:
+            return 'an exercise'
+
+    def get_absolute_url(self):
+        if self.exerciseingroup_set.filter(page__textbook__display_textbook__isnull=False).count():
+            eig = self.exerciseingroup_set.filter(page__textbook__display_textbook__isnull=False)[0]
+            return urlresolvers.reverse('solutions_exercise_detail', args=[eig.group.textbook.dt.composite_slug, eig.page.slug, eig.group.slug, eig.slug])
+        return ''
+
+    @property
+    def top_solution(self):
+        if hasattr(self, '_top_solution'): 
+            return self._top_solution
+        else:
+            try:
+                pool = list(self.public_solutions)
+                pool.sort(key=lambda s: s.created_on)
+                pool.sort(key=lambda s: s.reviewed, reverse=True)
+                pool.sort(key=lambda s: s.score, reverse=True)
+                self._top_solution = pool[0]
+            except IndexError:
+                self._top_solution = None
+            return self._top_solution
+
+    # this should only be used in cases where the actual correct name for this exercise
+    # in a specific group is not overly important. Otherwise, one should use the exerciseingroup object
+    # which has the actual exercise name and slug associated.
+    @property
+    def default_name(self):
+        all_eig = self.exerciseingroup_set.order_by('created_on')
+        if all_eig:
+            return all_eig[0].name
+        else:
+            return '00'
+
+    @property
+    def active_solutions(self):
+        return self.solutions.filter(populated=True, finished=True, active=True)
+
+    @property
+    def reviewed_solutions(self):
+        return self.active_solutions.filter(reviewed=True)
+
+    @property
+    def public_solutions(self): 
+        # a generic method for showing all solutions that should be deemed public
+        return self.active_solutions
+
+    # a temporary property to demonstrate whether an exercise is finished or not
+    # this should most likely not be used after mass contributors in the summer
+    @property
+    def status(self):
+        if hasattr(self, '_status'): return self._status
+        solutions = self.solutions.filter(active=True)
+
+        self._status = "not_yet_started"
+        if solutions.count():
+            if any(solution.finished for solution in solutions):
+                self._status = 'complete'
+            else:
+                s = self.solutions.all()[0]
+                if hasattr(s, 'data') and (hasattr(s.data, 'result') or s.data.cells.count()):
+                    self._status = "incomplete"
+
+        return self._status
+            
+    def save(self, *args, **kwargs):
+        super(Exercise, self).save(*args, **kwargs)
+
+
+class ExercisePrompt(SolutionDataCell):
+    exercise = models.OneToOneField('solutions.Exercise', related_name="prompt",)
+
+    class Meta:
+        app_label = 'solutions'
+        
+    def get_image_file_path(self, filename='exerciseprompt.png', *args, **kwargs):
+        kwargs['parent_obj'] = self.exercise
+        return super(ExercisePrompt, self).get_image_file_path(filename, *args, **kwargs)
+
+    def get_absolute_image_file_path(self, filename="exerciseprompt.png", *args, **kwargs):
+        kwargs['parent_obj'] = self.exercise
+        return super(ExercisePrompt, self).get_absolute_image_file_path(filename, *args, **kwargs)
+
+Exercise.prompt = property(lambda e: ExercisePrompt.objects.get_or_create(exercise=e)[0])

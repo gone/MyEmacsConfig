@@ -1,0 +1,60 @@
+#Copyright 2010 by Gerrity Labs. All Rights Reserved.
+
+import os
+
+from django import template
+from django.conf import settings
+from django.conf.urls.defaults import *
+from django.contrib import admin
+
+#from slader.solutions.urls import publisher_urls, textbook_urls
+#from slader.subjects.urls import subject_urls
+
+
+
+admin.autodiscover()
+
+urlpatterns = patterns('',
+    #(r'^admin/', include(admin.site.urls)),
+)
+
+# primary public site content views based on app
+urlpatterns += patterns('',
+    #(r'^splash/', include('slader.splash.urls')),
+    #(r'^account/', include('slader.accounts.urls')),
+    #(r'^publisher/', include(publisher_urls)),
+    #(r'^subject/', include(subject_urls)),
+    #(r'^tag/', include('slader.tagging.urls')),
+    #(r'^textbook/', include(textbook_urls)),
+    #(r'^moderator/', include('slader.moderator.urls')),
+    #(r'^contributor/', include('slader.contributor.urls')),
+)
+
+# 3rd party app URLs
+urlpatterns += patterns('',
+    #(r'^grappelli/', include('grappelli.urls')),
+    #(r'^ajax_select/', include('ajax_select.urls')),
+    #(r'^contributor/forum/', include('forum.urls')),
+    #(r'^twitter/', include('slader.thirdparty.twitter.urls')),
+    #(r'^facebook/', include('slader.thirdparty.facebook.urls')),                                                
+)
+
+# new contributor app, migrated over from old metadata site URLs
+urlpatterns += patterns('',
+    #(r'^contributor/', include('contributor.urls')),
+    
+)
+
+# API urls for new meta api site
+urlpatterns += patterns('',
+    (r'^api/', include('slader.api.urls')),
+)
+
+if settings.DEV_MODE:
+    urlpatterns += patterns('',
+        (r'^media/(?P<path>.*)$', 'django.views.static.serve', 
+         {'document_root': os.path.join(settings.SLADER_DIRECTORY, 'media')}),
+        (r'^var/(?P<path>.*)$', 'django.views.static.serve', 
+         {'document_root': "/var"}),
+                            
+    )

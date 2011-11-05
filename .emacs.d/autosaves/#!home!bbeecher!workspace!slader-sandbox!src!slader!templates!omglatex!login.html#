@@ -1,0 +1,42 @@
+{% extends "omglatex/omg_base.html" %}
+
+{% load main_tags latexthumbnail facebook_tags omg_tags%}
+
+
+{% block title %}
+OMGLatex!
+{% endblock %}
+
+{% block content %}
+<div id='logincontent'>
+<h1>Welcome to OMGLaTeX </h1> <h3> the beautiful love-child of mathematics and rabid (possibly pointless) inter-school competition.</h3>
+
+<p>
+Slader is a platform to allow math nerds like you to write solutions to homework problems that high school students need help with.  OMGLATEX is a way for you to do that, and earn some street cred for your college too.
+
+Before you begin, keep this in mind:
+</p>
+<ol>
+<li> Write stuff that makes sense (to other people)! The audience for these solutions are high school students who NEED HELP with their homework.  While yes, your work will help boost your college’s ranking, remember that you still need to write logical explanations, not just answers. If your work only makes sense to you... then it'll only make sense to you. We won't give you points for it.</li>
+
+<li> This requires a knowledge of LaTeX. All explanations should be written as if they were in the body of a LaTeX document.</li>
+
+<li>While this is LaTeX-based, you don't have to include preambles (package imports, page setups, etc.) or \begin{document} and \end{document} commands. Otherwise our servers will become very upset and ignore our text messages for, like, a week.</li>
+
+<li>Putting an empty line in your solution will insert a horizontal line in your solution when rendered. Use your powers wisely, like when you need to separate logical steps in your answers. Try it, hit preview and see what we mean.</li>
+
+<li>Preview your answers! There is a preview button. Find it and click it a lot. If your LaTeX has an error we’ll show you a red circle with an x inside of it.</li>
+
+<li>PREVIEW YOUR ANSWERS.</li>
+</ol>
+
+<p>
+If you have any feedback about the game (like LaTeX packages we don't have installed, errors that pop up, questions that seem wrong), email us at support@slader.com - We'll dispatch a team of ninjas to fix it as fast as possible.
+<p>
+
+{% omg_facebook_js %}
+<div id='fbbutton'>
+{% omg_facebook_button %}
+</div>
+</div>
+{% endblock %}

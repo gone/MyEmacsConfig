@@ -1,0 +1,12 @@
+
+
+HG: Enter commit message.  Lines beginning with 'HG:' are removed.
+HG: Leave message empty to abort commit.
+HG: --
+HG: user: Ben Beecher <Ben.Beecher@slader.com>
+HG: branch 'default'
+HG: changed src/slader/moderator/views.py
+HG: changed src/slader/settings.py
+HG: changed src/slader/solutions/models/textbook.py
+HG: changed src/slader/templates/moderator/further_action_list.html
+HG: changed src/slader/thirdparty/facebook/urls.py

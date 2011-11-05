@@ -5,8 +5,8 @@
 (autoload 'pymacs-eval "pymacs" nil t)
 (autoload 'pymacs-exec "pymacs" nil t)
 (autoload 'pymacs-load "pymacs" nil t)
-;;(eval-after-load "pymacs"
-;;  '(add-to-list 'pymacs-load-path YOUR-PYMACS-DIRECTORY"))
+(eval-after-load "pymacs"
+  '(add-to-list 'pymacs-load-path ""))
 (pymacs-load "ropemacs" "rope-")
 (setq ropemacs-enable-autoimport t)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -76,7 +76,7 @@
   ; 2) Do a Rope code completion
   ; 3) Do an indent
   (interactive)
-  (if (eql (ac-start) 0)
+  (if (eql (ac-start) nil)
       (indent-for-tab-command)))
 
 (defadvice ac-start (before advice-turn-on-auto-start activate)
@@ -95,7 +95,7 @@
 		   (local-file (file-relative-name
 						temp-file
 						(file-name-directory buffer-file-name))))
-      (list "pyflakes" (list local-file))))
+      (list "epylint" (list local-file))))
   (defun flymake-html-init ()
 	(let* ((temp-file (flymake-init-create-temp-buffer-copy
 					   'flymake-create-temp-inplace))
@@ -111,6 +111,43 @@
   (add-to-list 'flymake-err-line-patterns
 			   '("line \\([0-9]+\\) column \\([0-9]+\\) - \\(Warning\\|Error\\): \\(.*\\)"
 				 nil 1 2 4)))
+
+(defun show-fly-err-at-point () 
+  "If the cursor is sitting on a flymake error, display the 
+message in the minibuffer" 
+  (interactive) 
+  (let ((line-no (line-number-at-pos))) 
+    (dolist (elem flymake-err-info) 
+      (if (eq (car elem) line-no) 
+          (let ((err (car (second elem)))) 
+            (message "%s" (fly-pyflake-determine-message err))))))) 
+
+(defun fly-pyflake-determine-message (err) 
+  "pyflake is flakey if it has compile problems, this adjusts the 
+message to display, so there is one ;)" 
+  (cond ((not (or (eq major-mode 'Python) (eq major-mode 'python-mode) t))) 
+        ((null (flymake-ler-file err)) 
+         ;; normal message do your thing 
+         (flymake-ler-text err)) 
+        (t ;; could not compile err 
+         (format "compile error, problem on line %s" (flymake-ler-line err))))) 
+
+(defadvice flymake-goto-next-error (after display-message activate compile) 
+  "Display the error in the mini-buffer rather than having to mouse over it" 
+  (show-fly-err-at-point)) 
+
+(defadvice flymake-goto-prev-error (after display-message activate compile) 
+  "Display the error in the mini-buffer rather than having to mouse over it" 
+  (show-fly-err-at-point)) 
+
+(defadvice flymake-mode (before post-command-stuff activate compile) 
+  "Add functionality to the post command hook so that if the 
+cursor is sitting on a flymake error the error information is 
+displayed in the minibuffer (rather than having to mouse over 
+it)" 
+  (set (make-local-variable 'post-command-hook) 
+       (cons 'show-fly-err-at-point post-command-hook))) 
+
 
 (add-hook 'find-file-hook 'flymake-find-file-hook)
 (provide 'init_python)

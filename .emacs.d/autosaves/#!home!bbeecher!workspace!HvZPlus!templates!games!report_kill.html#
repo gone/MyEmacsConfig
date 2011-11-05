@@ -1,0 +1,54 @@
+{% extends "games/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Report Tag" %}{% endblock %}
+
+
+{% block body %}
+    <div class="report_tag">
+        <h1>{% trans "Report a tag" %}</h1><br>
+        <form class="report-tag uniForm" id="report_tag" method="post" action=".">{% csrf_token %}
+            <fieldset class="inlineLabels">
+                <div  class="form_blick">
+                  {{form.non_field_errors}}
+                  {{form.idkey.errors}}<input type="textfield" id="idkey" name="idkey"><label for="idkey">Their ID number</label><br><br>
+                  {{form.timedate.errors}}{{form.timedate}}<label for="timedate">When did you make the tag?</label><br><br>
+                  <label for="feeds">Who else do you want to feed?</label>
+                  <div id="feeds-div">
+                    {{form.feeds.errors}}{{form.feeds}}
+                  </div>
+                  <em class="eight"> Start typing their name.</em>            
+                  <br style="clear:both"><br><br>
+                  <input type="submit" value="Submit tag" class="awesome large red button" />
+                </div>
+            </fieldset>
+            {{ previous_fields|safe }}
+        </form>
+    </div>
+{% endblock %}
+
+{% block extra_body %}
+<script src="{{STATIC_URL}}js/jquery.autocomplete.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+	    $("#id_timedate").datetimepicker({
+            dateFormat: 'yy-mm-dd',
+	    });
+        //create the event
+        $("#id_feeds_text").keydown(function(e){
+            if ($('#id_feeds_on_deck').children().size() >= {{game.zombie_feeds}}){
+                e.stopImmediatePropagation()
+            }
+        });
+        //pop it off of the end of the event queue
+        x = $("#id_feeds_text").data("events").keydown.pop()
+        //and push it to the front
+        $("#id_feeds_text").data("events").keydown.splice(0, 0, x)
+    });
+</script>
+{% endblock %}
+
+
+

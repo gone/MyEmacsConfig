@@ -1,0 +1,83 @@
+function submitSignUp() {
+    //if the age checkbox is checked, submit the form, otherwise, return error
+
+    if (document.getElementById('id_age').checked == true) {
+        form_data = $('#inviteForm form').serialize();
+
+        $.ajax({
+           type: "POST",
+           url: "/splash/sign-up/",
+           data:  form_data,
+           success: function(result) {
+                if (result.error) {
+                    alert(result.error);
+                } else {
+                    $("#inviteForm").attr('class', "off");
+                    $("#inviteSuccess").attr('class', "on");
+                }
+           }
+        });
+
+    } else { 
+        alert('You must be 13 years or older to sign up.');
+    }        
+};
+
+$(document).ready(function(){
+
+    $(".subjectSelection").click(function() {
+        subject = $(this).attr('subject');
+
+        $.ajax({
+           type: "POST",
+           url: "/splash/subject-textbooks/",
+           data:  "subject="+subject,
+           success: function(result) {
+                if (result.error) {
+                    
+                } else {
+                    $("#inviteLightboxContents .lightboxContent").html(result.textbooks);
+                    $("#inviteLightboxContents .subjectHeader").html(result.subject);
+                    contents = $('#inviteLightboxContents');
+                    $(this).sladerLightBox('', contents.html());      
+      
+                    $('.inviteTextbookPicker .selectedTextbook').click(function() {
+                        textbook = $(this).attr('textbook');
+                        $('#id_textbook').val(textbook);
+                        $('#textbookPickerChosen .chosenTextbook img').attr('src', $(this).find('img').attr('src'))
+                        $('#textbookPickerChosen .chosenTextbook em.title').html($(this).find('span.textbookTitle').html())
+
+                        $('#lightboxBg').hide();
+
+                        $('.findTextbookPicker').addClass('off');
+                        $('#textbookPickerChosen').removeClass('off');
+
+                        return false;
+                    });    
+      
+                    $('.inviteTextbookPicker .manualTextbookEntry').click(function() {
+                        $('#lightboxBg').hide();
+                        
+                        $('.findTextbookPicker').addClass('off');
+                        $('#textbookPickerManual').removeClass('off');
+                        $('#id_textbook').focus();
+
+                        return false;
+                    });
+
+
+                }
+           }
+        });
+        return false;
+    });            
+      
+    $('.findTextbookPicker .changeBook').click(function() {
+        $('#id_textbook').val('');
+        $('.findTextbookPicker').addClass('off');
+        $('#textbookPickerSubjects').removeClass('off');
+        return false;
+    });
+
+
+});

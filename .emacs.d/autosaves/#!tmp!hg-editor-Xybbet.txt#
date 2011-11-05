@@ -1,0 +1,12 @@
+moved 
+
+HG: Enter commit message.  Lines beginning with 'HG:' are removed.
+HG: Leave message empty to abort commit.
+HG: --
+HG: user: Ben Beecher <Ben.Beecher@slader.com>
+HG: branch 'default'
+HG: added src/slader/templates/omglatex/omglatex.html
+HG: changed src/slader/thirdparty/facebook/urls.py
+HG: changed src/slader/thirdparty/facebook/views.py
+HG: changed src/slader/urls.py
+HG: removed src/slader/templates/facebook/omglatex.html

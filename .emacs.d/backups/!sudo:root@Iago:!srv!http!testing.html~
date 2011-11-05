@@ -1,0 +1,21 @@
+ <html>
+    <head><title>My Great Canvas Application</title></head>
+    <body>
+       <div id="fb-root"></div>
+       <script src="http://connect.facebook.net/en_US/all.js"></script>
+       <script>
+          FB.init({ apiKey:'24811b4b20eaf3d329059cbd7d015a6d', cookie:true, xfbml:true });
+       </script>
+       <fb:serverFbml width="740px">
+          <script type="text/fbml">
+          <fb:fbml>
+           <fb:request-form method="POST" invite="true" action="http://apps.facebook.com/livevideochat/?skipped=1"
+            type="Slader"
+            content='Would you like to join me in sladeration?'>
+             <fb:multi-friend-selector showborder="false" actiontext="Invite your friends to use YOUR APP NAME."> 
+            </fb:request-form>
+           </fb:fbml>
+           </script>
+       </fb:serverFbml>
+    </body>
+ </html>

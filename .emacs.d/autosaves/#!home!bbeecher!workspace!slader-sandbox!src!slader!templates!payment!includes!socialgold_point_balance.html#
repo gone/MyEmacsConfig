@@ -1,0 +1,8 @@
+<script type="text/javascript">
+$('.pointsWrapper').hover(functio(nevent){ $('#balance-loading-image').attr('src', '/media/images/interface/ajax-loader-sm-hover.gif')},
+                              function(event){ $('#balance-loading-image').attr('src', '/media/images/interface/ajax-loader-sm.gif')})
+$(document).ready(function(){
+    $('.userPointBalance').load('/payment/balance/')
+})
+</script>
+<img id="balance-loading-image" src='/media/images/interface/ajax-loader-sm.gif' alt='loading..' />

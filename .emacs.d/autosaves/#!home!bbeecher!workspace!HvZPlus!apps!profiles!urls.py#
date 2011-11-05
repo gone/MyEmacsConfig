@@ -1,0 +1,23 @@
+from django.conf.urls.defaults import *
+
+
+urlpatterns = patterns('',
+
+
+    url(r'^edit/about/$', 'profiles.views.update_aboutme', name='update_aboutme'),
+    url(r'^edit/password/$', 'profiles.views.update_password', name='update_password'),
+    url(r'^edit/email/$', 'profiles.views.update_email', name='update_email'),
+    url(r'^edit/blogs/$', 'profiles.views.update_blogs', name='update_blogs'),
+    url(r'^edit/avatar/$', 'profiles.views.update_avatar', name='update_avatar'),
+    url(r'^edit/$', 'profiles.views.profile_edit', name='profile_edit'),
+    url(r'^leave-game/$', 'profiles.views.leave_game', name='leave_game'),
+
+    url(r'^idcards/(?P<username>[\\+\w\d\._-]+)/$', 'profiles.views.idcards', name='idcards'),
+    url(r'^idcard/1/(?P<username>[\\+\w\d\._-]+)/$', 'profiles.views.idcard1', name='idcard1'),
+    url(r'^idcard/2/(?P<username>[\\+\w\d\._-]+)/$', 'profiles.views.idcard2', name='idcard2'),
+    url(r'^idcard/3/(?P<username>[\\+\w\d\._-]+)/$', 'profiles.views.idcard3', name='idcard3'),
+    url(r'^(?P<username>[\\+\w\d\._-]+)/$', 'profiles.views.profile', name='profile_detail'),
+
+    url(r'^(?P<slug>)[-\w]+/$', 'profiles.views.profiles', name='profile_list'),
+    url(r'^$', 'profiles.views.profiles', name='profile_list'),
+)

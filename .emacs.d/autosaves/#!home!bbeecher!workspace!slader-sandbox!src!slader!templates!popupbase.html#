@@ -1,0 +1,78 @@
+{% load main_tags %}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>{% block title %}{% endblock %} :: Slader</title>
+
+    <meta http-equiv="imagetoolbar" content="no" />
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+
+    <link rel="shortcut icon" href="/media/images/interface/favicon.ico" />
+    <link href="/media/css/global.css" rel="stylesheet" type="text/css" media="screen" />
+    <link href="/media/css/popup.css" rel="stylesheet" type="text/css" media="screen" />
+    <!--[if IE 7]><link href="/media/css/ie7.css" rel="stylesheet" type="text/css" media="screen" /><![endif]-->
+    <!--[if IE 6]><link href="/media/css/ie6.css" rel="stylesheet" type="text/css" media="screen" /><![endif]-->
+    {% block extra-style %}{% endblock %}
+    
+    <script src="/media/js/jquery-1.4.2.js" type="text/javascript"></script>
+    <script type="text/javaScript">
+    <!--
+    if ((navigator.appVersion.indexOf("Mac") != -1)) {
+       document.write("<link rel=stylesheet href=\"/media/css/mac.css\" type=\"text/css\" />"); }
+    // -->
+    </script>
+    <script src="/media/js/slader_common.js" type="text/javascript"></script>
+    {% block extra-script %}{% endblock %}
+</head>
+
+<body>
+<!-- container start -->
+<div id="container">
+
+	<!-- header start -->
+	<div id="header">
+    	<div id="logo"><a href="/"><em>Slader - Tomorrow's answers today</em></a></div>
+        <div id="mainNav">
+        </div>
+    </div>
+	<!-- header end -->
+	
+	<!-- content start -->
+	<div id="content">
+	
+		{% block content %}
+        {% endblock %}
+			
+	</div>
+	<!-- content end -->
+    
+    <!-- footer start -->
+    <div id="footer" class="footerHomePreLaunch">
+      <p class="footLegal">Copyright &copy; 2010 Slader</p>
+    </div>
+    <!-- footer end -->
+
+</div>
+<!-- container end -->
+
+{% block after-container %}
+{% endblock %}
+
+<!-- LightBox start -->
+<div id="lightboxBg">
+    <div id="lightBoxWindow">
+        <h2 id="lightboxHeader"></h2>
+        <div id="lightboxContent">
+        </div>
+    </div>
+    <div id="lightboxClose"></div>
+</div>
+
+<!-- LightBox end -->
+
+</body>
+</html>

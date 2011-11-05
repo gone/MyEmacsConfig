@@ -1,0 +1,48 @@
+from django.core.management.base import BaseCommand, CommandError
+from django.utils.translation import ugettext_lazy as _
+from optparse import make_option
+from decimal import Decimal as dec
+
+from games.models import Game
+from actstream import action
+
+class Command(BaseCommand):
+    option_list = BaseCommand.option_list + (
+        make_option('--slug', '-s', action = 'store',
+                    dest = 'slug', default = None,
+                    help = 'Limit to specified Game instance, using its slug'),
+    )
+
+    def handle(self, *args, **options):
+        slug = options['slug'] if options['slug'] else None
+
+        lookup = dict(
+            active=True,
+        )
+
+        if slug:
+            lookup.update(dict(slug=slug))
+
+        games = Game.objects.filter(**lookup)
+
+        for game in games:
+            total = float(game.player_set.players.count())
+            humans = float(game.humans.count())
+
+            corpses = game.corpses.count()
+            zombies = game.zombies.count()
+
+            remaining = (humans / total) * 100.
+
+            for event in (25., 50., 75., 90.):
+                if remaining >= event:
+                    action.send(game, verb=_('has lost %.0f%% of human population.') % event)
+            
+            if humans == 1.:
+                action.send(game, verb=_('has one human remaining'))
+
+            elif humans == 0.:
+                action.send(game, verb=_('has no human population.'))
+
+            if corpses and not zombies:
+                action.send(game, verb=_('all zombies have starved.'))

@@ -1,10 +1,18 @@
+;make sure we have access to everything
+(add-to-list 'load-path "~/.emacs.d/elpa/")
+(require 'package)
+(require 'cedet)
+(add-to-list 'package-archives
+             '("elpa" . "http://tromey.com/elpa/"))
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
+
+(package-initialize)
+(require 'starter-kit-defuns)
+
 ;; turn off that annoying start up screen - yes I know what gnu is.
 (setq inhibit-startup-echo-area-messagee t)
 (setq inhibit-startup-message t)
-;; turn off that annoying ~ file
-(setq make-backup-files nil)
-
-(setq tramp-default-method "ssh")
 
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
@@ -16,6 +24,29 @@
 (setq tramp-default-method "ssh")
 (setq auto-mode-alist (cons '("\\.tac$" . python-mode) auto-mode-alist))
 (setq display-time-24hr-format t)
+
+;; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(auto-save-file-name-transforms (quote ((".*" "~/.emacs.d/autosaves/\\1" t))))
+ '(backup-directory-alist (quote ((".*" . "~/.emacs.d/backups/"))))
+ '(deft-auto-save-interval 0.0)
+ '(focus-follows-mouse nil)
+ '(nxml-child-indent 4)
+ '(nxml-outline-child-indent 4)
+ '(py-indent-offset 4)
+ '(python-indent 8)
+ '(safe-local-variable-values (quote ((test-case-name . slader\.test\.test_common) (test-case-name . "slader.test.test_common") (test-case-name . "slader.test.test_common.py") (test-case-name . solutions\.tests) (folded-file . t) (test-case-name . twisted\.test\.test_abstract) (test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_factories) (test-case-name . twisted\.test\.test_newcred) (test-case-name . twisted\.test\.test_defer) (test-case-name . twisted\.test\.test_protocols) (test-case-name . twisted\.test\.test_banana) (test-case-name . twisted\.test\.test_pb) (test-case-name . twisted\.test\.test_reflect) (test-case-name . twisted\.test\.test_persisted) (test-case-name . twisted\.test\.test_jelly))))
+ '(slime-complete-symbol-function (quote slime-fuzzy-complete-symbol))
+ '(tool-bar-mode nil)
+ '(uniquify-buffer-name-style (quote reverse) nil (uniquify)))
+
+;; create the autosave dir if necessary, since emacs won't.
+(make-directory "~/.emacs.d/autosaves/" t)
+
 ;; scroll line by line, smoothly
 (setq scroll-step 1)
 ;; don't add newlines to end of buffer when scrolling
@@ -35,21 +66,18 @@
 (add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/elisp")
 (load-library "python-mode.el")
-(load-library "psvn.el")
 (load-library "ansi-color.el")
 (load-library "espresso.elc")
-(load-library "js2.elc")
 (autoload #'espresso-mode "espresso" "Start espresso-mode" t)
 (add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
-(load-library "xml-rpc.el")
-(load-library "trac-wiki.el")
-(load-library "tidy.el")
 (load-library "multi-mode.el")
 (load-library "twisted.el")
-(load-file "/usr/share/emacs/site-lisp/cedet/common/cedet.el")
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/ecb")
-(add-to-list 'load-path "/usr/share/emacs/23.1/site-lisp/")
+;nxml
+;(load "~/.emacs.d/nxhtml/autostart.el")
+;(setq mumamo-background-colors nil) 
+;(add-to-list 'auto-mode-alist '("\\.html$" . django-html-mumamo-mode))
+
 
 ;custom keys
 (global-set-key (kbd "M-p") 'align-regexp)
@@ -58,7 +86,16 @@
 (global-set-key (kbd "s-y") 'clipboard-yank)
 (global-set-key (kbd "s-k") 'clipboard-kill-ring-save)
 (global-set-key (kbd "<f8>") 'apropos)
-(global-set-key (kbd "s-m") 'clean-sql)
+(global-set-key (kbd "M-p") 'align-regexp)
+
+(defun back-to-indentation-or-beginning ()
+   (interactive)
+   (if (= (point) (save-excursion (back-to-indentation) (point)))
+       (beginning-of-line)
+     (back-to-indentation)))
+
+(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
+
 
 ;disabled
 (put 'upcase-region 'disabled nil)
@@ -92,6 +129,7 @@
 (set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
 
 ;color;
+(add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0/")
 (require 'color-theme)
 (color-theme-initialize)
 (eval-after-load "color-theme"
@@ -107,22 +145,28 @@
 ;;   "Major mode for editing literate Haskell scripts." t)
 ;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 
-(load-library "cheetah-mode.el")
+;cheetah templating library
+;;(load-library "cheetah-mode.el")
+
+;git support
+(add-to-list 'load-path "~/.emacs.d/egg/")
+(load-library "egg.elc")
+
+
+(add-hook 'after-save-hook
+    'executable-make-buffer-file-executable-if-script-p)
 
 ;(load-library "python-mode.el")
 ;(load-library "python.el")
 (add-hook 'python-mode-hook
           (setq py-smart-indentation nil))
-(load-library "psvn.el")
+
 (load-library "ansi-color.el")
 (load-library "espresso.elc")
 (load-library "js2.elc")
 (autoload #'espresso-mode "espresso" "Start espresso-mode" t)
 (add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
-(load-library "xml-rpc.el")
-(load-library "trac-wiki.el")
-(load-library "tidy.el")
 (load-library "multi-mode.el")
 
 ;python
@@ -147,13 +191,10 @@
  ac-complete-mode-map "\C-n" 'ac-next)
 (define-key ac-complete-mode-map "\C-p" 'ac-previous)
 
-(require 'yasnippet)
-(yas/initialize)
-(yas/load-directory "~/.emacs.d/snippets")
-(require 'auto-complete-yasnippet)
+(require 'deft)
 
 (load-library "init_python")
-
+(load-library "init_sproutcore.el")
 
 ;processing
 ;keep these around, but cold storage it - I'm not doing much processing
@@ -161,11 +202,30 @@
 ;(add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
 ;(setq processing-location "~/workspace/processing/processing-1.1/")
 
+;; paredit
+(add-to-list 'load-path "~/opt/paredit")
+(require 'paredit)
+(autoload 'paredit-mode "paredit"
+  "Minor mode for pseudo-structurally editing Lisp code." t)
+(add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
+(add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
+(add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
+(add-hook 'scheme-mode-hook           (lambda () (paredit-mode +1)))
+(add-hook 'clojure-mode-hook           (lambda () (paredit-mode +1)))
+;(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
+;; Stop SLIME's REPL from grabbing DEL,
+;; which is annoying when backspacing over a '('
+( defun override-slime-repl-bindings-with-paredit ()
+   (define-key slime-repl-mode-map
+       (read-kbd-macro paredit-backward-delete-key) nil))
+(add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
+
+(require 'eldoc) ; if not already loaded
+(eldoc-add-command
+ 'paredit-backward-delete
+ 'paredit-close-round)
 
 
-;clojure
-;(add-to-list 'load-path "~/workspace/clojure/clojure-mode")
-;(require 'clojure-mode)
 ;clojure-swank
 ;(add-to-list 'load-path "~/workspace/clojure/swank-clojure/src/emacs")
 ;(setq swank-clojure-jar-path "~/.clojure/clojure.jar"
@@ -175,21 +235,30 @@
 ;(require 'swank-clojure-autoload)
 
 ;slimep
-(add-to-list 'load-path "~/.emacs.d/slime/")
-(setq inferior-lisp-program "sbcl")
-(setq slime-backend
-      "~/.emacs.d/slime/swank-loader.lisp")
-(load "~/.emacs.d/slime/slime-autoloads.el")
-(eval-after-load "slime"
-  '(progn
-    (slime-setup '(slime-fancy slime-asdf slime-banner))
-    (setq slime-complete-symbol*-fancy t)
-    (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol)))
-(require 'slime)
-(slime-setup '(slime-repl))
-(slime-setup)
+;(add-to-list 'load-path "~/.emacs.d/slime/")
+(setq inferior-lisp-program "clj-env-dir")
+
+(defun slime-buffer-name (type)
+  (format "*Slime %s*"
+          (cond
+           ((keywordp type)
+            (substring (symbol-name type) 1))
+           (t (symbol-name type)))))
+
+
+;; (setq slime-backend
+;;        "~/.emacs.d/slime/swank-loader.lisp")
+;;  (load "~/.emacs.d/slime/slime-autoloads.el")
+;;  (eval-after-load "slime"
+;;    '(progn
+;;     (slime-setup '(slime-fancy slime-asdf slime-banner))
+;;     (setq slime-complete-symbol*-fancy t)
+;;     (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol)))
+;; (require 'slime)
+;; (slime-setup '(slime-repl))
+;; (slime-setup)
 (add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
-(add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
+;(add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
 
 ;dired-single
 (require 'dired-single)
@@ -245,9 +314,6 @@
     (replace "\\n" "\n")
     (replace "\\t" "\t")))
 
-
-               
-
 (defun blankit ()
   (interactive "")
   "prints ', blank=True' - using this for the cph project since every freaking field needs it"
@@ -259,62 +325,56 @@
 (setq whitespace-style '(tab-mark))
 (whitespace-mode)
 
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(focus-follows-mouse nil)
- '(nxml-child-indent 4)
- '(nxml-outline-child-indent 4)
- '(py-indent-offset 4)
- '(python-indent 8)
- '(safe-local-variable-values (quote ((test-case-name . slader\.test\.test_common) (test-case-name . "slader.test.test_common") (test-case-name . "slader.test.test_common.py") (test-case-name . solutions\.tests) (folded-file . t) (test-case-name . twisted\.test\.test_abstract) (test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_factories) (test-case-name . twisted\.test\.test_newcred) (test-case-name . twisted\.test\.test_defer) (test-case-name . twisted\.test\.test_protocols) (test-case-name . twisted\.test\.test_banana) (test-case-name . twisted\.test\.test_pb) (test-case-name . twisted\.test\.test_reflect) (test-case-name . twisted\.test\.test_persisted) (test-case-name . twisted\.test\.test_jelly))))
- '(slime-complete-symbol-function (quote slime-fuzzy-complete-symbol))
- '(tool-bar-mode nil))
+
 
 (require 'w3m-load)
-(setq slime-path "/usr/share/emacs/site-lisp/slime/")
 
-(setq inferior-lisp-program "/usr/bin/sbcl --noinform"
-      cltl2-url "file:///usr/local/share/doc/cltl/clm/node1.html"
-      hyperspec-prog (concat slime-path "hyperspec")
-      hyperspec-path "/usr/local/share/doc/HyperSpec/")
+;(setq slime-path "/usr/share/emacs/site-lisp/slime/")
 
-(setq lisp-indent-function 'common-lisp-indent-function
-      ;slime-complete-symbol-function 'slime-fuzzy-complete-symbol
-      slime-startup-animation nil
-      common-lisp-hyperspec-root (concat "file://" hyperspec-path)
-      common-lisp-hyperspec-symbol-table (concat hyperspec-path "Data/Map_Sym.txt")
-      w3m-default-homepage common-lisp-hyperspec-root
-      ;browse-url-browser-function 'w3m
-      w3m-symbol 'w3m-default-symbol
-      w3m-key-binding 'info
-      w3m-coding-system 'utf-8
-      w3m-default-coding-system 'utf-8
-      w3m-file-coding-system 'utf-8
-      w3m-file-name-coding-system 'utf-8
-      w3m-terminal-coding-system 'utf-8)
+;; (setq inferior-lisp-program "/usr/bin/sbcl --noinform"
+;;       cltl2-url "file:///usr/local/share/doc/cltl/clm/node1.html"
+;;       hyperspec-prog (concat slime-path "hyperspec")
+;;       hyperspec-path "/usr/local/share/doc/HyperSpec/")
 
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/slime/")
-(require 'slime)
-(slime-setup '(slime-repl))
-(add-hook 'lisp-mode-hook 'slime)
-(add-hook 'lisp-mode-hook 'slime-mode)
+;; (setq lisp-indent-function 'common-lisp-indent-function
+;;       ;slime-complete-symbol-function 'slime-fuzzy-complete-symbol
+;;       slime-startup-animation nil
+;;       common-lisp-hyperspec-root (concat "file://" hyperspec-path)
+;;       common-lisp-hyperspec-symbol-table (concat hyperspec-path "Data/Map_Sym.txt")
+;;       w3m-default-homepage common-lisp-hyperspec-root
+;;       ;browse-url-browser-function 'w3m
+;;       w3m-symbol 'w3m-default-symbol
+;;       w3m-key-binding 'info
+;;       w3m-coding-system 'utf-8
+;;       w3m-default-coding-system 'utf-8
+;;       w3m-file-coding-system 'utf-8
+;;       w3m-file-name-coding-system 'utf-8
+;;       w3m-terminal-coding-system 'utf-8)
+
+;; (add-hook 'lisp-mode-hook 'slime)
+;; (add-hook 'lisp-mode-hook 'slime-mode)
+
+
 (setq browse-url-generic-program "google-chrome"
       browse-url-browser-function 
       '(("file:///usr/local/share/doc/." . w3m-browse-url)
         ("." . browse-url-generic)))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
-
 
 (defun browse-django-docs ()
   (interactive)
-  (w3m-browse-url "file://home/benbeecher/django/docs/_build/html/index.html"))
+  (w3m-browse-url "file://home/bbeecher/django/docs/_build/html/index.html"))
 
 
+(defun delete-horizontal-space-forward () ; adapted from `delete-horizontal-space'
+      "*Delete all spaces and tabs after point."
+      (interactive "*")
+      (delete-region (point) (progn (skip-chars-forward " \t") (point))))
+
+
+
+(require 'uniquify)
+;;; This was installed by package-install.el.
+;;; This provides support for the package system and
+;;; interfacing with ELPA, the package archive.
+;;; Move this code earlier if you want to reference
+;;; packages in your .emacs.

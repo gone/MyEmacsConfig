@@ -1,0 +1,182 @@
+# encoding: utf-8
+import datetime
+from south.db import db
+from south.v2 import SchemaMigration
+from django.db import models
+
+class Migration(SchemaMigration):
+
+    def forwards(self, orm):
+        
+        
+        # Deleting model 'KillLocation'
+        db.delete_table('kills_killlocation')
+
+
+    def backwards(self, orm):
+        
+        # Adding model 'KillLocation'
+        db.create_table('kills_killlocation', (
+            ('longitude', self.gf('django.db.models.fields.FloatField')()),
+            ('kill', self.gf('django.db.models.fields.related.OneToOneField')(related_name='location', unique=True, to=orm['kills.Kill'])),
+            ('location', self.gf('django.db.models.fields.CharField')(max_length=255)),
+            ('latitude', self.gf('django.db.models.fields.FloatField')()),
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        ))
+        db.send_create_signal('kills', ['KillLocation'])
+
+
+    models = {
+        'actstream.action': {
+            'Meta': {'ordering': "('-timestamp',)", 'object_name': 'Action'},
+            'action_object_content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'action_object'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
+            'action_object_object_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'actor_content_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'actor'", 'to': "orm['contenttypes.ContentType']"}),
+            'actor_object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'description': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'post_target': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
+            'public': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'target_content_type': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'target'", 'null': 'True', 'to': "orm['contenttypes.ContentType']"}),
+            'target_object_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'verb': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
+        'auth.group': {
+            'Meta': {'object_name': 'Group'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
+            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
+        },
+        'auth.permission': {
+            'Meta': {'ordering': "('content_type__app_label', 'content_type__model', 'codename')", 'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
+            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        },
+        'auth.user': {
+            'Meta': {'object_name': 'User'},
+            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
+            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
+        },
+        'contenttypes.contenttype': {
+            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
+            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        'games.game': {
+            'Meta': {'object_name': 'Game'},
+            'access': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'access_domain': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True', 'blank': 'True'}),
+            'actions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['actstream.Action']", 'null': 'True', 'blank': 'True'}),
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'created': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'creator': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'game_created'", 'to': "orm['auth.User']"}),
+            'description': ('django.db.models.fields.TextField', [], {}),
+            'end': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'include_mods': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_paused': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'kind': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
+            'local_timezone': ('timezones.fields.TimeZoneField', [], {'default': "'<UTC>'", 'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
+            'over': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'proposed_end': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'proposed_start': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'registration': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'rules': ('django.db.models.fields.TextField', [], {'default': 'u"<ul>\\n    <li>Don\'t be a D-Bag!</li>\\n    <li>No realistic looking blaster</li>\\n    <li>Blasters may not be visible inside of academic buildings or jobs on campus</li>\\n    <li>No cars (segways allowed)</li>\\n</ul>\\n<p><strong>Required Equipment:</strong></p>\\n<ul>\\n    <li>Bandana</li>\\n    <li>Dart Blaster (or socks)</li>\\n    <li>One ID index card</li>\\n</ul>\\n<p>&nbsp;</p>\\n<p><strong>Safe Zones:</strong><br />\\nDorm rooms, Bathrooms, Academic buildings, Library, SRC,    Health Center, Dining Halls.<br />\\nEverywhere else is Free Game. <br />\\n<br />\\n*A zombie must have both feet    outside of a safe zone to tag a human.</p>\\n<p><strong>Non-participants</strong><br />\\nPeople who are not registered participants may not directly    interact with the game.</p>\\n<p><strong>Human Rules</strong></p>\\n<p><strong>Conditions for Winning:</strong><br />\\nHumans win when the last    zombie starves to death.</p>\\n<p><strong>Staying on campus:<br />\\n</strong>Humans must sleep on campus. If for whatever reason you need to leave    campus for longer than 24 hours, we apologize, but there are no exceptions.</p>\\n<p><strong>ID number:</strong><br />\\nEvery Human player must keep one index card with their unique identification    number on them at all times.</p>\\n<p><strong>Stunning a Zombie:</strong><br />\\nHumans may stun a Zombie for 15 minutes by blasting them with a dart blaster or throwing a sock at them.</p>\\n<p>*Only single shot/Non-automatic blasters are allowed until the Humans are notified otherwise.</p>\\n<p><strong>When tagged by a Zombie:<br />\\n</strong>When tagged by a Zombie, a Human is required to distribute their ID    card. One hour from being tagged a Human becomes a member of the Zombie team.</p>\\n<p>*One hour from being tagged you must begin wearing your bandana around your head - you are then allowed to tag other Humans.</p>\\n<p><strong>Zombie Rules </strong></p>\\n<p><strong>Conditions for Winning:<br />\\n</strong>The Zombies win when the Human team has no remaining members.</p>\\n<p><strong>Wearing your Headband:<br />\\n</strong>The Zombie team must wear a bandana around their head at all times.</p>\\n<p><strong>Tagging:<br />\\n</strong>A tag is a firm touch to any part of a Human. After tagging a Human    the Zombie must collect their ID card. Kills must be reported within three hours.</p>\\n<p><strong>Feeding:<br />\\n</strong>Zombie must feed every 48 hours. A zombie feeds by reporting their    kill on the website. A zombie may choose two other zombies to join in the feed.</p>\\n<p><strong>Getting blasted:<br />\\n</strong>When shot with a dart blaster or hit with a sock a Zombie is stunned for    15 minutes. A stunned zombie may not interact with the game in any way.</p>\\n<p>*This includes shielding other zombies from darts or continuing to run toward a human.<br />\\n*If shot while stunned, a zombie remains stunned for the next 15 minutes.</p>\\n"'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50', 'db_index': 'True'}),
+            'start': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'starve_time': ('django.db.models.fields.IntegerField', [], {'default': '30'}),
+            'state': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'total_hours': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'zombie_feeds': ('django.db.models.fields.IntegerField', [], {'default': '2'}),
+            'zombie_reports': ('django.db.models.fields.IntegerField', [], {'default': '0'})
+        },
+        'kills.kill': {
+            'Meta': {'object_name': 'Kill'},
+            'feeds': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['profiles.Player']", 'symmetrical': 'False'}),
+            'game': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'kills'", 'to': "orm['games.Game']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'internal_kill_time': ('util.fields.DateTimeField', [], {}),
+            'internal_report_time': ('util.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'killer': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'kills'", 'to': "orm['profiles.Player']"}),
+            'site': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['sites.Site']"}),
+            'valid': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'victim': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'victims'", 'to': "orm['profiles.Player']"})
+        },
+        'kills.killdispute': {
+            'Meta': {'unique_together': "(('user', 'kill'),)", 'object_name': 'KillDispute'},
+            'decision': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'dispute_time': ('util.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'kill': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['kills.Kill']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'tag_disputes'", 'to': "orm['profiles.Player']"})
+        },
+        'profiles.gun': {
+            'Meta': {'object_name': 'Gun'},
+            'default': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100'}),
+            'model': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
+        'profiles.player': {
+            'Meta': {'unique_together': "(('game', 'user', 'idkey'),)", 'object_name': 'Player'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'death_time': ('util.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'game': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['games.Game']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'idkey': ('django.db.models.fields.CharField', [], {'max_length': '8'}),
+            'is_mod': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'is_playing': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'killed_by': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'tags'", 'null': 'True', 'to': "orm['profiles.Player']"}),
+            'killed_time': ('util.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'last_feed': ('util.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'profile': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'players'", 'to': "orm['profiles.Profile']"}),
+            'revealed': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'starve_time': ('util.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'state': ('django.db.models.fields.IntegerField', [], {'default': '3'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'players'", 'to': "orm['auth.User']"}),
+            'want_oz': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+        },
+        'profiles.profile': {
+            'Meta': {'object_name': 'Profile'},
+            'about': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'facebook': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
+            'guns': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['profiles.Gun']", 'null': 'True', 'blank': 'True'}),
+            'hear_about': ('django.db.models.fields.TextField', [], {'null': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_plus': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'karma': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'location': ('django.db.models.fields.CharField', [], {'max_length': '40', 'null': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True', 'blank': 'True'}),
+            'newsletter': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'tumblr': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
+            'twitter': ('django.db.models.fields.URLField', [], {'max_length': '200', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'website': ('django.db.models.fields.URLField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'})
+        },
+        'sites.site': {
+            'Meta': {'ordering': "('domain',)", 'object_name': 'Site', 'db_table': "'django_site'"},
+            'domain': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        }
+    }
+
+    complete_apps = ['kills']

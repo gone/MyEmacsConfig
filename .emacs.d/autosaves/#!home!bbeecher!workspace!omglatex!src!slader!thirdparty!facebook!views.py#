@@ -1,0 +1,243 @@
+import re
+import urllib
+import urlparse
+
+from django.contrib.auth import login, REDIRECT_FIELD_NAME
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages 
+from django.core.urlresolvers import reverse
+from django.core.files.base import ContentFile
+from django.db import IntegrityError, transaction
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response, redirect
+from django.template import RequestContext
+
+try:
+    from django.views.decorators.csrf import csrf_protect
+    has_csrf = True
+except ImportError:
+    has_csrf = False
+
+
+
+import facebook
+from facebook import GraphAPIError
+from socialregistration.forms import UserForm
+from socialregistration.models import FacebookProfile
+from socialregistration.views import FB_ERROR
+
+from slader.accounts.signals import user_registered
+from slader.thirdparty.facebook.models import FacebookKey
+
+
+
+
+facebook_id = "102729186451984"
+facebook_api ="24811b4b20eaf3d329059cbd7d015a6d"
+facebook_secret = "fc2d38ad947e8df67bd5569aeab41d79"
+
+facebook_request_url = "https://graph.facebook.com/oauth/authorize"
+facebook_access_url = "https://graph.facebook.com/oauth/access_token"
+
+#a list of facebook permissions we want
+perms =   ["user_about_me", "friends_about_me",
+           "user_birthday",	"friends_birthday",
+           "user_education_history",	"friends_education_history",
+           "user_hometown",	"friends_hometown",
+           "user_location",	"friends_location",
+           "email"  ]
+
+
+def request_token(request):
+    """gets a request token and redirects to auth url"""
+    args = dict(client_id=facebook_id,
+                redirect_uri=request.build_absolute_uri(reverse(get_access_token)),
+                scope=",".join(perms))
+    
+    url = facebook_request_url + "?" + urllib.urlencode(args)
+    return redirect(url)
+
+def get_access_token(request):
+    if 'error' in request.GET:
+        return redirect("http://www.facebook.com/#!/pages/Slader/123241954370447")   
+    if request.method == "GET" and request.GET.get('code', False):
+        #we've been given a request token as code - we need to swap that for an access token now.
+        args = dict(client_id=facebook_id,
+                    client_secret=facebook_secret,
+                    code= request.GET['code'],
+                    redirect_uri= request.build_absolute_uri(reverse(get_access_token)))
+        url = facebook_access_url + "?" + urllib.urlencode(args)
+        response = urlparse.parse_qs(urllib.urlopen(url).read())
+        access_token = response['access_token'][-1]
+        api = facebook.GraphAPI(access_token)
+        profile = api.get_object('me')
+        facebookkey = FacebookKey(access_token=access_token,
+                                  name = profile['name'],
+                                  profile_id = str(profile['id']),
+                                  profile_url = profile['link'],
+                                  )
+        facebookkey.save()
+        request.session['facebook_access_token'] = access_token
+        return redirect("http://www.facebook.com/#!/pages/Slader/123241954370447")
+    else:
+        #shouldn't have come here
+        return redirect(request_token)
+
+
+def facebook_reject(request):
+    return render_to_response('accounts/notonlist.html')
+
+
+def setup(request, template='accounts/login.html',
+    form_class=UserForm, extra_context=dict()):
+    """
+    Setup view to create a username & set email address after authentication
+    """
+    try:
+        request.session['socialregistration_user']
+        request.session['socialregistration_profile']
+    except KeyError:
+        return redirect("/account/login")
+
+    try:
+        user = request.facebook.graph.get_object("me")
+    except GraphAPIError:
+        #users authenticated with facebook via our service, logged out of facebook, logged in as another user,
+        #and now we're trying to use the first users authentication token
+        #so clear the cookies and redirect to the login page
+        redic =  redirect("/account/login")
+        redic.delete_cookie('fbs_' + facebook_api)
+        del request.session['socialregistration_user']
+        del request.session['socialregistration_profile']
+        return redic
+    
+    if not 'email' in user:
+        return redirect(no_email)
+    email = user['email']
+    return check_email_and_reg(request, email)
+
+if has_csrf:
+    setup = csrf_protect(setup)
+
+def no_email(request):
+    if request.method == "POST" and 'email' in request.POST:
+        return check_email_and_reg(request, request.POST['email'])
+    else:
+        return render_to_response('accounts/need_users_email.html')
+                            
+if has_csrf:
+    no_email = csrf_protect(no_email)
+
+
+def facebook_connect(request, template='socialregistration/facebook.html',
+    extra_context=dict()):
+    """
+    View to handle connecting existing django accounts with facebook
+    """
+    if request.facebook.uid is None or request.user.is_authenticated() is False:
+        extra_context.update(dict(error=FB_ERROR))
+        return render_to_response(template, extra_context,
+            context_instance=RequestContext(request))
+    
+    try:
+        FacebookProfile.objects.get(uid=request.facebook.uid)
+    except FacebookProfile.DoesNotExist:
+        FacebookProfile.objects.create(user=request.user, uid=request.facebook.uid)
+
+    return prefill_profile(request)
+    
+
+def check_email_and_reg(request, email, template='accounts/login.html'):
+    from slader.splash.models import WhiteListSignUp
+
+    u = User.objects.filter(email=email)
+    if u:
+        request.session['next'] = "/account/"
+        direct = "%s=%s" % (REDIRECT_FIELD_NAME, reverse('facebook_connect'))
+        pieces = [reverse('auth_login'), "?", direct,"&fb_btn_omit=1"]
+        url = "".join(pieces)
+        messages.info(request, "We already have an account with that email address on file. Please login to your Slader account to link your Facebook account.")
+        return redirect(url)
+    try:
+        social_user = request.session['socialregistration_user']
+        social_profile = request.session['socialregistration_profile']
+    except KeyError:
+        return redirect("/account/login")        
+    gooduser = WhiteListSignUp.objects.filter(email=email, approved=True)
+    if not gooduser:
+        del request.session['socialregistration_user']
+        del request.session['socialregistration_profile']
+        return redirect(facebook_reject)
+
+    # Generate user and profile
+    social_user = User()
+    social_user.username = str(email).split("@")[0]
+    social_user.email = str(email)
+    while True:
+        try:
+            social_user.save()
+            # Assuming the IntegrityError is due to a slug fight
+        except IntegrityError:
+            try:
+                transaction.rollback()
+            except:
+                pass #stupid django
+            match_obj = re.match(r'^(.*)-(\d+)$', social_user.username)
+            if match_obj:
+                next_int = int(match_obj.group(2)) + 1
+                social_user.username = match_obj.group(1) + '-' + str(next_int)
+            else:
+                social_user.username += '-2'
+        else:
+            break
+
+    social_profile.user = social_user
+    social_profile.save()
+
+    # Authenticate and login
+    user = social_profile.authenticate()
+    login(request, user)
+            
+    # send a signal that this user has registered
+    user_registered.send(sender=User, user=user, email=email, request=request)
+
+    # Clear & Redirect
+    if 'socialregistration_user' in request.session:
+        del request.session['socialregistration_user']
+    if 'socialregistration_profile' in request.session:        
+        del request.session['socialregistration_profile']
+    return prefill_profile(request)
+
+
+@login_required
+def prefill_profile(request):
+    """fills a users profile with facebook data"""
+    try:
+        user = request.user
+        profile = user.profile
+        me = request.facebook.graph.get_object('me')
+    except:
+        return HttpResponseRedirect( reverse('accounts_registration_register_step2') )
+    if not user.first_name and "first_name" in me:
+        user.first_name = me['first_name']
+    if not user.last_name and "last_name" in me:
+        user.last_name = me["last_name"]
+    if not profile.gender and "gender" in me:
+        profile.gender = me['gender'][0] #profile limits to a single char
+    #pull and save fb picture
+    #this is motherfucking crazy. Who ever wrote the facebook module should be shot.
+    #A string? That's the best way to give me a picture? As a string?
+    #the worst part is that in the fblibrary there's a temp file already being made, so this is totally wasteful.
+    
+    if not profile.picture:
+        pic = ContentFile(request.facebook.graph.get_connections("me", "picture", type='large'))
+
+        profile.picture.save(
+            user.username,
+            pic,
+        )
+    user.save()
+    profile.save()
+    return HttpResponseRedirect(  reverse('accounts_registration_register_step2')   )
+

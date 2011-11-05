@@ -1,0 +1,297 @@
+;;; -*- coding: utf-8 -*-
+
+;; ----- ido-last-directory-list -----
+(
+ ("/home/bbeecher/workspace/slader-sandbox/src/slader/" . "latex/")
+ ("/home/bbeecher/workspace/slader-sandbox/src/slader/solutions/" . "templatetags/")
+ ("/home/bbeecher/.virtualenvs/zombies/lib/python2.7/site-packages/" . "messages/")
+ ("/home/bbeecher/.virtualenvs/zombies/lib/python2.7/" . "site-packages/")
+ ("/home/bbeecher/.virtualenvs/zombies/lib/" . "python2.7/")
+ ("/home/bbeecher/.virtualenvs/zombies/" . "lib/")
+ ("/home/bbeecher/.virtualenvs/" . "zombies/")
+ ("/home/bbeecher/workspace/pinax/pinax/apps/" . "threadedcomments_extras/")
+ ("/home/bbeecher/workspace/HvZPlus/apps/account/" . "templatetags/")
+ ("/home/bbeecher/workspace/pinax/pinax/" . "apps/")
+ ("/home/bbeecher/workspace/pinax/" . "pinax/")
+ ("/home/bbeecher/workspace/HvZPlus/apps/profiles/" . "migrations/")
+ ("/home/bbeecher/workspace/HvZPlus/media/" . "js/")
+ ("/home/bbeecher/workspace/HvZPlus/templates/" . "kills/")
+ ("/home/bbeecher/workspace/HvZPlus/apps/" . "actstream/")
+ ("/home/bbeecher/workspace/HvZPlus/" . "apps/")
+ ("/home/bbeecher/workspace/clojure/scip/src/" . "scip/")
+ ("/home/bbeecher/workspace/clojure/scip/" . "src/")
+ ("/home/bbeecher/workspace/clojure/" . "scip/")
+ ("/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/elpa/" . "slime-clj-0.1.6/")
+ ("/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/" . "elpa/")
+ ("/home/bbeecher/workspace/MyEmacsConfig/" . ".emacs.d/")
+ ("/home/bbeecher/" . ".virtualenvs/")
+ ("/home/bbeecher/workspace/" . "slader/")
+ ("/home/bbeecher/.emacs.d/elpa/" . "slime-clj-0.1.6/")
+ ("/home/bbeecher/.emacs.d/" . "elpa/")
+)
+
+;; ----- ido-work-directory-list -----
+(
+ "/home/bbeecher/workspace/slader-sandbox/src/slader/latex/"
+ "/home/bbeecher/workspace/HvZPlus/apps/actstream/"
+ "/home/bbeecher/workspace/HvZPlus/apps/dataviz/"
+ "/home/bbeecher/workspace/HvZPlus/apps/kills/"
+ "/home/bbeecher/workspace/HvZPlus/templates/dataviz/"
+ "/home/bbeecher/workspace/HvZPlus/"
+ "/home/bbeecher/workspace/HvZPlus/apps/jchat/"
+ "/home/bbeecher/workspace/HvZPlus/media/js/"
+ "/home/bbeecher/workspace/HvZPlus/templates/"
+ "/home/bbeecher/workspace/HvZPlus/apps/games/"
+ "/home/bbeecher/workspace/HvZPlus/templates/games/"
+ "/home/bbeecher/workspace/HvZPlus/templates/kills/"
+ "/home/bbeecher/workspace/HvZPlus/apps/messages/"
+ "/home/bbeecher/workspace/HvZPlus/settings/"
+ "/home/bbeecher/workspace/pinax/pinax/apps/profiles/"
+ "/home/bbeecher/workspace/HvZPlus/apps/profiles/"
+ "/home/bbeecher/workspace/HvZPlus/apps/account/"
+ "/home/bbeecher/workspace/HvZPlus/apps/"
+ "/home/bbeecher/workspace/slader/"
+ "/home/bbeecher/workspace/ml/"
+ "/home/bbeecher/.emacs.d/"
+ "/home/bbeecher/workspace/django-timeforms/"
+ "/home/bbeecher/workspace/django-timeforms/timeforms/"
+ "/home/bbeecher/workspace/django-timeforms/tests/"
+ "/etc/"
+ "/home/bbeecher/workspace/HvZPlus/apps/modadmin/"
+ "/home/bbeecher/"
+ "/home/bbeecher/workspace/HvZPlus/media/css/"
+ "/home/bbeecher/workspace/HvZPlus/templates/profiles/"
+ "/home/bbeecher/workspace/HvZPlus/templates/modadmin/"
+ "/sudo:root@Iago:/etc/"
+ "/etc/httpd/sites-enabled/"
+ "/home/bbeecher/workspace/GenomicDesignation/"
+ "/home/bbeecher/workspace/clojure/scip/src/"
+ "/home/bbeecher/workspace/clojure/"
+ "/home/bbeecher/.emacs.d/elpa/slime-clj-0.1.6/"
+ "/home/bbeecher/.emacs.d/backups/"
+ "/home/bbeecher/workspace/clojure/scip/src/scip/"
+ "/home/bbeecher/.emacs.d/elpa/slime-20100404.1/"
+ "/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/elpa/slime-clj-0.1.6/"
+ "/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/"
+ "/home/bbeecher/workspace/MyEmacsConfig/"
+)
+
+;; ----- ido-work-file-list -----
+(
+ "__init__.py"
+ "models.py"
+ "urls.py"
+ "views.py"
+ "test.html"
+ "admin.py"
+ "d3.min.js"
+ "site_base.html"
+ "create.html"
+ "forms.py"
+)
+
+;; ----- ido-dir-file-cache -----
+(
+ ("/home/bbeecher/workspace/slader-sandbox/src/slader/latex/" (20138 56720) "../" "./" "templatetags/" "tests.py" "views.py" "__init__.pyc" "views.pyc" "urls.pyc" "utils.py" "models.pyc" "forms.pyc" "utils.pyc" "__init__.py" "models.py" "create_latex.py" "management/" "urls.py" "forms.py" "create_latex.pyc" "scripts/")
+
+ ("/home/bbeecher/workspace/slader-sandbox/src/slader/" (20135 13414) "feeds/" "../" "subjects/" "moderator/" "./" "schoolroom/" "omglatex/" "fabfile.pyc" "middleware.py" "settings_meta.py" "__init__.pyc" "search_sites.py" "meta/" "settings.pyc" "whoosh_index/" "urls.pyc" "accounts/" "discussion/" "templates/" "search_sites.pyc" "fabfile.py" "middleware.pyc" "comments/" "paypal/" "common/" "reputation/" "payment/" "api/" "mobile/" ".#urls_meta.py" "midwife/" "survey/" "media/" "manage.py" "dev" "slader_badges/" "settings.py.orig" "__init__.py" "contributor/" "main/" "contest/" "settings.py" "urls.py" "thirdparty/" "forum/" "urls_meta.py" "humanities/" "latex/" "solutions/" "crossdomain.xml" "demographics/")
+
+ ("/home/bbeecher/workspace/slader-sandbox/src/slader/solutions/templatetags/" (20055 62526) "../" "./" "__init__.pyc" "solutions_tags.pyc" "solutions_tags.py" "__init__.py")
+
+ ("/home/bbeecher/workspace/slader-sandbox/src/slader/solutions/" (20083 37907) "../" "sitemaps.py" "util.py" "./" "validators.py" "templatetags/" "tests.py" "views.py" "migrations/" "__init__.pyc" "lookups.py" "views.pyc" "search_indexes.pyc" "urls.pyc" "fixtures/" "views.py.orig" "admin.py" "search_indexes.py" "forms.pyc" "models/" "__init__.py" "sitemaps.pyc" "signals.py" "signals.pyc" "management/" "util.pyc" "urls.py" "sql/" "admin.pyc" "util.py.orig" "forms.py")
+
+ ("/home/bbeecher/workspace/slader-sandbox/src/slader/solutions/models/" (20138 56544) "../" "exercise.py" "textbook_exercise_group.pyc" "author_publisher.pyc" "./" "__init__.pyc" "solution.py.orig" "value.py" "textbook_exercise_group.py" "exercise.pyc" "chapter_section.py" "solution.py" "textbook_page.py" "__init__.py" "author_publisher.py" "textbook.py" "chapter_section.pyc" "textbook.pyc" "value.pyc" "solution.pyc" "textbook_page.pyc")
+
+ ("/home/bbeecher/workspace/slader/solutions/" (20083 37907) "../" "sitemaps.py" "util.py" "./" "validators.py" "templatetags/" "tests.py" "views.py" "migrations/" "__init__.pyc" "lookups.py" "views.pyc" "search_indexes.pyc" "urls.pyc" "fixtures/" "views.py.orig" "admin.py" "search_indexes.py" "forms.pyc" "models/" "__init__.py" "sitemaps.pyc" "signals.py" "signals.pyc" "management/" "util.pyc" "urls.py" "sql/" "admin.pyc" "util.py.orig" "forms.py")
+
+ ("/home/bbeecher/workspace/slader/" (20135 13414) "feeds/" "../" "subjects/" "moderator/" "./" "schoolroom/" "omglatex/" "fabfile.pyc" "middleware.py" "settings_meta.py" "__init__.pyc" "search_sites.py" "meta/" "settings.pyc" "whoosh_index/" "urls.pyc" "accounts/" "discussion/" "templates/" "search_sites.pyc" "fabfile.py" "middleware.pyc" "comments/" "paypal/" "common/" "reputation/" "payment/" "api/" "mobile/" ".#urls_meta.py" "midwife/" "survey/" "media/" "manage.py" "dev" "slader_badges/" "settings.py.orig" "__init__.py" "contributor/" "main/" "contest/" "settings.py" "urls.py" "thirdparty/" "forum/" "urls_meta.py" "humanities/" "latex/" "solutions/" "crossdomain.xml" "demographics/")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/games/" (20138 56365) "../" "_trial_temp/" "./" "tests.pyc" "templatetags/" "tests.py" "views.py" "migrations/" "__init__.pyc" "views.pyc" "urls.pyc" "fixtures/" "admin.py" "utils.py" "models.pyc" "forms.pyc" "utils.pyc" "constants.pyc" "management.py" "fields.py" "__init__.py" "models.py" "signals.py" "signals.pyc" "management/" ".#admin.py" "urls.py" "admin.pyc" "forms.py" "constants.py")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/actstream/" (20138 51616) "../" "./" "tests.pyc" "templatetags/" "tests.py" "views.py" "migrations/" "__init__.pyc" "views.pyc" "urls.pyc" "admin.py" "models.pyc" "__init__.py" "models.py" "signals.py" "signals.pyc" "feeds.pyc" "urls.py" "admin.pyc" "feeds.py")
+
+ ("/home/bbeecher/workspace/HvZPlus/templates/dataviz/" (20138 15620) "../" "./" "test.html")
+
+ ("/home/bbeecher/workspace/HvZPlus/" (20138 8039) "../" "./" "dump.json" "wsgi.py" "urls.pyc" "fixtures/" "templates/" "requirements.txt" ".git/" "manage.prod.py" "settings/" "manage.bbia.py" "media/" "manage.py" ".ropeproject/" "__init__.py" "nginx.conf" ".gitignore" "apps/" "data.json" "urls.py" "satchmo.log" "tests/" "dotcloud.yml" "conf/" "postinstall" "build/")
+
+ ("/home/bbeecher/workspace/HvZPlus/templates/kills/" (20137 62964) "../" "./" "report_kill.html")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/dataviz/" (20138 8024) "../" "./" "views.py" "__init__.py" "models.py" "urls.py" "forms.py")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/kills/" (20138 4044) "../" "./" "tests.pyc" "fields.pyc" "tests.py" "views.py" "migrations/" "__init__.pyc" "views.pyc" "urls.pyc" "admin.py" "models.pyc" "forms.pyc" "__init__.py" "models.py" "urls.py" "admin.pyc" "forms.py" "constants.py")
+
+ ("/home/bbeecher/workspace/HvZPlus/templates/" (20138 7732) "../" "./" "games/" "tickets/" "logged_in_sidebar.html" "500.html" "navbar.html" "account/" "homepage.html" "404.html" "footer.html" "left_column_default.html" "help.html" "logo.html" "kills/" "site_base.html" "dataviz/" "modadmin/" "profiles/")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/" (20138 7693) "../" "./" "home/" "games/" "middleware.py" "actstream/" "util/" "__init__.pyc" "jchat/" "tickets/" "groups/" "middleware.pyc" "mailer/" "api/" "endless_pagination/" "account/" "avatar/" "chatbox/" "sel/" "__init__.py" "email_auth.py" "context_processors.pyc" "email_auth.pyc" "context_processors.py" "messages/" "notification/" "kills/" "dataviz/" "modadmin/" "profiles/")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/jchat/" (20138 4044) "../" "./" "views.py" "__init__.pyc" "views.pyc" "urls.pyc" "fixtures/" "admin.py" "models.pyc" "__init__.py" "models.py" "management/" "urls.py" "admin.pyc")
+
+ ("/home/bbeecher/workspace/HvZPlus/media/js/" (20138 3022) "../" "./" "jquery.isotope.min.js" "date.js" "d3.min.js" "jquery-ui-1.8.11.custom.min.js" "jchat.js" "jquery-1.6.2.min.js" "jquery.autocomplete.min.js" "endless_on_scroll.js" "jquery.ajaxQueue.js" "base.js" "jquery.isotope.js" "jquery.autocomplete.js" "ajaxfileupload.js" "chosen.jquery.min.js")
+
+ ("/home/bbeecher/workspace/d3/" (20138 1899) "../" "d3.csv.min.js" "./" "d3.csv.js" "d3.geo.min.js" ".gitmodules" "d3.min.js" "d3.time.min.js" ".#d3.js" "d3.js" "d3.chart.js" "d3.geom.min.js" ".git/" "lib/" "d3.chart.min.js" "Makefile" ".gitignore" "d3.geom.js" "d3.layout.min.js" "package.json" "README.md" "d3.layout.js" "LICENSE" "test/" "examples/" "src/" "d3.geo.js" "d3.time.js")
+
+ ("/home/bbeecher/workspace/" (20137 64386) "../" "gasf/" "mongrel2/" "dictshield/" "original.patch" "./" "iphoneemail/" "zeromq-2.1.9.tar.gz" "django/" "omglatex/" "zombies/" "GenomicDesignation/" "kismet/" "PZK - Resonance Cascade Technologies Legal Engagement Letter (6.6.11).pdf" "django-badges/" "node/" "hgtutorial/" "ritz/" "spotify_coverletter.txt" "gwttest/" "todos/" "insurance.aes256" "sproutcore2/" "isotope/" "resume.txt" "slader-backup/" "sproutcore/" "andriod/" "django-timeforms/" "mobileboilerplate/" "slader-sladerbox/" "sproutcore-docs/" "jasmin/" "Ben Beecher-SproutCore Training.mp4" "snippets/" "basicstolearn.txt" "keithdepisition.txt" "sicp/" "pypy/" "slader-mobile/" "ActionVideoGoogleAnalytics.mov" "nwr/" "sqlite/" "jerinit.el" "logins/" "sc-tutorial/" "espresstest/" "neo4j/" "impact/" "slader-sandbox/" "asdf" "ml/" "oldHvZPlus/" "javascript/" "django-endless-pagination/" "Wysiwyg/" "django-storages/" "oldhvz.patch" "MyEmacsConfig/" "tzform/" "slader/" "Django-Skeleton/" "clojure/" "socialregistration/" "ipwhere/" "pinax/" "iphonebackup/" "django-huge-caching/" "cph/" "d3/" "sc_email/" "gawker/" "PZK_-_Resonance_Cascade_Technologies_Legal_Engagement_Letter__6.6.11_-signed.pdf" "zeromq-2.1.9/" "sproutcore20/" "slime-20101113.tar" "todos2/" "HvZPlus/" "pythonemacs/" "pydocs/" "mathurl/" "chosen/" "pg/" "graffle2svg/" "latex/" "twitter.sql.bz2" "style/" "brubeck/" "knightrider/")
+
+ ("/home/bbeecher/workspace/HvZPlus/templates/games/" (20137 62593) "../" "default_rules.html" "./" "default_rules_full.html" "game_request_submitted_email.txt" "detail.html" "approved_game_email.txt" "game_list.html" "rules.html" "no_games_to_claim.html" "base.html" "confirm_kill.html" "game_approval.html" "game_chat.html" "game_news.html" "joined.txt" "join.html" "welcome_oz_to_mods.txt" "create_success.html" "create.html" "prompt.html")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/account/" (20137 62271) "../" "./" "openid_consumer.py" "middleware.py" "templatetags/" "views.py" "__init__.pyc" "views.pyc" "urls.pyc" "admin.py" "utils.py" "models.pyc" "forms.pyc" "__init__.py" "models.py" "context_processors.py" "urls.py" "admin.pyc" "forms.py")
+
+ ("/home/bbeecher/" (20137 50812) "Downloads/" ".passwd-s3fs" ".emerald/" "../" ".macromedia/" ".bogofilter/" ".fltk/" ".pylint.d/" ".gem/" ".recently-used.xbel.HULFMV" "./" ".eshell/" ".gstreamer-0.10/" ".gnomerc~" ".gnome2/" ".xchm" ".hgrc" ".gconfd/" ".octave_hist" ".bundler/" ".netx/" ".kde4/" ".Revenge of the Titans 1.72/" ".gksu.lock" ".ido.last" ".m2/" ".recently-used.xbel.0AODMV" ".icedteaplugin/" ".AbiSuite/" ".aspell.en.prepl" ".recently-used.xbel.M0V8LV" ".dasher/" ".emacs" ".clojure/" "Dropbox/" "books/" ".gnome2_private/" ".themes/" ".emacs.d/" ".rvm/" ".recently-used.xbel.PVSHMV" ".java_history" ".xinitrc" ".xinitrc~" ".bash_history" ".dropbox-dist-new/" "MadDuckAim.gif" "fonts.dir" ".Xauthority" "workspace/" ".recently-used.xbel.FNP7LV" ".recently-used.xbel.GE9IMV" ".gconf/" "zevv-peep.pcf.gz" "%backup%~" ".tramp_history" ".adobe/" ".dotcloud/" ".Skype/" ".deft/" "gif/" "ing.pdf" ".wireshark/" ".ICEauthority" ".ssh/" ".config/" ".jline-clojure.main.history" ".wine/" ".lesshst" ".bash_profile" ".purple/" ".recently-used.xbel.QCYKMV" ".pip/" ".virtualenvs/" ".bzr.log" ".pulse-cookie" ".mysql_history" "jencarinsuranceprogressive.pdf" ".sqlite_history" ".zshrc.zni" ".icons/" "zevv-peep.bdf" ".slime-history.eld" ".local/" "music/" ".pgadmin3" ".gnupg/" ".clj-env-dir_history" ".lein/" ".lftp/" ".java/" ".subversion/" "movies/" ".node_libraries/" ".cabal/" ".ipython/" ".thumbnails/" ".gitk" ".mplayer/" ".dropbox/" ".dropbox-dist/" ".recently-used.xbel.QUNDMV" ".xsession" ".zshrc" ".dbus/" ".pki/" ".xsession-errors" ".recently-used.xbel.WA8GMV" ".xmonad/" ".gnomerc" ".fontconfig/" ".histfile" ".pulse/" ".mozilla/" ".recently-used.xbel.WBTRMV" ".aspell.en.pws" ".recently-used.xbel.TOLBMV" ".rvmrc" ".dmenu_cache" ".gvfs/" ".recently-used.xbel.YQ9OMV" ".naev/" ".fonts/" ".gimp-2.6/" ".kismet/" ".mission-control/" "opt/" ".recently-used.xbel.JY0BMV" "caching.zip" ".pgadmin_histoqueries" ".cache/" ".w3m/" ".gitconfig" ".esd_auth" ".dbshell" ".Revenge of the Titans 1.72.1/" "Desktop/" ".pgpass" ".eteks/" ".bashrc" ".ctags" ".zcompdump" ".psql_history" ".mono/")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/profiles/" (20135 37626) "../" "./" "templatetags/" "views.py" "migrations/" "__init__.pyc" "lookups.py" "views.pyc" "urls.pyc" "admin.py" "templates/" "lookups.pyc" "models.pyc" "forms.pyc" "constants.pyc" "__init__.py" "models.py" "urls.py" "listeners.py" "admin.pyc" "forms.py" "constants.py")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/messages/" (20135 37625) "../" "./" "tests.pyc" "fields.pyc" "templatetags/" "tests.py" "views.py" "__init__.pyc" "views.pyc" "urls.pyc" "admin.py" "utils.py" "models.pyc" "forms.pyc" "utils.pyc" "management.py" "fields.py" "management.pyc" "__init__.py" "models.py" "context_processors.pyc" "context_processors.py" "signals.py" "signals.pyc" "urls.py" "locale/" "admin.pyc" "forms.py")
+
+ ("/home/bbeecher/workspace/HvZPlus/settings/" (20135 37081) "../" "development.pyc" "./" "base.py" "base.pyc" "__init__.pyc" "__init__.py" "__pycache__/" "production.py" "development.py" "bbia.py")
+
+ ("/home/bbeecher/workspace/HvZPlus/templates/messages/" (20131 18192) "../" "./" "messages/" "notification/")
+
+ ("/home/bbeecher/workspace/HvZPlus/templates/messages/messages/" (20135 35674) "../" "./" "new_message.html" "outbox.html" "compose.html" "base.html" "trash.html" "inbox.html" "view.html")
+
+ ("/home/bbeecher/.virtualenvs/zombies/lib/python2.7/site-packages/messages/" (20131 18192) "../" "./" "tests.pyc" "fields.pyc" "templatetags/" "tests.py" "views.py" "__init__.pyc" "views.pyc" "urls.pyc" "admin.py" "templates/" "utils.py" "models.pyc" "forms.pyc" "utils.pyc" "management.py" "fields.py" "management.pyc" "__init__.py" "models.py" "context_processors.pyc" "context_processors.py" "signals.py" "signals.pyc" "urls.py" "locale/" "admin.pyc" "forms.py")
+
+ ("/home/bbeecher/.virtualenvs/zombies/lib/python2.7/site-packages/" (20135 33436) "creole.pyc" "httplib2-0.6.0-py2.7.egg-info/" "site.py" "django_activity_stream-0.3.5-py2.7.egg-info/" "requirements/" "facebook-python-sdk.egg-link" "python_dateutil-1.4.1-py2.7.egg-info/" "django_voting-0.1_pre-py2.7.egg-info/" "django_mptt-0.3.1-py2.7.egg-info/" "template_utils-0.4p2-py2.7.egg-info/" "django_threadedcomments-0.5.1-py2.7.egg-info/" "django_microblogging-0.1.2-py2.7.egg-info/" "django_pagination-1.0.5.1-py2.7.egg-info/" "django_markup/" "product/" "django_timezones-0.1.4-py2.7.egg-info/" "django-timeforms.egg-link" "textile.py" "setuptools-0.6c11-py2.7.egg-info" "debug_toolbar/" "setuptools/" "_renderPM.so" "django_tagging-0.3-py2.7.egg-info/" "oauth2-1.2.0-py2.7.egg-info/" "ajax_validation/" "django_email_confirmation-0.1.3-py2.7.egg-info/" "django/" "dateutil/" "selenium/" "BeautifulSoup.pyc" "easy-install.pth" "docutils-0.5-py2.7.egg-info/" "announcements/" "sorl_thumbnail-3.2.5-py2.7.egg-info/" "flag/" "pagination/" "django_wikiapp-0.2.0-py2.7.egg-info/" "django_signals_ahoy-0.1_2-py2.7.egg-info/" "django_avatar-1.0.2-py2.7.egg-info/" "django_robots-0.6.1-py2.7.egg-info/" "BeautifulSoup.py" "S3.pyc" "django_sorting-0.1-py2.7.egg-info/" "S3.py" "dotcloud/" "pygments/" "gravatar/" "storages/" "django_openid/" "django_debug_toolbar-0.8.5-py2.7.egg-info/" "atomformat.pyc" "voting/" "pytz/" "humandt/" "dotcloud-0.4.3-py2.7.egg-info/" "django_messages-0.4.4-py2.7.egg-info/" "parsedatetime-0.8.6-py2.7.egg-info/" "django_notification-0.1.4-py2.7.egg-info/" "threadedcomments/" "satchmo_store/" "simplejson/" "sgmlop.so" "boto/" "_rl_accel.so" "django_caching_app_plugins-0.1.1-py2.7.egg-info/" "pip-0.8.3-py2.7.egg/" "httplib2/" "recaptcha/" "ybrowserauth-1.2-py2.7.egg-info/" "creole.py" "timezones/" "feedparser.py" "django_announcements-0.1.0-py2.7.egg-info/" "attachments/" "geopy/" "photologue/" "recaptcha_client-1.0.5-py2.7-nspkg.pth" "Satchmo-0.9_1-py2.7.egg-info/" "django_flag-0.1.1-py2.7.egg-info/" "markdown/" "django_swaps-0.5.3-py2.7.egg-info/" "uni_form/" "docs/" "payment/" "shipping/" "bookmarks/" "parsedatetime/" "oembed/" "docutils/" "geopy-0.93dev_r0-py2.7.egg-info/" "locations/" "vobject/" "mailer/" "signals_ahoy/" "distribute-0.6.24-py2.7.egg-info/" "satchmo_utils/" "pkg_resources.pyc" "elementtree-1.2.7_20070827_preview-py2.7.egg-info/" "django_smartif-0.1-py2.7.egg-info/" "reportlab/" "PyYAML-3.09-py2.7.egg-info/" "gunicorn-0.12.1-py2.7.egg-info/" "badges/" "django_atomformat-0.1.0dev-py2.7.egg-info/" "django_attachments-0.3-py2.7.egg-info/" "django_extensions-0.4.1-py2.7.egg-info/" "endless_pagination/" "ajax_select/" "avatar/" "south/" "setuptools.pth" "mptt/" "djangodblog/" "django_mailer-0.1.0-py2.7.egg-info/" "South-0.7.3-py2.7.egg-info/" "wiki/" "django_keyedcache-1.4_1-py2.7.egg-info/" "textile.pyc" "atomformat.py" "picklefield/" "ybrowserauth.py" "pytz-2009l-py2.7.egg-info/" "BeautifulSoup-3.2.0-py2.7.egg-info/" "Markdown-2.0.3-py2.7.egg-info/" "atom/" "django_bookmarks-0.1.0-py2.7.egg-info/" "ybrowserauth.pyc" "satchmo_ext/" "django_sorting/" "staticfiles/" "diff_match_patch.py" "recaptcha_client-1.0.5-py2.7.egg-info/" "tagging/" "gdata/" "django_endless_pagination-1.1-py2.7.egg-info/" "rdflib/" "rdflib-3.1.0-py2.7.egg-info/" "django_storages-1.1.3-py2.7.egg-info/" "textile-2.1.3-py2.7.egg-info/" "django_livesettings-1.4_7-py2.7.egg-info/" "django_uni_form-0.9.0-py2.7.egg-info/" "keyedcache/" "twitter-1.6-py2.7.egg-info/" "vobject-0.8.1c-py2.7.egg-info/" "gdata-1.3.3-py2.7.egg-info/" "trml2pdf/" "pkg_resources.py" "_yaml.so" "pinax/" "swaps/" "elementtree/" "yaml/" "django_db_log-1.0.1-py2.7.egg-info/" "friends/" "django_markup-0.3-py2.7.egg-info/" "messages/" "app_plugins/" "boto-2.0-py2.7.egg-info/" "django_badges-0.1.6-py2.7.egg-info/" "django_extensions/" "django_gravatar-0.1.0-py2.7.egg-info/" "django_native_tags-0.5.3-py2.7.egg-info/" "gunicorn/" "TRML2PDF-1.0-py2.7.egg-info/" "satchmo_skeleton/" "selenium-2.0rc3-py2.7.egg-info/" "django_ajax_validation-0.1.3-py2.7.egg-info/" "diff_match_patch.pyc" "feedparser.pyc" "BeautifulSoupTests.py" "microblogging/" "site.pyc" "robots/" "notification/" "django_locations-0.1.1-py2.7.egg-info/" "easy_install.pyc" "tax/" "oauth2/" "Pinax-0.9a1-py2.7.egg-info/" "diff_match_patch-20090804-py2.7.egg-info/" "simplejson-2.1.3-py2.7.egg-info/" "smartif/" "Django-1.3-py2.7.egg-info/" "django_friends-0.1.4-py2.7.egg-info/" "django_staticfiles-0.1.2-py2.7.egg-info/" "example/" "Pygments-1.0-py2.7.egg-info/" "django_ajax_selects-1.1.4-py2.7.egg-info/" "pyHnj.so" "easy_install.py" "sorl/" "openid/" "tests/" "python_openid-2.2.5-py2.7.egg-info/" "l10n/" "django_photologue-2.3-py2.7.egg-info/" "feedparser-5.0.1-py2.7.egg-info/" "livesettings/" "static/" "emailconfirmation/" "django_threaded_multihost-1.4_0-py2.7.egg-info/" "dotcloud.cli-0.4.3-py2.7.egg-info/" "reportlab-2.5-py2.7.egg-info/" "django_oembed-0.1.0-py2.7.egg-info/" "django_human_datetime-0.1-py2.7.egg-info/" "django-timezones.egg-link" "template_utils/" "native_tags/" "BeautifulSoupTests.pyc" "django_openid-0.2.0-py2.7.egg-info/" "django_picklefield-0.1.6-py2.7.egg-info/" "twitter/" "creole-1.0.1-py2.7.egg-info/" "threaded_multihost/" "../" "./")
+
+ ("/home/bbeecher/.virtualenvs/zombies/lib/python2.7/" (20124 29846) "../" "site.py" "encodings/" "./" "linecache.pyo" "types.pyo" "genericpath.pyo" "types.py" "fnmatch.pyc" "copy_reg.py" "posixpath.py" "sre_compile.pyc" "abc.pyc" "codecs.pyc" "sre_parse.pyo" "sre_constants.pyo" "posixpath.pyc" "_abcoll.pyo" "sre_parse.py" "fnmatch.py" "_abcoll.pyc" "os.pyo" "site-packages/" "sre_constants.pyc" "sre_constants.py" "_abcoll.py" "orig-prefix.txt" "_weakrefset.pyo" "lib-dynload/" "abc.pyo" "UserDict.pyo" "linecache.py" "UserDict.py" "sre_compile.py" "stat.py" "_weakrefset.py" "distutils/" "UserDict.pyc" "sre_compile.pyo" "posixpath.pyo" "os.pyc" "codecs.pyo" "sre.py" "ntpath.py" "os.py" "types.pyc" "genericpath.py" "sre_parse.pyc" "re.py" "site.pyc" "locale.py" "stat.pyo" "re.pyo" "site.pyo" "stat.pyc" "codecs.py" "warnings.pyc" "warnings.py" "_weakrefset.pyc" "copy_reg.pyc" "genericpath.pyc" "config/" "linecache.pyc" "re.pyc" "locale.pyc" "copy_reg.pyo" "abc.py" "warnings.pyo")
+
+ ("/home/bbeecher/.virtualenvs/zombies/lib/" (19867 28534) "../" "./" "python2.7/")
+
+ ("/home/bbeecher/.virtualenvs/zombies/" (20135 33436) "../" "./" "share/" "lib/" "include/" "bin/" "src/")
+
+ ("/home/bbeecher/.virtualenvs/" (20133 60991) "../" "./" "iphoneemail/" "zombies/" "postrmvirtualenv" "prermvirtualenv" "Pinax/" "postactivate" "predeactivate" "premkproject" "hvzplus/" "preactivate" "slader-sandbox/" "postdeactivate" "get_env_details" "swagger/" "slader/" "prermproject" "cph/" "hook.log" "hook.log.1" "initialize" "pinaxenv/" "postmkproject" "premkvirtualenv" "postmkvirtualenv" "postrmproject" "ruby/" "brubeck/")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/profiles/templates/" (20108 34530) "../" "./" "profile_item.html")
+
+ ("/home/bbeecher/workspace/pinax/pinax/apps/threadedcomments_extras/" (20131 15012) "../" "./" "templatetags/" "__init__.py")
+
+ ("/home/bbeecher/workspace/pinax/pinax/apps/autocomplete_app/" (20135 35010) "../" "./" "views.py" "__init__.py")
+
+ ("/home/bbeecher/workspace/pinax/pinax/apps/profiles/" (20135 34975) "../" "./" ".#urls.py" "templatetags/" "views.py" "admin.py" "templates/" "__init__.py" "models.py" "urls.py" "locale/" "forms.py")
+
+ ("/home/bbeecher/workspace/clojure/scip/src/" (20135 26925) "../" "./" "scip/" "1.clj")
+
+ ("/home/bbeecher/workspace/ml/" (20135 14823) "../" "02.4-V2-LinearRegressionWithOneVariable-CostFunctionIntuitionII.mp4" "05.1-OctaveTutorial-BasicOperations.mp4" "03.3-V2-LinearAlgebraReview(Optional)-MatrixVectorMultiplication.mp4" "./" "01.2-V2-Introduction-WhatIsMachineLearning.mp4" "03.2-V2-LinearAlgebraReview(Optional)-AdditionAndScalarMultiplication.mp4" "04.3-LinearRegressionWithMultipleVariables-GradientDescentInPracticeIFeatureScaling.mp4" "05.3-OctaveTutorial-ComputingOnData.mp4" "getthem.py" "05.2-OctaveTutorial-MovingDataAround.mp4" "02.8-V2-What'sNext.mp4" "06.1-LogisticRegression-Classification.mp4" "03.5-V2-LinearAlgebraReview(Optional)-MatrixMultiplicationProperties.mp4" "07.2-Regularization-CostFunction.mp4" "05.6-OctaveTutorial-Vectorization.mp4" "ex1.pdf" "02.2-V2-LinearRegressionWithOneVariable-CostFunction.mp4" "06.2-LogisticRegression-HypothesisRepresentation.mp4" "04.1-LinearRegressionWithMultipleVariables-MultipleFeatures.mp4" "06.7-LogisticRegression-MultiClassClassificationOneVsAll.mp4" "02.3-V2-LinearRegressionWithOneVariable-CostFunctionIntuitionI.mp4" "06.3-LogisticRegression-DecisionBoundary.mp4" "04.7-LinearRegressionWithMultipleVariables-NormalEquationNonInvertibility(Optional).mp4" "06.6-LogisticRegression-AdvancedOptimization.mp4" "05.7-OctaveTutorial-WorkingOnAndSubmittingProgrammingExercises.mp4" "01.1-V3-Introduction-Welcome.mp4" "03.1-V2-LinearAlgebraReview(Optional)-MatricesAndVectors.mp4" "05.4-OctaveTutorial-PlottingData.mp4" "02.6-V2-LinearRegressionWithOneVariable-GradientDescentIntuition.mp4" "04.2-LinearRegressionWithMultipleVariables-GradientDescentForMultipleVariables.mp4" "04.6-V2-LinearRegressionWithMultipleVariables-NormalEquation.mp4" "06.4-LogisticRegression-CostFunction.mp4" "mlclass-ex1/" "03.4-V2-LinearAlgebraReview(Optional)-MatrixMatrixMultiplication.mp4" "02.7-V2-LinearRegressionWithOneVariable-GradientDescentForLinearRegression.mp4" "02.5-V2-LinearRegressionWithOneVariable-GradientDescent.mp4" "06.5-LogisticRegression-SimplifiedCostFunctionAndGradientDescent.mp4" "01.4-V2-Introduction-UnsupervisedLearning.mp4" "07.3-Regularization-RegularizedLinearRegression.mp4" "07.1-Regularization-TheProblemOfOverfitting.mp4" "04.5-LinearRegressionWithMultipleVariables-FeaturesAndPolynomialRegression.mp4" "02.1-V2-LinearRegressionWithOneVariable-ModelRepresentation.mp4" "01.3-V2-Introduction-SupervisedLearning.mp4" "05.5-OctaveTutorial-ForWhileIfStatementsAndFunctions.mp4" "04.4-LinearRegressionWithMultipleVariables-GradientDescentInPracticeIILearningRate.mp4" "03.6-V2-LinearAlgebraReview(Optional)-InverseAndTranspose.mp4")
+
+ ("/usr/share/info/" (20135 14923) "texinfo.gz" "aalib.info-3.gz" "gcc.info.gz" "octave.info-2.gz" "elisp-10.gz" "pcl-cvs.gz" "gccinstall.info.gz" "screen.info-2.gz" "libtasn1.info.gz" "netcat.info.gz" "elisp-3.gz" "flex.info-2.gz" "sc.gz" "fontname.info.gz" "sbcl.info-2.gz" "OctaveFAQ.info.gz" "readline.info.gz" "libc.info-9.gz" "gnutls.info-3.gz" "info-stnd.info.gz" "pgg.gz" "aalib.info-2.gz" "url.gz" "libext2fs.info.gz" "bash.info.gz" "guile.info-4.gz" "auth.gz" "guile.info-6.gz" "gmp.info-2.gz" "mairix-el.gz" "edt.gz" "reftex.gz" "guile-tut.info.gz" "elisp-6.gz" "calc-4.gz" "gmp.info.gz" "gnupg.info-1.gz" "nano.info.gz" "mpfr.info.gz" "gcrypt.info.gz" "nettle.info.gz" "liblouis.info.gz" "gnutls-pgp.png" "gnus-5.gz" "tds.info.gz" "gsl-ref.info.gz" "mikmod.info.gz" "gpgme.info.gz" "gsl-ref.info-3.gz" "dc.info.gz" "calc-5.gz" "gnutls-guile.info.gz" "sasl.gz" "calc-6.gz" "texinfo-1.gz" "gsl-ref.info-1.gz" "find.info.gz" "tramp.gz" "guile.info-2.gz" "dbus.gz" "tar.info-1.gz" "gsl-ref.info-4.gz" "rcirc.gz" "gnupg.info-2.gz" "cppinternals.info.gz" "tar.info.gz" "goops.info.gz" "ebrowse.gz" "pinentry.info.gz" "ksba.info.gz" "idlwave.gz" "screen.info.gz" "octave.info-1.gz" "efaq.gz" "bc.info.gz" "libgomp.info.gz" "m4.info-1.gz" "asdf.info.gz" "info.gz" "libc.info-5.gz" "org-3.gz" "libc.info.gz" "ccmode-2.gz" "octave.info-5.gz" "eshell.gz" "org-1.gz" "info.info.gz" "burg.info.gz" "bison.info.gz" "autosprintf.info.gz" "annotate.info.gz" "octave.info-4.gz" "gnutls.info.gz" "libc.info-11.gz" "eudc.gz" "latex2e.info.gz" "gcrypt.info-1.gz" "emacs.gz" "emacs-3.gz" "erc.gz" "dvips.info.gz" "ediff.gz" "m4.info-2.gz" "emacs-1.gz" "emacs-4.gz" "gzip.info.gz" "ada-mode.gz" "stabs.info.gz" "grep.info.gz" "ccmode.gz" "make.info-2.gz" "inetutils.info.gz" "libc.info-10.gz" "cln.info.gz" "gnutls-handshake-sequence.png" "smtpmail.gz" "epspdf.info.gz" "elisp-5.gz" "assuan.info.gz" "gettext.info.gz" "find-maint.info.gz" "m4.info.gz" "eieio.gz" "emacs-5.gz" "gpm.info.gz" "libquadmath.info.gz" "gsl-ref.info-5.gz" "autoconf.info.gz" "octave.info-6.gz" "texdraw.info.gz" "groff.info.gz" "libc.info-8.gz" "gawk.info.gz" "gnus-3.gz" "elisp-4.gz" "epa.gz" "libidn.info.gz" "elisp-8.gz" "cpp.info.gz" "make.info.gz" "ses.gz" "parted.info.gz" "guile.info-7.gz" "dir" "libcdio.info.gz" "woman.gz" "elisp-9.gz" "gnutls-layers.png" "mh-e-1.gz" "libIDL2.info.gz" "history.info.gz" "fftw3.info-1.gz" "gdbm.info.gz" "vcdxrip.info.gz" "gccint.info.gz" "aalib.info.gz" "emacs-w3m-ja.info.gz" "octave.info-3.gz" "viper.gz" "widget.gz" "octave.info.gz" "which.info.gz" "automake.info.gz" "guile.info-5.gz" "octave.info-7.gz" "gnupg1.info.gz" "ccmode-1.gz" "pkcs11-vision.png" "gnupg.info.gz" "org.gz" "gdb.info.gz" "diffutils.info.gz" "nxml-mode.gz" "autotype.gz" "slime.info.gz" "emacs-8.gz" "gnutls.info-1.gz" "configure.info.gz" "gnutls-x509.png" "eintr-3.gz" "calc-2.gz" "spd-say.info.gz" "texinfo-3.gz" "aspell.info.gz" "gnutls-client-server-use-case.png" "automake.info-2.gz" "dvipng.info.gz" "dired-x.gz" "mjpeg-howto.info.gz" "speech-dispatcher.info.gz" "vcd-info.info.gz" "bfd.info.gz" "gnutls-logo.png" "sieve.gz" "screen.info-5.gz" "mh-e-2.gz" "grub.info.gz" "gmp.info-1.gz" "emacs-mime.gz" "gnutls.info-2.gz" "cloog.info.gz" "libidn-components.png.gz" "emacs-7.gz" "emacs-w3m.info.gz" "gpgme.info-1.gz" "elisp-1.gz" "recode.info.gz" "eintr-2.gz" "semantic.gz" "coreutils.info.gz" "libtool.info-2.gz" "guile.info.gz" "libtool.info-1.gz" "guile.info-1.gz" "remember.gz" "gsl-ref.info-2.gz" "libtool.info.gz" "screen.info-3.gz" "libgtop2.info.gz" "libc.info-7.gz" "sed.info.gz" "gprof.info.gz" "eintr.gz" "r5rs.info.gz" "rluserman.info.gz" "groff.info-1.gz" "automake.info-1.gz" "latex2man.info.gz" "elisp-11.gz" "message.gz" "wget.info.gz" "flex.info-1.gz" "ede.gz" "texinfo-2.gz" "newsticker.gz" "forms.gz" "eplain.info.gz" "gawkinet.info.gz" "libffi.info.gz" "gsl-ref.info-6.gz" "binutils.info.gz" "libmpc.info.gz" "calc-1.gz" "elisp-7.gz" "libc.info-6.gz" "make.info-1.gz" "mh-e.gz" "org-2.gz" "emacs-2.gz" "guile.info-3.gz" "elisp-2.gz" "gdbint.info.gz" "vcdimager.info.gz" "groff.info-2.gz" "ld.info.gz" "gpgme.info-2.gz" "calc.gz" "gnus-2.gz" "cl.gz" "fftw3.info.gz" "gnus-4.gz" "gnutls-handshake-state.png" "eintr-1.gz" "multiboot.info.gz" "dirmngr.info.gz" "gnutls-modauth.png" "tar.info-2.gz" "gnus-1.gz" "flex.info.gz" "sbcl.info-1.gz" "kpathsea.info.gz" "libc.info-1.gz" "aalib.info-1.gz" "sbcl.info.gz" "vip.gz" "recode.info-1.gz" "fftw3.info-2.gz" "web2c.info.gz" "screen.info-1.gz" "standards.info.gz" "libc.info-4.gz" "recode.info-2.gz" "speedbar.gz" "gnutls-internals.png" "libc.info-2.gz" "screen.info-4.gz" "as.info.gz" "elisp.gz" "calc-3.gz" "libc.info-3.gz" "ssip.info.gz" "liboctave.info.gz" "aspell-dev.info.gz" "gnus.gz" "emacs-6.gz" "flymake.gz" "groff.info-3.gz" "../" "./")
+
+ ("/home/bbeecher/.deft/" (20135 11550) "../" "./" "deft-2.txt" "deft-0.txt" ".#deft-6.txt" "deft-1.txt" "deft-3.txt" "deft-6.txt" "deft-4.txt" "deft-5.txt")
+
+ ("/home/bbeecher/workspace/sicp/" (20135 9799) "../" "index.html" "./" "files")
+
+ ("/home/bbeecher/.emacs.d/" (20135 5989) "cheetah-mode.el" "../" "auto-complete-yasnippet.elc" "session.1084528b1e2877b39b13102559957035500000013820033" "rinari/" "python.el" "./" "auto-complete.el" "xml-rpc.el" "session.10a2a1260db156a830130581862097474600000142280029" "ansi-color.elc" "multi-mode.elc" "python-mode.elc" "places" "processing-mode.elc" "dired-single.el" "processing-mode.el" "js2.el" "init_sproutcore.elc" "auto-complete.elc" "session.1042beca139c9b35d1130611476381587300000302700032" "haskell-mode.tar.gz" "session.106c2993c710b8584d130577298775907300000039410031" "emacs-lisp-intro-texi.tar.gz" "session.10ea927949fe5f9912129055817418392300000045620074" "nxhtml-1.87-090708.zip" ".emacs.d/" "color-theme-6.6.0/" "ropemode/" "twit.elc" "cheetah-mode.elc" "ben-cheetah-mode.el" "actionscript-mode-haas-7.0.elc" "backups/" "ben-cheetah-mode.elc" "init_sproutcore.el" "snippets/" "#pythoscope.el#" "init_python.el~" "deft.elc" "%backup%~" "auto-complete-yasnippet.el" "deft.el" "init_python.el" "emacs-lisp-intro.info.gz" "autosaves/" "tramp" "actionscript-mode-haas-7.0.el" "auto-save-list/" "color-theme-6.6.0.tar.gz" "elpa/" "ansi-color.el" "haskell-mode-2.4/" "session.1077c48600a618e9e0130578168638704500000039460031" ".smex-items" "tidy.el" "session.10ce3ca69b653d8468130567144792671300000038700041" "pythoscope.el" "dired-single.elc" "psvn.el" "swank/" "twit.el" "tidy.elc" "multi-mode.el.1" "em-joc.elc" "twisted.elc" "sinasi.elc" "ropemacs/" "egg/" "pythoscope.elc" "#python-mode.el#" "psvn.elc" "twisted.el" "espresso.elc" "python-mode.el" "nxhtml/" "python.elc" "trac-wiki.elc" "js2.elc" "xml-rpc.elc" "smarttabs.elc" "rope/" "mmm-mode-0.4.8.tar.gz" "w3m-load.el" "url/" "trac-wiki.el" "mmm-mode-0.4.8/" "sinasi.el" "em-joc.el" "multi-mode.el" "smarttabs.el")
+
+ ("/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/" (20133 35096) "cheetah-mode.el" "../" "auto-complete-yasnippet.elc" "session.1084528b1e2877b39b13102559957035500000013820033" "rinari/" "python.el" "./" "auto-complete.el" "xml-rpc.el" "session.10a2a1260db156a830130581862097474600000142280029" "ansi-color.elc" "multi-mode.elc" "python-mode.elc" "places" "processing-mode.elc" "dired-single.el" "processing-mode.el" "js2.el" "init_sproutcore.elc" "auto-complete.elc" "session.1042beca139c9b35d1130611476381587300000302700032" "haskell-mode.tar.gz" "session.106c2993c710b8584d130577298775907300000039410031" "emacs-lisp-intro-texi.tar.gz" "session.10ea927949fe5f9912129055817418392300000045620074" "nxhtml-1.87-090708.zip" ".emacs.d/" "color-theme-6.6.0/" "ropemode/" "twit.elc" "cheetah-mode.elc" "ben-cheetah-mode.el" "actionscript-mode-haas-7.0.elc" "backups/" "ben-cheetah-mode.elc" "init_sproutcore.el" "snippets/" "#pythoscope.el#" "init_python.el~" "deft.elc" "%backup%~" "auto-complete-yasnippet.el" "deft.el" "init_python.el" "emacs-lisp-intro.info.gz" "autosaves/" "tramp" "actionscript-mode-haas-7.0.el" "auto-save-list/" "color-theme-6.6.0.tar.gz" "elpa/" "ansi-color.el" "haskell-mode-2.4/" "session.1077c48600a618e9e0130578168638704500000039460031" ".smex-items" "tidy.el" "session.10ce3ca69b653d8468130567144792671300000038700041" "pythoscope.el" "dired-single.elc" "psvn.el" "swank/" "twit.el" "tidy.elc" "multi-mode.el.1" "em-joc.elc" "twisted.elc" "sinasi.elc" "ropemacs/" "egg/" "pythoscope.elc" "#python-mode.el#" "psvn.elc" "twisted.el" "espresso.elc" "python-mode.el" "nxhtml/" "python.elc" "trac-wiki.elc" "js2.elc" "xml-rpc.elc" "smarttabs.elc" "rope/" "mmm-mode-0.4.8.tar.gz" "init_python.elc" "w3m-load.el" "url/" "trac-wiki.el" "mmm-mode-0.4.8/" "sinasi.el" "em-joc.el" "multi-mode.el" "smarttabs.el")
+
+ ("/home/bbeecher/workspace/MyEmacsConfig/" (20134 62635) "../" "./" ".emacs" ".emacs.d/" "zevv-peep.pcf.gz" ".git/" "zevv-peep.bdf" "README")
+
+ ("/home/bbeecher/.virtualenvs/zombies/lib/python2.7/site-packages/pinax/" (19867 39086) "../" "./" "templatetags/" "middleware/" "views.py" "__init__.pyc" "views.pyc" "fixtures/" "templates/" "projects/" "media/" "utils/" "__init__.py" "core/" "apps/" "locale/")
+
+ ("/home/bbeecher/.virtualenvs/zombies/lib/python2.7/site-packages/pinax/templates/" (19867 39086) "../" "./" "README" "default/")
+
+ ("/home/bbeecher/.virtualenvs/zombies/lib/python2.7/site-packages/pinax/templates/default/" (19867 39086) "../" "facebox_js.html" "./" "announcements/" "wakawaka/" "django_openid/" "threadedcomments/" "photos/" "500.html" "blog/" "bookmarks/" "signup_codes/" "locations/" "_account_bar.html" "account/" "avatar/" "projects/" "404.html" "idios/" "tribes/" "base.html" "about/" "swaps/" "friends/" "tasks/" "messages/" "topics/" "microblogging/" "notification/" "waitinglist/" "gblocks/" "emailconfirmation/" "profiles/")
+
+ ("/home/bbeecher/.virtualenvs/zombies/lib/python2.7/site-packages/pinax/templates/default/messages/" (20134 18639) "../" "./" "new_messages.html" "outbox.html" "compose.html" "base.html" "trash.html" "notification/" "inbox.html" "view.html")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/account/templatetags/" (20134 17821) "../" "./" "account_tags.py" "other_service_tags.py" "account_tags.pyc" "__init__.pyc" "openid_tags.py" "__init__.py" "openid_tags.pyc" "other_service_tags.pyc")
+
+ ("/home/bbeecher/workspace/django-timeforms/tests/" (20133 52240) "../" "./" "misc.py" "__init__.py")
+
+ ("/home/bbeecher/workspace/django-timeforms/" (20133 51015) "../" "./" "requirements.txt" ".git/" "README.markdown" ".ropeproject/" "setup.py" "timeforms/" "django_timeforms.egg-info/" "tests/")
+
+ ("/home/bbeecher/workspace/django-timeforms/timeforms/" (20133 50526) "../" "./" "misc.py" "__init__.py" "forms.py")
+
+ ("/etc/" (20133 36059) "profile.d/" "printcap" "modprobe.d/" "rc.shutdown" "issue" "odbc.ini" "pacman.d/" "clyde.conf" "colord.conf" "bash.bashrc" "dconf/" "mail.rc" "esd.conf" "dhclient-wlan0.conf" "gdm/" "hosts.deny" "ushare/" "rc.conf~" "environment" "openldap/" "tsocks.conf.complex.example" "rc.sysinit" "bash_completion" "shadow-" "hosts" "cron.weekly/" "netconfig" "pulse/" "libao.conf" "passwd-" "sysctl.conf" ".pwd.lock" "gshadow" "bonobo-activation/" "polkit-1/" "localtime" "logrotate.conf" "nscd.conf" "services" "bash.bash_logout" "slp.spi" "motd" "fonts/" "ImageMagick/" "skel/" "fuse.conf" "sensors3.conf" "ca-certificates/" "ntpd.conf" "ksysguarddrc" "hosts.deny~" "arch-release" "slp.conf" "ssl/" "wpa_supplicant.conf" "ntp.conf.pacnew" "udev/" "mercurial/" "abs.conf" "mongodb.conf" "fstab.pacnew" "shells.pacnew" "odbcinst.ini" "X11/" "cups/" "obex-data-server/" "gnome-vfs-2.0/" "dbus-1/" "avahi/" "sane.d/" "security/" "ODBCDataSources/" "kismet.conf" "nsswitch.conf" "nanorc" "speech-dispatcher/" "mke2fs.conf" "crypttab" "idn.conf" "shells" "gssapi_mech.conf" "UPower/" "dhcpcd.conf" "tor/" "NetworkManager/" "dnsmasq.conf.pacnew" "pam.d/" "gdb/" "group.pacnew" "ppp/" "idnalias.conf" "tsocks.conf.simple.example" "rc.conf.pacnew" "man_db.conf" "rc.conf" "syslog-ng/" "gshadow-" "pcmcia/" "gconf/" "rc.local" "gnome-vfs-mime-magic" "postfix/" "pkcs11/" "passwd~" "pdnsd.conf.sample" "privoxy/" "rc.d/" "resolv.conf~" "ntp.conf" "atmsigd.conf" "shadow" "mtab.fuselock" "bash.bashrc.pacnew" "krb5.conf" "ConsoleKit/" "lvm/" "sysctl.conf~" "group" "rc.single" "clyde.conf~" "securetty" "xdg/" "burg.d/" "ld.so.cache" "logrotate.d/" "apm/" "rc_keymaps/" "pacman.conf.pacnew" "mkinitcpio.d/" "mtab" "ld.so.conf" "host.conf" "xinetd.d/" "pm/" "ssh/" "power/" "ntp.conf~" "rc_maps.cfg" "npmrc" "locale.gen.pacnew" "compizconfig/" "group-" "asound.conf" "acpi/" "iptables/" "mdns.allow" "resolv.conf" "cron.monthly/" "passwd-s3fs~" "lftp.conf" "default/" "pango/" "mplayer/" "mdadm.conf" "rsyncd.conf" "lirc/" "idn.conf.sample" "screenlets/" "slsh.rc" "laptop-mode/" "gai.conf" "passwd" "bogofilter/" "rc.local.shutdown" "xinetd.conf" "iproute2/" "sound/" "kde/" "idnalias.conf.sample" "openal/" "hosts.allow" "gnome-system-tools/" "makepkg.conf" "pam_thinkfinger/" "httpd/" "ld.so.conf.d/" "updatedb.conf" "login.defs" "gimp/" "locale.gen" "pacman.conf" "tmpfiles.d/" "sudoers~" "conf.d/" "hosts.pacnew" "bluetooth/" "localtime-old" "screenrc" "pdnsd.conf~" "gtk-3.0/" "kismet_drone.conf" "hal/" "hosts~" "resolv.conf.head" "mkinitcpio.conf" "pdnsd.conf" "hosts.allow~" "gshadow.pacnew" "ca-certificates.conf" "request-key.conf" "dnsmasq.conf" "nsswitch.conf~" "inittab" "mime.types" "php/" "cron.daily/" "sudoers.d/" "wgetrc" "pacman.conf~" "inputrc" "gtk-2.0/" "mono/" "tpbrc" "cron.d/" "brltty/" "irman.conf" "profile" "sudoers" "hosts.atm" "mysql/" "protocols" "texmf/" "bash_completion.d/" "brltty.conf" "libgda-5.0/" "fstab" "rc.multi" "slp.reg" "at-spi2/" "modules.conf" "xml/" "rpc" "../" "./")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/util/" (20133 37223) "../" "./" "tests.pyc" "fields.pyc" "decorators.py" "testing.pyc" "templatetags/" "tests.py" "timezonedata.py" "__init__.pyc" "widgets.py" "timezonedata.pyc" "testing.py" "tags.pyc" "models.pyc" "forms.pyc" "misc.pyc" "fields.py" "misc.py" "__init__.py" "models.py" "widgets.pyc" "tags.py")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/groups/" (20110 3238) "../" "./" "base.py" "templatetags/" "base.pyc" "__init__.pyc" "bridge.py" "__init__.py" "helpers.py")
+
+ ("/home/bbeecher/workspace/pinax/pinax/apps/account/" (20131 17231) "../" "./" "openid_consumer.py" "middleware.py" "templatetags/" "views.py" "admin.py" "utils.py" "auth_backends.py" "media/" "__init__.py" "models.py" "context_processors.py" "signals.py" "urls.py" "locale/" "tests/" "forms.py")
+
+ ("/home/bbeecher/workspace/pinax/pinax/apps/" (20131 15012) "../" "analytics/" "./" "authsub/" "photos/" "blog/" "signup_codes/" "threadedcomments_extras/" "account/" "projects/" "voting_extras/" "__init__.py" "tagging_utils/" "tribes/" "bbauth/" "tasks/" "autocomplete_app/" "topics/" "waitinglist/" "profiles/")
+
+ ("/home/bbeecher/workspace/pinax/pinax/" (20131 15013) "../" "./" "templatetags/" "middleware/" "views.py" "fixtures/" "templates/" "projects/" "media/" "utils/" "__init__.py" "core/" "apps/" "locale/")
+
+ ("/home/bbeecher/workspace/pinax/" (20131 15013) "../" "requirements/" "./" "INSTALL" "docs/" ".git/" "CHANGELOG" "setup.py" ".gitignore" "README" "pinax/" "AUTHORS" "README.transifex" "ROADMAP" "LICENSE" "tests/" "MANIFEST.in" "scripts/")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/profiles/migrations/" (20115 13243) "../" "./" "0008_auto__add_field_profile_facebook__add_field_profile_twitter__add_field.pyc" "0009_auto__del_field_profile_tumbrl__add_field_profile_tumblr__chg_field_pl.pyc" "0013_auto__del_unique_player_idkey_game_user__add_unique_player_game_user.pyc" "0009_auto__del_field_profile_tumbrl__add_field_profile_tumblr__chg_field_pl.py" "0013_auto__del_unique_player_idkey_game_user__add_unique_player_game_user.py" "__init__.pyc" "0003_auto__del_field_player_numkills.py" "0012_auto__del_field_player_internal_last_feed__del_field_player_internal_k.py" "0011_auto__del_field_profile_tumbrl__add_field_profile_tumblr__del_field_pl.pyc" "0011_auto__del_field_profile_tumbrl__add_field_profile_tumblr__del_field_pl.py" "0002_auto__add_field_player_numkills.pyc" "0004_auto__chg_field_player_killed_by.py" "0006_auto__add_field_profile_newsletter.py" "0007_auto__add_field_player_active.py" "0005_auto__add_field_profile_hear_about.pyc" "0008_auto__add_field_profile_facebook__add_field_profile_twitter__add_field.py" "0001_initial.pyc" "0005_auto__add_field_profile_hear_about.py" "0012_auto__del_field_player_internal_last_feed__del_field_player_internal_k.pyc" "__init__.py" "0007_auto__add_field_player_active.pyc" "0004_auto__chg_field_player_killed_by.pyc" "0010_auto__chg_field_player_idkey.py" "0014_auto__add_field_player_counts.pyc" "0014_auto__add_field_player_counts.py" "0002_auto__add_field_player_numkills.py" "0013_auto.py" "0001_initial.py" "0013_auto.pyc" "0010_auto__chg_field_player_idkey.pyc" "0003_auto__del_field_player_numkills.pyc" "0006_auto__add_field_profile_newsletter.pyc")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/notification/" (20131 642) "../" "./" "decorators.py" "views.py" "__init__.pyc" "atomformat.pyc" "views.pyc" "urls.pyc" "admin.py" "templates/" "models.pyc" "engine.py" "atomformat.py" "__init__.py" "models.py" "context_processors.pyc" "lockfile.py" "context_processors.py" "management/" "feeds.pyc" "urls.py" "admin.pyc" "decorators.pyc" "feeds.py")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/endless_pagination/" (20124 36661) "../" "./" "tests.pyc" "decorators.py" "templatetags/" "tests.py" "views.py" "__init__.pyc" "views.pyc" "settings.pyc" "exceptions.py" "templates/" "utils.py" "models.pyc" "utils.pyc" "__init__.py" "paginator.py" "models.py" "paginator.pyc" "settings.py" "locale/" "static/" "exceptions.pyc")
+
+ ("/home/bbeecher/workspace/HvZPlus/apps/modadmin/" (20130 8345) "../" "./" "tests.pyc" "decorators.py" "tests.py" "views.py" "__init__.pyc" "views.pyc" "urls.pyc" "fixtures/" "models.pyc" "forms.pyc" "__init__.py" "models.py" "urls.py" "decorators.pyc" "forms.py")
+
+ ("/home/bbeecher/.emacs.d/nxhtml/" (20130 6630) "autostart.el" "../" "web-vcs.el" "./" "nxhtml-web-vcs.elc" "nxhtml-base.el" "etc/" "util/" "autostart22.el" "README.txt" "web-autoload.el" "nxhtmlmaint.el" "nxhtml-loaddefs.el" "alts/" "autostart22.elc" "related/" "zipped-utils/" "nxhtml-base.elc" ".nosearch" "web-vcs.elc" "emacs22.cmd" "nxhtml/" "readme.txt" "nxhtml-web-vcs.el" "web-autoload.elc" "tests/")
+
+ ("/home/bbeecher/workspace/HvZPlus/media/css/" (20130 5963) "../" "./" "chosen-sprite.png" "style.css" "chosen.css" "jquery.autocomplete.css" "jquery-ui-1.8.16.custom.css" "images/")
+
+ ("/home/bbeecher/workspace/HvZPlus/templates/profiles/" (20129 46192) "../" "profiles.html" "./" "idcard1.html" "idcard3.html" "idcard2.html" "profile.html" "idcards.html" ".#profiles.html")
+
+ ("/home/bbeecher/workspace/HvZPlus/templates/modadmin/" (20129 44974) "../" "left_side_bar.html" "./" "list_players.html" "edit_player.html" "add_original_zombie.html" ".#kill_player.html" "invite_players.html" "control_panel.html" "edit_ticket.html" "messages.html" "moderator_base.html" "invite_moderators.html" "kill_player.html" "moderator_invitation.txt" "edit_rules.html" "list_games.html")
+
+ ("/home/bbeecher/workspace/HvZPlus/media/satchmo/" (20108 34532) "../" "./" "js/" "css/" "images/")
+
+ ("/home/bbeecher/workspace/HvZPlus/media/" (20115 13902) "../" "./" "js/" "avatars/" "satchmo/" "500.html" "css/" "uni_form/" "400.html" "images/")
+
+ ("/dev/shm/" (20128 61370) "mono.1576" "pulse-shm-3355417675" "pulse-shm-2647230095" "pulse-shm-760790329" "pulse-shm-4171627859" "../" "./")
+
+ ("/dev/" (20128 54983) "vga_arbiter" "mem" "null" "port" "zero" "full" "random" "urandom" "kmsg" "tty" "console" "tty0" "vcs" "vcsa" "vcs1" "vcsa1" "tty1" "tty2" "tty3" "tty4" "tty5" "tty6" "tty7" "tty8" "tty9" "tty10" "tty11" "tty12" "tty13" "tty14" "tty15" "tty16" "tty17" "tty18" "tty19" "tty20" "tty21" "tty22" "tty23" "tty24" "tty25" "tty26" "tty27" "tty28" "tty29" "tty30" "tty31" "tty32" "tty33" "tty34" "tty35" "tty36" "tty37" "tty38" "tty39" "tty40" "tty41" "tty42" "tty43" "tty44" "tty45" "tty46" "tty47" "tty48" "tty49" "tty50" "tty51" "tty52" "tty53" "tty54" "tty55" "tty56" "tty57" "tty58" "tty59" "tty60" "tty61" "tty62" "tty63" "mcelog" "snapshot" "ptmx" "ttyS0" "ttyS1" "ttyS2" "ttyS3" "hpet" "input/" "psaux" "rtc0" "cpu_dma_latency" "network_latency" "network_throughput" "core" "fd/" "stdin" "stdout" "stderr" "char/" "rtc" "bus/" "bsg/" "sda" "sda1" "sda2" "sda3" "sda4" "block/" "disk/" "initctl" "pts/" "shm/" "loop0" "snd/" "net/" "ppp" "mapper/" "uinput" "cpu/" "autofs" "btrfs-control" "fuse" "nvram" "mei" "rfkill" "tpm0" "watchdog" "sg0" "agpgart" "media0" "video0" "v4l/" "video" "dri/" "fb0" "vcs10" "vcsa10" "vcs11" "vcsa11" "vcs12" "vcsa12" "vcs13" "vcsa13" "vcs14" "vcsa14" "vcs15" "vcsa15" "vcs16" "vcsa16" "vcs17" "vcsa17" "vcs18" "vcsa18" "vcs19" "vcsa19" "vcs2" "vcsa2" "vcs20" "vcsa20" "vcs21" "vcsa21" "vcs22" "vcsa22" "vcs23" "vcsa23" "vcs24" "vcsa24" "vcs25" "vcsa25" "vcs26" "vcsa26" "vcs27" "vcsa27" "vcs28" "vcsa28" "vcs29" "vcsa29" "vcs3" "vcsa3" "vcs30" "vcsa30" "vcs31" "vcsa31" "vcs32" "vcsa32" "vcs33" "vcsa33" "vcs34" "vcsa34" "vcs35" "vcsa35" "vcs36" "vcsa36" "vcs37" "vcsa37" "vcs38" "vcsa38" "vcs39" "vcsa39" "vcs4" "vcsa4" "vcs40" "vcsa40" "vcs41" "vcsa41" "vcs42" "vcsa42" "vcs43" "vcsa43" "vcs44" "vcsa44" "vcs45" "vcsa45" "vcs46" "vcsa46" "vcs47" "vcsa47" "vcs48" "vcsa48" "vcs49" "vcsa49" "vcs5" "vcsa5" "vcs50" "vcsa50" "vcs51" "vcsa51" "vcs52" "vcsa52" "vcs53" "vcsa53" "vcs54" "vcsa54" "vcs55" "vcsa55" "vcs56" "vcsa56" "vcs57" "vcsa57" "vcs58" "vcsa58" "vcs59" "vcsa59" "vcs6" "vcsa6" "vcs60" "vcsa60" "vcs61" "vcsa61" "vcs62" "vcsa62" "vcs63" "vcsa63" "vcs7" "vcsa7" "vcs8" "vcsa8" "vcs9" "vcsa9" "log" "../" "./")
+
+ ("/etc/httpd/" (20128 46062) "./" "run/" "build/" "modules/" "../" "logs/" "conf/" "sites-enabled/")
+
+ ("/etc/httpd/sites-enabled/" (20128 50674) "./" "hvz" "../")
+
+ ("/srv/http/" (20128 49221) "./" "testingfb.html" "cacti/" "../" "testing.html")
+
+ ("/srv/" (20119 16263) "./" "../" "ftp/" "http/")
+
+ ("/home/bbeecher/workspace/GenomicDesignation/" (20125 43645) "../" ".#genemap" "./" "genemap" "omim.txt" "test.txt" "morbidmap" "mim2gene.txt" "GenomicDB.uxf" "genemap.key" "genomicdb.object.violet")
+
+ ("/home/bbeecher/workspace/clojure/scip/" (20122 21248) "../" "./" "classes/" "lib/" ".gitignore" "README" "project.clj" "test/" "src/")
+
+ ("/home/bbeecher/workspace/clojure/" (20121 63345) "../" "Pragmatic.Bookshelf.Programming.Clojure.May.2009.eBook-BBL/" "./" "newtons_algo.clj" "scip/" "Joy of Clojure - Full Text/" "mire/" "Manning.-.The.Joy.of.Clojure.2011.RETAiL.eBOOk-rebOOk/" "sicpinclojure.com/" "sicpclojusre/")
+
+ ("/home/bbeecher/opt/" (20119 26248) "../" "./" "mongodata/" "packages/" "clojure-contrib/" "paredit/" "clyde/" "leiningen/" "clojure/")
+
+ ("/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/elpa/clojure-mode-1.11.2/" (20121 63868) "../" "./" "clojure-mode.elc" "clojure-mode-autoloads.el" "clojure-mode-pkg.elc" "clojure-mode-pkg.el" "clojure-mode.el")
+
+ ("/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/elpa/" (20122 18932) "../" "org-magit-0.1.2/" "clojure-test-mode-1.5.6/" "yasnippet-bundle-0.6.1/" "geben-0.26/" "./" "smex-1.1.1/" "magit-simple-keys-1.0.0/" "starter-kit-eshell-2.0.2/" "elisp-cache-1.15/" "gist-0.5/" "slime-ritz-0.1.6/" "package.el" "elein-0.2.2/" "starter-kit-js-2.0/" "slime-20100404.1/" "archives/" "anything-ipython-0.1.2009/" "slime-repl-20100404/" "yas-jit-0.5/" "json-1.2/" "elisp-slime-nav-0.1/" "magit-1.0.0/" "flymake-cursor-1.0/" "pony-mode-0.2/" "closure-lint-mode-0.1/" "anything-el-swank-fuzzy-0.1.2009/" "html-script-src-0.0.2/" "magithub-0.1/" "starter-kit-lisp-2.0.3/" "durendal-0.2/" "idle-highlight-mode-1.1.2/" "starter-kit-bindings-2.0.2/" "ecb-2.40/" "django-theme-1.0.2/" "org-20111013/" "nose-0.1.1/" "auto-complete-1.4.20110207/" "ido-ubiquitous-0.4/" "yasnippet-0.6.1/" "paredit-22/" "anything-1.287/" "clojure-mode-1.11.2/" "slime-clj-0.1.6/" "anything-config-0.4.1/" "rainbow-delimiters-1.3.1/" "auto-indent-mode-0.35/" "flymake-jslint-0.2/" "starter-kit-2.0.3/" "clojurescript-mode-0.5/" "android-mode-0.1/" "swank-clojure-1.1.0/" "find-file-in-project-3.0/")
+
+ ("/home/bbeecher/workspace/ritz/" (20122 5529) "../" "./" "classes/" "slime/" "build-elpa-package.sh" ".git/" "update-slime-ritz-package-version.sh" "start-release.sh" "ReleaseNotes.md" ".gitignore" "project.clj" "README.md" "finish-release.sh" "src/" "DEVELOPMENT.md")
+
+ ("/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/slime/" (20122 2763) "../" "nregex.lisp" "./" "start-swank.lisp" "swank.lisp" "metering.lisp" "swank-sbcl.lisp" "swank-match.lisp" "swank-backend.lisp" "swank-cmucl.lisp" "slime" "HACKING" "ChangeLog" "slime.el" "doc/" "hyperspec.el" "swank-abcl.lisp" "swank-source-file-cache.lisp" "sbcl-pprint-patch.lisp" "swank-loader.lisp" "swank-corman.lisp" "swank-ccl.lisp" "swank-source-path-parser.lisp" "test.sh" "swank-scl.lisp" "swank-allegro.lisp" "xref.lisp" "slime-autoloads.el" "mkdist.sh" "README" "swank-clisp.lisp" "PROBLEMS" "swank-lispworks.lisp" "contrib/" "swank-ecl.lisp" "swank-gray.lisp" ".cvsignore" "NEWS" "swank-rpc.lisp" "swank.asd")
+
+ ("/home/bbeecher/.emacs.d/elpa/slime-clj-0.1.6/" (20122 2408) "../" "./" "slime-clj-pkg.el" "slime-clj-pkg.elc" "slime-clj.el" "slime-clj-autoloads.el")
+
+ ("/home/bbeecher/.emacs.d/elpa/" (20122 1265) "../" "org-magit-0.1.2/" "clojure-test-mode-1.5.6/" "yasnippet-bundle-0.6.1/" "geben-0.26/" "./" "smex-1.1.1/" "magit-simple-keys-1.0.0/" "starter-kit-eshell-2.0.2/" "elisp-cache-1.15/" "gist-0.5/" "package.el" "elein-0.2.2/" "starter-kit-js-2.0/" "slime-20100404.1/" "archives/" "anything-ipython-0.1.2009/" "slime-repl-20100404/" "yas-jit-0.5/" "json-1.2/" "elisp-slime-nav-0.1/" "magit-1.0.0/" "flymake-cursor-1.0/" "pony-mode-0.2/" "closure-lint-mode-0.1/" "anything-el-swank-fuzzy-0.1.2009/" "html-script-src-0.0.2/" "magithub-0.1/" "starter-kit-lisp-2.0.3/" "durendal-0.2/" "idle-highlight-mode-1.1.2/" "starter-kit-bindings-2.0.2/" "ecb-2.40/" "django-theme-1.0.2/" "org-20111013/" "nose-0.1.1/" "auto-complete-1.4.20110207/" "ido-ubiquitous-0.4/" "yasnippet-0.6.1/" "paredit-22/" "anything-1.287/" "clojure-mode-1.11.2/" "slime-clj-0.1.6/" "anything-config-0.4.1/" "rainbow-delimiters-1.3.1/" "auto-indent-mode-0.35/" "flymake-jslint-0.2/" "starter-kit-2.0.3/" "clojurescript-mode-0.5/" "android-mode-0.1/" "swank-clojure-1.1.0/" "find-file-in-project-3.0/")
+
+ ("/home/bbeecher/.emacs.d/elpa/android-mode-0.1/" (20121 63862) "../" "./" "android-mode-pkg.elc" "android-mode-pkg.el" "android-mode-autoloads.el" "android-mode.elc" "android-mode.el")
+
+ ("/home/bbeecher/.emacs.d/elpa/ecb-2.40/" (20121 63877) "../" "ecb-autoloads.el" "ecb-examples.el" "ecb-help.el" "tree-buffer.el" "ecb-analyse.el" "ecb-autogen.elc" "ecb-cycle.el" "ecb-eshell.elc" "./" "ecb-winman-support.el" "ecb-tod.el" "ecb-face.elc" "ecb-eshell.el" "ecb-layout.elc" "ecb-upgrade.elc" "ecb-cedet-wrapper.el" "ecb-jde.elc" "ecb-face.el" "ecb-common-browser.elc" "ecb-speedbar.elc" "ecb-mode-line.elc" "ecb-examples.elc" "ecb-method-browser.el" "ecb-winman-support.elc" "ecb-cedet-wrapper.elc" "info-help/" "ecb-advice-test.elc" "ecb-advice-test.el" "ecb-cycle.elc" "ecb-util.el" "ecb-tod.elc" "ecb-file-browser.el" "ecb-semantic.elc" "ecb-util.elc" "ecb.el" "ecb-symboldef.el" "ecb-jde.el" "ecb-layout-defs.el" "ecb-upgrade.el" "silentcomp.elc" "ecb-mode-line.el" "ecb-layout.el" "ecb-pkg.el~" "ecb-compatibility.elc" "silentcomp.el" "ecb-method-browser.elc" "ecb-pkg.el" "ecb-create-layout.el" "ecb.elc" "ecb-navigate.el" "ecb-help.elc" "ecb-autogen.el" "ecb-layout-defs.elc" "ecb-create-layout.elc" "ecb-compilation.el" "ecb-compatibility.el" "ecb-common-browser.el" "ecb-file-browser.elc" "tree-buffer.elc" "ecb-autoloads.elc" "ecb-pkg.elc" "ecb-images/" "ecb-symboldef.elc" "ecb-speedbar.el" "ecb-semantic.el" "ecb-compilation.elc")
+
+ ("~/workspace/clojure/scip/src/scip/./" (20121 58185) "../" "core.clj" "./" ".#one.clj")
+
+ ("~/workspace/clojure/scip/src/scip/" (20121 58185) "../" "core.clj" "./" ".#one.clj")
+
+ ("~/workspace/clojure/scip/src/" (19966 10638) "../" "./" "scip/")
+
+ ("~/workspace/clojure/scip/" (19966 10638) "../" "./" ".gitignore" "README" "project.clj" "test/" "src/")
+
+ ("/home/bbeecher/workspace/clojure/scip/src/scip/" (20121 58185) "../" "core.clj" "./" ".#one.clj")
+
+ ("/etc/rc.d/" (20120 35352) "mysqld" "kdm" "lircd" "ntpdate" "./" "avahi-dnsconfd" "gdm" "ushare" "krb5-kadmind" "gpm" "pdnsd" "healthd" "sensord" "dnsmasq" "esd" "git-daemon" "acpid" "memcached" "crond" "snmpd" "ntpd" "hwclock" "dbus" "postgresql~" "xinetd" "slpd" "functions.d/" "adsl" "mongodb" "fancontrol" "tor" "nscd" "ppp" "fluidsynth" "ip6tables" "syslog-ng" "selenium-server" "postfix" "privoxy" "netfs" "sshd" "../" "alsa" "openntpd" "cpufreq" "iptables" "postgresql" "laptop-mode" "krb5-kdc" "networkmanager" "httpd" "network" "bluetooth" "hal" "svnserve" "functions" "irexecd" "avahi-daemon" "mono" "rsyncd" "brltty" "cupsd" "lircmd" "speechd" "ftpd" "mdadm" "rpcbind" "sensors")
+
+ ("/home/bbeecher/.emacs.d/elpa/slime-20100404.1/" (20119 27877) "../" "./" "slime.elc" "slime.el" "slime-pkg.elc" "slime-autoloads.el" "slime-pkg.el")
+
+ ("/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/elpa/slime-clj-0.1.6/" (20119 26860) "../" "./" "slime-clj-pkg.el" "slime-clj-pkg.elc" "slime-clj.elc" "slime-clj.el" "slime-clj-autoloads.el")
+
+ ("/home/" (19875 19948) "../" "www-data/" "./" "lost+found/" "postgres/" "bbeecher/")
+
+ ("/home/bbeecher/opt/leiningen/" (19965 33151) "../" "./" "lein")
+
+ ("/home/bbeecher/opt/clojure-contrib/" (19965 8508) "../" "./" "launchers/" "doc/" "modules/" ".git/" "clojurescript/" ".gitignore" "epl-v10.html" "pom.xml" "README.md" "src/" "config/" "Revisions")
+)
+
+;; ----- ido-unc-hosts-cache -----
+t

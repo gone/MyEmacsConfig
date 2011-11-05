@@ -1,0 +1,7 @@
+ideas for brubeck
+
+bake mongo in at a deeper layer - no more init_db_conn as application code.
+
+either dict shild should have some kind of logic that tells it what kind of db it's going into - mongoDocument or something, 
+or brubeck should have the idea db storage mechanisim. Managing connections is no fun :(
+

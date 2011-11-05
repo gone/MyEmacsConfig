@@ -1,0 +1,28 @@
+{% extends "modadmin/moderator_base.html" %}
+
+{% load i18n %}
+
+{% block body %}
+<h1>Tag Player</h1>
+<br>
+<form method="POST" action="{% url modadmin:kill_player slug=game.slug, username=player.user.username %}">{% csrf_token %}
+  {{form.non_field_errors}}
+  {{form.killer.errors}}  
+  <p class="nobottommargin"> Who made the tag?</p>
+  {{form.killer}}
+  <br>
+  <br>
+  <p class="nobottommargin"> Who was tagged?</p>
+  {{form.victim.errors}}
+  {{form.victim}}
+  <br>
+  <br>
+  <p class="nobottommargin"> when did the tag happen? </p>
+  {{form.kill_time.errors}}
+  {{form.kill_time}}
+  <br>
+  <br>
+  <input type="submit" value="{% trans "Update"%}" /> or <a href="{% url profile_list slug=game.slug %}">{% trans "Cancel" %}</a>
+</form>
+{% endblock %}
+

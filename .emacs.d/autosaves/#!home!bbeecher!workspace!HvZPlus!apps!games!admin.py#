@@ -1,0 +1,20 @@
+from django.contrib import admin
+from models import Game, GameRequest
+
+
+class GameAdmin(admin.ModelAdmin):
+    list_per_page = 25
+    prepopulated_fields = {'slug': ('name',)}
+    exclude = ('actions', 'creator')
+    list_display = ('name', 'slug', 'active', 'over',)
+    list_filter = ('over', 'active',)
+    search_fields = ('name', 'slug',)
+    ordering = ('name',)
+
+
+class GameRequestAdmin(admin.ModelAdmin):
+    list_per_page = 25
+
+
+admin.site.register(Game, GameAdmin)
+admin.site.register(GameRequest, GameRequestAdmin)

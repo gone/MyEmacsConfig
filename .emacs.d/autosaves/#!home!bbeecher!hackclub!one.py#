@@ -1,0 +1,36 @@
+yellow =       ["0",       "come",    "through",   "come",   "must",  "must",]
+cyan =         ["robot",     "robot",   "robot",     "obey",   "robot",]
+light_green =  ["may",       "1",       "may",       "may",]
+red =          ["not",       "not",     "not",]
+light_purple = ["harm",      "harm",    "being",     "being",]
+burgandy =     ["humanity",  ]
+green =        ["inaction",  "injure",  "inaction",  "har",]
+brown =        ["allow",     "human",   "allow",     "human",  "m",     "human",  ]
+blue =         ["hu",        "bei",     "2",]
+
+
+colors = [yellow, cyan, light_green, red, light_purple, burgandy, green, brown, blue]
+
+total = ['0', 'come', 'through', 'come', 'must', 'must', 'robot', 'robot', 'robot', 'obey', 'robot', 'may', '1', 'may', 'may', 'not', 'not', 'not', 'harm', 'harm', 'being', 'being', 'humanity', 'inaction', 'injure', 'inaction', 'har', 'allow', 'human', 'allow', 'human', 'm', 'human', 'hu', 'bei', '2']
+
+
+
+def perm(current_string, lists,): 
+    if len(lists ) == 1: # last one, so spit out every iteration
+        for x in lists[0]: 
+            ff.add(current_string + x)
+    else:
+        for x in lists[0]:
+            perm(current_string + x, lists[1:])
+
+
+
+
+
+
+
+
+0 manity ng m s law ch aw
+wach wal s m gn ytinam 0
+
+hu bei har being First su L disobey

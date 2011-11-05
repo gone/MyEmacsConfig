@@ -1,7 +1,3 @@
-
-
-
-
 (require 'auto-complete)
 (require 'yasnippet)
 

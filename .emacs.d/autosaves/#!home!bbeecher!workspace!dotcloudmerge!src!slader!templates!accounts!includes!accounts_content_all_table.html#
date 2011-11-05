@@ -1,0 +1,17 @@
+{% load endless %}
+
+{% paginate all_solutions using "all_page" %}
+{% for solution in all_solutions %}
+    <div class="tr {% cycle "" "odd" %}">
+        <div class="td td1">{% for eig in solution.exercise.exerciseingroup_set.all %}<a href="{{ eig.get_absolute_url }}">{{ eig }}</a><br />{% endfor %}</div>
+        <div class="td td2 center">{{ solution.modified_on|date }}</div>
+        <div class="td td3 center">{{ solution.status }}</div>
+        <div class="td td4 center">{{ solution.score }}</div>
+        <div class="td td5 center">{{ solution.view_count }}</div>
+        <div class="td td6 center"><a href="{{ solution.get_edit_url }}" class="solutionEdit">&nbsp;</a></div>
+        <div class="td td7 center">
+            {% if not solution.finished %}<a href="{% url solutions_delete_solution solution_slug=solution.uuid %}" class="solutionDelete">&nbsp;</a>{% endif %}
+        </div>
+    </div>
+{% endfor %}
+{% show_more "show more" %}

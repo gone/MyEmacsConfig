@@ -1,0 +1,1809 @@
+import os, csv, re
+import datetime
+import math
+import urlparse
+import urllib2
+import numpy
+from collections import defaultdict
+
+from django.conf import settings
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+from django.core.mail import EmailMultiAlternatives
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from django.core.urlresolvers import resolve, reverse
+from django.core.urlresolvers import Resolver404
+from django.db import connection, IntegrityError, transaction
+from django.db.models import Min, Count, F, Max, Avg, Q
+from django.http import HttpResponse, Http404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.template import RequestContext
+from django.template.defaultfilters import slugify
+from django.template.loader import render_to_string
+from django.utils import simplejson
+from django.utils.datastructures import SortedDict
+from django.utils.safestring import mark_safe
+from django.views.decorators.http import require_POST
+
+from johnny import cache
+from endless_pagination.decorators import page_template
+from badges.models import Badge
+
+from slader.common.analytics import AnalyticsFeed
+from slader.common.util import ankey, naturalsort_query, HttpResponseNotAuthorized, mod_test, js_ts, get_object_from_form_ident
+from slader.contributor.models import ChapterAssignment
+from slader.contributor.utils import handle_pages_input
+from slader.demographics.models import School
+from slader.meta.models import TextbookReservation
+from slader.moderator.models import ModerationSkillSet, ReviewNeeded, FurtherAction, Specialization
+from slader.moderator import review_queue
+from slader.moderator import special_moderation
+from slader.moderator.forms import DupeExerciseOffsetForm, AddFlagForm
+from slader.moderator.special_moderation import SPECIAL_TYPES
+from slader.moderator.util import get_sorted_actions_for_user
+from slader.payment.models import SolutionView, AnonymousSession, AnonymousUserView
+from slader.payment.tranches import UserTranche, totalTranche
+from slader.payment.util import get_redeemable_balance, convert_points_to_dollars, UserPointsLogic
+from slader.solutions.models import Textbook, Section, Exercise, TextbookExerciseGroup, DisplayTextbook, Solution, Chapter, TextbookPage, ExerciseInGroup, ExplanationCell
+
+
+def get_page_no(request):
+    try:
+        return int(request.GET.get('page', 1))
+    except ValueError:
+        return 1 
+
+
+def get_page(request, pages):
+    pageno = get_page_no(request)
+    try:
+        return pages.page(pageno)
+    except (EmptyPage, InvalidPage):
+        return pages.page(pages.num_pages)
+
+
+@login_required
+@user_passes_test(mod_test)
+def moderator_home(request):
+
+    now = datetime.datetime.now()
+    today_start = datetime.datetime(now.year, now.month, now.day, 0, 0, 0)
+    week_start = today_start - datetime.timedelta(days=datetime.datetime.now().weekday())
+    month_start = datetime.datetime(now.year, now.month, 1, 0, 0, 0)
+
+    reg_stats = {}
+    reg_stats['today'] = (User.objects.filter(date_joined__gte=today_start).count(), today_start)
+    reg_stats['week'] = (User.objects.filter(date_joined__gte=week_start).count(), week_start)
+    reg_stats['month'] = (User.objects.filter(date_joined__gte=month_start).count(), month_start)
+
+    return render_to_response('moderator/moderator_home.html', RequestContext(request, {'reg_stats': reg_stats
+                                                                                        }))
+
+
+@login_required
+@user_passes_test(mod_test)
+def textbook_detail_by_chapter(request, textbook_id):
+    """displays details on a given textbook"""
+    try:
+        textbook_id = int(textbook_id)
+    except ValueError:
+        raise Http404
+    textbook =  get_object_or_404(Textbook, id=textbook_id)
+    chapter_sections = [ch.get_chapter_sections() for ch in textbook.chapters.all()]
+    chapter_sections.sort(key=lambda cs:ankey(cs.chapter.name))
+
+    pages = Paginator(chapter_sections, 5)
+    chapter_sections = get_page(request, pages)
+
+    return render_to_response('moderator/moderator_textbook_chapters_list.html', RequestContext(request, {'textbook': textbook,
+                                                                                                     'chapter_sections': chapter_sections,
+                                                                                                     'pages': chapter_sections,
+                                                                                                     }))
+
+
+@login_required
+@user_passes_test(mod_test)
+def textbook_detail_by_page(request, textbook_id):
+    """
+    displays details on a given textbook page
+
+    """
+
+    try:
+        textbook_id = int(textbook_id)
+    except ValueError:
+        raise Http404
+    textbook =  get_object_or_404(Textbook, id=textbook_id)
+
+    pages = textbook.active_pages
+
+    for page in pages:
+        page.page_groups = [ ( group, Exercise.active_objects.filter(groups=group, pages=page) ) 
+                                    for group in page.active_groups ]
+
+    return render_to_response('moderator/moderator_textbook_pages_list.html', RequestContext(request, {'textbook': textbook,
+                                                                                                  'pages': pages}))
+
+
+@login_required
+@user_passes_test(mod_test)
+def section_detail(request, section_id):
+    """displays details on a given section"""
+    try:
+        section_id = int(section_id)
+    except ValueError:
+        raise Http404
+    section =  get_object_or_404(Section, id=section_id)
+    exgroups = section.groups.all()
+    pages = Paginator(exgroups, 10)
+    exgroups = get_page(request, pages)
+    return render_to_response('moderator/moderator_section_details.html', RequestContext(request, {'section': section,
+                                                                                                   'exgroups':exgroups,
+                                                                                                   'pages':exgroups,}))
+
+
+@login_required
+@user_passes_test(mod_test)
+def exercise_group_list(request, textbook_id):
+    """displays a list of textbookExercises"""
+    
+    textbook =  get_object_or_404(Textbook, id=textbook_id)
+    exgroups = textbook.groups.all()
+    pages = Paginator(exgroups, 10)
+    exgroups = get_page(request, pages)
+    return render_to_response('moderator/moderator_textbook_exercisegroup_list.html', RequestContext(request, {  'pages':exgroups,
+                                                                                                                 'exgroups':exgroups,
+                                                                                                                 'textbook':textbook}))
+
+
+one_week = datetime.timedelta(days=7)
+def calc_weeks_progress(user, week):
+    """returns number of exercises finished between the date given, and one week previously"""
+    return Solution.objects.filter(user=user).filter(finished=True).filter(modified_on__range=(week-one_week, week)).count()
+    
+    
+def calc_velocity(user):
+    """
+    pull out the first solution this user made, and from that point on find the average of their finalization rate per day.
+    Based on that average, estimate a time the book will be finished.
+    Returns the speed, and the estimated finishing time
+    """
+    #find average per day
+    finished_exercises = Solution.objects.filter(user=user).filter(finished=True)
+    try:
+        first_finalization = finished_exercises.order_by('modified_on')[0]
+    except IndexError:
+        return 0, 0
+    if first_finalization.modified_on > datetime.datetime.now():
+        return 0,0 #something is fishy, just bail
+    timediff = datetime.datetime.now() - first_finalization.modified_on
+    num_finished = finished_exercises.count()
+    if timediff.days == 0:
+        ave_per_day = num_finished
+    else:
+        ave_per_day = int(math.ceil(float(num_finished)/float(timediff.days)))
+
+    #use that ave to calc finish by date
+    textbooks = (tr.textbook for tr in TextbookReservation.objects.filter(user=user))
+    num_exercises = sum(textbook.active_exercises.count() for textbook in textbooks)
+    days_left = num_exercises/ave_per_day
+    days_left = datetime.date.today() + datetime.timedelta(days=days_left)
+
+    return ave_per_day, days_left
+
+
+def get_users_to_moderate(user):
+    try:
+        all_users_to_moderate = User.objects.filter(textbookreservation__textbook__in=user.skills.textbooks.all())
+        return all_users_to_moderate.exclude(groups__name='exclude_from_moderation').distinct()
+    except ModerationSkillSet.DoesNotExist:
+        return None
+
+
+@login_required
+@user_passes_test(mod_test)
+def moderator_queues(request):
+    if request.method == "POST":
+        specialization = request.POST.get('specialization', None)
+        textbook_id = request.POST.get('textbook_id', None)
+        review_needed = review_queue.pop_review(request.user, specialization, textbook_id)
+        return redirect(special_moderation.dispatch, review_id=review_needed.id)
+
+    try:
+        # just show all specializations for this user as the query to only show those with active items was taking FOREVER
+        specials = Specialization.objects.filter(moderationskillset__user=request.user)
+        specials = [ (special, ReviewNeeded.objects.filter(specialization=special, closed=False)) for special in specials ]
+        specials.sort(key=lambda s: s[1].count(), reverse=True)
+    except ModerationSkillSet.DoesNotExist:
+        specials = []
+
+    sort = request.GET.get('sort', 'review_count')
+
+    all_books = []
+    _all_books = Textbook.objects.all()
+    for book in _all_books:
+        review_count = Solution.objects.filter(reviewed=False, finished=True, populated=True, exercise__exerciseingroup__group__textbook=book).exclude(reviewneeded__action__closed=False).count()
+        if review_count:
+            book.review_count = review_count
+            all_books.append(book)
+    
+    if sort == 'review_count':
+        all_books.sort(key=lambda b: getattr(b, sort), reverse=True)
+    else:
+        all_books.sort(key=lambda b: getattr(b, sort))
+
+    return render_to_response('moderator/moderator_queues.html', RequestContext(request, {'all_books': all_books, 'specials': specials}))
+
+
+@login_required
+@user_passes_test(mod_test)
+def user_list(request):
+
+    group = request.GET.get('group', None)
+
+    active_users = []
+    solution_users = Solution.objects.filter(finished=True, populated=True).values('user').annotate(user_count=Count('user'))
+    for su in solution_users:
+        user = User.objects.get(id=su['user'])
+        if group:
+            if not group in [grp.name for grp in user.groups.all()]:
+                continue
+        user_solutions = Solution.objects.filter(user=user, populated=True, finished=True).order_by('-created_on')
+        unreviewed_count = Solution.objects.filter(user=user, populated=True, finished=True, reviewed=False).count()
+        active_users.append( [ user, su['user_count'], user_solutions[0].created_on, convert_points_to_dollars(get_redeemable_balance(user)), unreviewed_count ] )
+
+    active_users.sort(key=lambda u: u[2], reverse=True)
+
+    return render_to_response('moderator/moderator_user_list.html', RequestContext(request, {'active_users': active_users}))
+
+
+@login_required
+@user_passes_test(mod_test)
+def chapter_reservations(request):
+
+    sort = request.GET.get('sort', 'last_completed')
+    all_chapters = Chapter.objects.filter(assignments__isnull=False)
+    for chapter in all_chapters:
+        chapter.user = chapter.assignments.all()[0].user
+        chapter.res = chapter.assignments.all()[0]
+        user_solutions = Solution.objects.filter(user=chapter.user, exercise__groups__chapter=chapter, populated=True, finished=True).order_by('-created_on')
+        chapter.num_complete = user_solutions.count()
+        if user_solutions:
+            chapter.last_completed = user_solutions[0].created_on
+        else:
+            chapter.last_completed = datetime.datetime(1900, 01, 01)
+    
+    all_chapters = list(all_chapters)
+    if sort == 'num_complete':
+        all_chapters.sort(key=lambda c: c.num_complete, reverse=True)
+    if sort == 'reservation_date':
+        all_chapters.sort(key=lambda c: c.res.created_on, reverse=True)
+    else:
+        all_chapters.sort(key=lambda c: c.last_completed, reverse=True)
+
+    available_chapters = Chapter.objects.filter(assignments__isnull=True, textbook__starred=True).count()
+
+    return render_to_response('moderator/chapter_reservations.html', RequestContext(request, {'all_chapters': all_chapters, 'available_chapters': available_chapters}))
+
+
+@require_POST
+@login_required
+@user_passes_test(mod_test)
+def chapter_reservation_delete(request):
+    res_id = request.POST.get('reservation_id', None)
+    if request.POST.get('reservation_id', None):
+        assignment = ChapterAssignment.objects.get(id=res_id)
+        assignment.delete()
+        return HttpResponse()
+    else:
+        raise Http404
+
+
+@require_POST
+@login_required
+@user_passes_test(mod_test)
+def chapter_reservation_approve(request):
+    res_id = request.POST.get('reservation_id', None)
+    if request.POST.get('reservation_id', None):
+        assignment = ChapterAssignment.objects.get(id=res_id)
+        assignment.approved = True
+        assignment.save()
+
+        the_user = assignment.user
+        chapter = assignment.chapter 
+
+        # send the email
+        subject_line = 'Slader - Thanks for requesting a chapter!'
+
+        email_context = RequestContext(request, {'the_user': the_user, 'chapter': chapter,})
+        text_content = render_to_string('solutions/includes/chapter_request_email.txt',
+                                            context_instance=email_context)
+
+        msg = EmailMultiAlternatives(subject_line, text_content, 'contributor@slader.com', [the_user.email], headers={})
+        msg.send(fail_silently=False)
+
+        return HttpResponse()
+    else:
+        raise Http404
+
+
+@page_template("moderator/includes/moderator_user_list_all_table.html")
+@login_required
+@user_passes_test(mod_test)
+def user_list_all(request, user_id, extra_context=None, template='moderator/moderator_user_list_all.html'):
+
+    user = User.objects.get(id=user_id)
+
+    all_solutions = Solution.objects.filter(user=user).order_by('-modified_on')
+    all_count = all_solutions.count()
+
+    userlogic = UserPointsLogic(user=user)
+
+    context = {
+        'all_solutions': all_solutions,
+        'all_count': all_count,
+        'user': user,
+        'redeemable_balance': get_redeemable_balance(user),
+        'total_balance': userlogic.get_balance(),
+    }
+
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return render_to_response(template, context,
+                              context_instance=RequestContext(request))
+
+
+@login_required
+@user_passes_test(mod_test)
+def user_list_preview(request):
+    user = User.objects.get(id=request.POST['user_id'])
+    submitted_content = Solution.objects.filter(user=user).order_by('-modified_on')[:10]
+
+    rendered = render_to_string('moderator/includes/moderator_user_list_details.html', {"submitted_content": submitted_content, 'user': user})
+    rdict = {'rendered': rendered}
+    json = simplejson.dumps(rdict, ensure_ascii=False)
+    return HttpResponse(json, mimetype='application/json')
+
+
+@login_required
+@user_passes_test(mod_test)
+def view_further_action(request):
+
+    user_actions = User.objects.filter(solution__reviewneeded__action__closed=False).annotate(Count('solution__reviewneeded__action')).order_by('last_name')
+
+    return render_to_response('moderator/further_action_list.html', RequestContext(request, {"users": user_actions}))
+
+
+@login_required
+@user_passes_test(mod_test)
+def get_sorted_action_ajax(request):
+    user = User.objects.get(id=request.POST['user_id'])
+    sorted_actions = get_sorted_actions_for_user(user)
+
+    rendered = render_to_string('moderator/further_action_sorted_for_user.html', {"sorted_actions": sorted_actions})
+    rdict = {'rendered': rendered}
+    json = simplejson.dumps(rdict, ensure_ascii=False)
+    return HttpResponse(json, mimetype='application/json')
+
+
+@login_required
+@user_passes_test(mod_test)
+def view_further_action_details(request, action_id):
+    action = get_object_or_404(FurtherAction, id=action_id)
+    return render_to_response('moderator/further_action_details.html', {"action":action})
+    
+
+@login_required
+@user_passes_test(mod_test)
+def cancel_further_action(request, action_id):
+    """ 
+    Allows a super moderator to cancel a further action, create a review, then immediately see it
+    """
+
+    def redo_review(solution):
+        reviews = ReviewNeeded.objects.filter(solution=solution)
+        actions = FurtherAction.objects.filter(review__in=reviews)
+        for review in reviews.filter(closed=False):
+            review.closed = True
+            review.notes =  "  Cancelled by supermoderator"
+            review.resolved = datetime.datetime.now()
+            review.save()
+        for action in actions.filter(closed=False):
+            action.closed = True
+            action.notes =  "  Cancelled by supermoderator"
+            action.save()
+        new_review = ReviewNeeded.objects.create(solution=solution)
+        return new_review
+
+    action = get_object_or_404(FurtherAction, id=action_id)
+    review = redo_review(action.review.solution)
+    review_needed = review_queue.pop_review(request.user, review=review)
+    return redirect(special_moderation.dispatch, review_id=review_needed.id)
+    
+
+@login_required
+def view_moderators(request, moderator_user_id=None):
+    if moderator_user_id:
+        mod = get_object_or_404(User, id=moderator_user_id)
+        all_reviews = ReviewNeeded.objects.filter(resolved_by=mod).order_by('-resolved')
+        pages = Paginator(all_reviews, 20)
+        reviews = get_page(request, pages)
+        return render_to_response('moderator/moderator_recent_activity.html', RequestContext(request, {"mod":mod,"reviews":reviews}))
+    all_mods = User.objects.filter(groups__name='moderators')
+
+    for mod in all_mods:
+        counts = []
+        now = datetime.datetime.now()
+        start = datetime.datetime(now.year, now.month, now.day, 0, 0, 0)
+        for day in xrange(0,5):
+            end = start+datetime.timedelta(days=1)
+            counts.append(ReviewNeeded.objects.filter(resolved_by=mod, resolved__range=(start, end)).count())
+            start = start-datetime.timedelta(days=1)
+        mod.counts = counts
+    return render_to_response('moderator/mod_list.html', RequestContext(request, {"mods_with_counts":all_mods}))
+
+
+@login_required
+@user_passes_test(mod_test)
+def dupe_textbook_exercise_group(request, textbook1=None, textbook2=None, textbook_msg=None, books_groups=None, number_pg_forms=6):
+    """
+    A view for duping from one textbook group to another
+    
+    """
+
+    if request.GET.get('textbook1', None) and request.GET.get('textbook2', None):
+        textbook1_isbn = request.GET['textbook1']
+        textbook2_isbn = request.GET['textbook2']
+
+        textbook1 = get_object_or_404(Textbook, isbn=textbook1_isbn)
+        textbook2 = get_object_or_404(Textbook, isbn=textbook2_isbn)
+        if textbook1 == textbook2:
+            textbook1 = None
+            textbook2 = None
+            textbook_msg = "You cannot duplicate groups in the same book."
+        
+        else:
+            books_groups = []
+
+            textbook_groups = list(TextbookExerciseGroup.active_objects.filter(textbook__in=[textbook1, textbook2]).distinct())
+            def _sort_key(g):
+                try:
+                    return ankey(g.pages.all()[0].name)
+                except IndexError:
+                    return '0'
+            textbook_groups.sort(key=lambda g: _sort_key(g))
+
+            for group in textbook_groups:
+                if group.textbook == textbook1:
+                    _t1 = group
+                    _t1.all_pages = [ (page, ExerciseInGroup.objects.filter(page=page, group=_t1)) for page in sorted(_t1.active_pages, key=lambda p: ankey(p.name))]
+                    _this_group = {'t1': _t1}
+                    try:
+                        _t2 = TextbookExerciseGroup.active_objects.filter(exercises__in=group.active_exercises.all(), textbook=textbook2).distinct()[0]
+                        _t2.all_pages = [ (page, ExerciseInGroup.objects.filter(page=page, group=_t2)) for page in sorted(_t2.active_pages, key=lambda p: ankey(p.name))]
+                        _this_group['t2'] = _t2
+                    except (TextbookExerciseGroup.DoesNotExist, IndexError):
+                        _this_group['t2'] = None
+
+                elif group.textbook == textbook2:
+                    _t2 = group
+                    _t2.all_pages = [ (page, ExerciseInGroup.objects.filter(page=page, group=_t2)) for page in sorted(_t2.active_pages, key=lambda p: ankey(p.name))]
+                    _this_group = {'t2': group}
+                    try:
+                        _t1 = TextbookExerciseGroup.active_objects.filter(exercises__in=group.active_exercises.all(), textbook=textbook1).distinct()[0]
+                        _t1.all_pages = [ (page, ExerciseInGroup.objects.filter(page=page, group=_t1)) for page in sorted(_t1.active_pages, key=lambda p: ankey(p.name))]
+                        _this_group['t1'] = _t1
+                    except (TextbookExerciseGroup.DoesNotExist, IndexError):
+                        _this_group['t1'] = None
+
+                '''
+                # all groups are dupable for now ... and ever?
+                if group.active_exercises.filter(solutions__reviewed=True).count() == group.active_exercises.count():
+                    _this_group['dupable'] = True
+                else:
+                    _this_group['dupable'] = False
+                '''
+                _this_group['dupable'] = True
+
+                if _this_group not in books_groups:
+                    books_groups.append(_this_group)
+
+            textbook2.section_choices = list(Section.objects.filter(textbook=textbook2, active=True))
+            if textbook2.section_choices:
+                textbook2.section_choices.sort(key=lambda s: ankey(s.name))
+                textbook2.section_choices.sort(key=lambda s: ankey(s.chapter.name))
+
+            textbook2.chapter_choices = list(Chapter.objects.filter(textbook=textbook2, active=True))
+            if textbook2.chapter_choices:
+                textbook2.chapter_choices.sort(key=lambda c: ankey(c.name))
+    
+    textbooks = Textbook.active_objects.all()
+
+    return render_to_response('moderator/dupe_textbook_exercise_group.html', RequestContext(request, {'textbooks': textbooks,
+                                                                                                      'textbook1': textbook1,
+                                                                                                      'textbook2': textbook2,
+                                                                                                      'books_groups': books_groups,
+                                                                                                      'textbook_msg': textbook_msg,
+                                                                                                      'number_pg_forms': [i for i in range(0,number_pg_forms)] }))
+    
+
+@login_required
+@user_passes_test(mod_test)
+def ajax_dupe_group(request, number_pg_forms=6, error=None):
+
+    if request.method == 'POST':
+        
+        pages_input = handle_pages_input(request.POST)
+
+        if not pages_input:
+            error = 'You must enter some page/exercise information to proceed.'
+
+        if error:
+            rdict = {'error_message': error}
+        else:
+            data = request.POST
+            textbook2 = Textbook.objects.get(id=data['textbook2_id'])
+            dupe_group = TextbookExerciseGroup.objects.get(id=data['group1_id'])
+            if data.get('group2_id', None):
+                new_group = TextbookExerciseGroup.objects.get(id=data['group2_id'])
+            else:
+                try:
+                    # see if a group with these exercises already exists ... if it does, we just return 404 since 
+                    #we don't want to go forward with changes, they are in process
+                    _group = TextbookExerciseGroup.active_objects.filter(exercises__in=dupe_group.active_exercises.all(), textbook=textbook2).distinct()[0]
+                    # just give a blank response ... just don't want to give bad data!
+                    return HttpResponse()
+                except IndexError:
+                    # if it doesn't exist, create it
+                    new_group = TextbookExerciseGroup()
+                    new_group.name = data['new_group_name']
+                    new_group.textbook = textbook2
+
+                    # assign chapter, throw error if not supplied, as it is required
+                    if data.get('chapter', None):
+                        new_group.chapter_id = data['chapter']
+                    else:
+                        rdict = {'error_message': 'You must specify a chapter for this group.'}
+                        json = simplejson.dumps(rdict, ensure_ascii=False)
+                        return HttpResponse(json, mimetype='application/json')
+
+                    if data['section']:
+                        new_group.section_id = data['section']
+                    new_group.save()
+
+            #now process the pages/exercises and add them to the new group
+            keyed_input = defaultdict(lambda: {'pg': '', 'ex': ''})
+            for v, value in pages_input.iteritems():
+                trash, type, groupno = v.split('_')
+                keyed_input[groupno][type] = value
+
+            all_ex_in_group = list(dupe_group.active_eig)
+            all_ex_in_group.sort(key=lambda e: ankey(e.name))
+            
+            for group, info in keyed_input.iteritems():
+                page_name = info['pg']
+
+                exercise_ranges = info['ex'].split(',')
+
+                for _rng in exercise_ranges:
+                    _rng = _rng.strip()
+                    if '-' in _rng:
+                        start, end = _rng.split('-')
+                    else:
+                        start = end = _rng
+
+                    try:
+                        start_ex = ExerciseInGroup.objects.get(group=dupe_group, name=start)
+                        end_ex = ExerciseInGroup.objects.get(group=dupe_group, name=end)
+                    except ExerciseInGroup.DoesNotExist:
+                        start_ex = None
+                        end_ex = None
+                        #rdict = {'error_message': 'Verify that value entered contains a valid exercise or valid exercise range, containing the exact names of exercises listed to the left'}
+                        #json = simplejson.dumps(rdict, ensure_ascii=False)
+                        #return HttpResponse(json, mimetype='application/json')
+                        pass
+
+                    try:
+                        page = TextbookPage.objects.get(textbook=textbook2, name=page_name)
+                    except TextbookPage.DoesNotExist:
+                        try:
+                            page = TextbookPage(textbook=textbook2, name=page_name)
+                            sid = transaction.savepoint()
+                            page.save(force_insert=True)
+                            transaction.savepoint_commit(sid)
+                        except IntegrityError, e:
+                            transaction.savepoint_rollback(sid)
+                            try:
+                                page = TextbookPage.objects.get(textbook=textbook2, name=page_name)
+                            except TextbookPage.DoesNotExist:
+                                raise e
+
+                    new_group.pages.add(page)
+
+                    if start_ex and end_ex:
+                        exs_to_copy = [ ex for ex in all_ex_in_group if all_ex_in_group.index(start_ex) <= all_ex_in_group.index(ex) <= all_ex_in_group.index(end_ex) ]
+                    else:
+                        exs_to_copy = []
+
+                    for ex in exs_to_copy:
+                        try:
+                            #may change page, but see if this ex already in this group.
+                            ex_in_group = ExerciseInGroup.objects.get(group=new_group, exercise=ex.exercise)
+                            #if it is, change page
+                            ex_in_group.page = page
+                            ex_in_group.save()
+                        except ExerciseInGroup.DoesNotExist:
+                            ex_in_group = ExerciseInGroup.objects.create(group=new_group, exercise=ex.exercise, page=page, name=ex.name)
+                
+            textbook2 = Textbook.objects.get(id=data['textbook2_id'])
+
+            new_group.all_pages = [ (page, ExerciseInGroup.objects.filter(page=page, group=new_group)) for page in sorted(new_group.active_pages, key=lambda p: ankey(p.name))]
+
+            new_group_rendered = render_to_string('moderator/includes/dupe_edit_form.html', 
+                                        {'new_group': new_group, 'dupe_group': dupe_group, 'textbook2': textbook2, 'number_pg_forms': [i for i in range(0,number_pg_forms)]}
+                                        )
+            rdict = {'new_group': new_group_rendered}
+
+        json = simplejson.dumps(rdict, ensure_ascii=False)
+        return HttpResponse(json, mimetype='application/json')
+
+    else:
+        return Http404()
+
+
+@login_required
+@user_passes_test(mod_test)
+def dashboard(request):
+    '''
+    View exercises that visitors want to view but for which we have no solutions!
+    '''
+    g_feed = AnalyticsFeed()
+    today = datetime.date.today()
+    one_week_ago = today - datetime.timedelta(days=7)
+
+    g_feed.get_visits_for_time_period(date_start=one_week_ago, date_end=today)
+    
+    stats = {}
+
+    dead_other_links = []
+    textbooks_visited = []
+    pages_visited = []
+    pages_visited_wo_solutions = []
+    exercises_visited = []
+    exercises_visited_wo_solutions = []
+    
+    for entry in g_feed.feed.entry:
+        if '/account/login/?next' not in entry.dimension[0].value:
+            try:
+                func, args, kwargs = resolve(entry.dimension[0].value)
+                if 'exercise_slug' in kwargs:
+                    try:
+                        dt = DisplayTextbook.objects.get(composite_slug=kwargs['composite_slug'])
+                        page = TextbookPage.objects.get(slug=kwargs['page_slug'], textbook__display_textbook=dt)
+                        eig = ExerciseInGroup.objects.get(slug=kwargs['exercise_slug'], page__slug=kwargs['page_slug'], page__textbook__display_textbook=dt)
+                        solutions = Solution.objects.filter(exercise=eig.exercise, finished=True)
+                        if not solutions.count():
+                            exercises_visited_wo_solutions.append( {'textbook': dt, 'page': page, 'exercise': eig, 'visits': entry.metric[0].value} )
+                        else:
+                            exercises_visited.append( {'textbook': dt, 'page': page, 'exercise': eig, 'visits': entry.metric[0].value} )
+                    except: 
+                        dead_other_links.append( (entry.dimension[0].value, entry.metric[0].value) )
+
+                elif 'page_slug' in kwargs:
+
+                    try:
+                        dt = DisplayTextbook.objects.get(composite_slug=kwargs['composite_slug'])
+                        page = TextbookPage.objects.get(slug=kwargs['page_slug'], textbook__display_textbook=dt)
+                        solutions = Solution.objects.filter(exercise__pages=page, finished=True)
+                        if not solutions.count():
+                            pages_visited_wo_solutions.append( {'textbook': dt, 'page': page, 'visits': entry.metric[0].value} )
+                        else:
+                            pages_visited.append( {'textbook': dt, 'page': page, 'visits': entry.metric[0].value} )
+                    except:
+                        dead_other_links.append( (entry.dimension[0].value, entry.metric[0].value) )
+
+                else:
+                    try:
+                        dt = DisplayTextbook.objects.get(composite_slug=kwargs['composite_slug'])
+                        textbooks_visited.append( {'textbook': dt, 'visits': entry.metric[0].value} )
+                    except (KeyError, DisplayTextbook.DoesNotExist):
+                        dead_other_links.append( (entry.dimension[0].value, entry.metric[0].value) )
+
+            except (Resolver404, DisplayTextbook.DoesNotExist):
+                dead_other_links.append( (entry.dimension[0].value, entry.metric[0].value) )
+
+    stats['dead_other_links'] = dead_other_links
+    stats['textbooks_visited'] = textbooks_visited
+    
+    pages_visited.sort(key=lambda p: p['textbook'].title)
+    pages_visited.sort(key=lambda p: p['page'].name)
+    pages_visited.sort(key=lambda p: int(p['visits']), reverse=True)
+    stats['pages_visited'] = pages_visited
+    
+    pages_visited_wo_solutions.sort(key=lambda p: p['textbook'].title)
+    pages_visited_wo_solutions.sort(key=lambda p: p['page'].name)
+    pages_visited_wo_solutions.sort(key=lambda p: int(p['visits']), reverse=True)
+    stats['pages_visited_wo_solutions'] = pages_visited_wo_solutions
+    
+    exercises_visited.sort(key=lambda p: p['textbook'].title)
+    exercises_visited.sort(key=lambda p: p['page'].name)
+    exercises_visited.sort(key=lambda p: p['exercise'].name)
+    exercises_visited.sort(key=lambda p: int(p['visits']), reverse=True)
+    stats['exercises_visited'] = exercises_visited
+    
+    exercises_visited_wo_solutions.sort(key=lambda p: p['textbook'].title)
+    exercises_visited_wo_solutions.sort(key=lambda p: p['page'].name)
+    exercises_visited_wo_solutions.sort(key=lambda p: p['exercise'].name)
+    exercises_visited_wo_solutions.sort(key=lambda p: int(p['visits']), reverse=True)
+    stats['exercises_visited_wo_solutions'] = exercises_visited_wo_solutions
+
+    return render_to_response('moderator/dashboard.html', RequestContext(request, {'stats': stats,
+                                                                                         }))
+
+
+@login_required
+@user_passes_test(mod_test)
+def textbook_dashboard(request):
+    '''
+    Dashboard of display textbook progress
+    '''
+
+    isbns = request.GET.get('isbn', None)
+    release_date = request.GET.get('release_date', None)
+    sort = request.GET.get('sort', None)
+    filter = request.GET.get('filter', None)
+
+    if isbns:
+        try:
+            textbooks = Textbook.objects.filter(isbn__in=isbns.split(','))
+        except:
+            textbooks = Textbook.objects.all()
+    else:
+        textbooks = Textbook.objects.all()
+
+    if release_date:
+        textbooks = textbooks.filter(families__family_textbooks__target_release_date=release_date)
+
+    if filter == 'starred':
+        textbooks = textbooks.filter(starred=True)
+
+    all_textbooks = []
+    for textbook in textbooks:
+        for family in textbook.families.all():
+            t = textbook
+            t.fam = family.name
+            t.master_fam = family.master_family.name
+            all_textbooks.append(t)
+        if not textbook.families.count():
+            t = textbook
+            t.fam = None
+            t.master_fam = None
+            all_textbooks.append(t)
+
+    if sort:
+        if sort == 'family':
+            all_textbooks.sort(key=lambda t: t.fam)
+            all_textbooks.sort(key=lambda t: t.master_fam)
+        elif sort == 'target_release_date':
+            def getdatefromt(t):
+                if t.target_release_date:
+                    return t.target_release_date
+                else:
+                    return datetime.date(9999,01,01)
+            all_textbooks.sort(key=lambda t: getdatefromt(t))
+        elif sort == 'publisher':
+            def getpubfromt(t):
+                if t.publisher:
+                    return t.publisher.name
+                else:
+                    return ''
+            all_textbooks.sort(key=lambda t: getpubfromt(t))
+        else:
+            all_textbooks.sort(key=lambda t: getattr(t, sort))
+
+    potential_chapter_users = User.objects.filter(Q(groups__name="contributors") | Q(groups__name="new_contrib"))
+            
+    return render_to_response('moderator/display_textbook_dashboard.html', RequestContext(request, {'all_textbooks': all_textbooks,
+                                                                                                    'sort': sort,
+                                                                                                    'potential_chapter_users': potential_chapter_users,
+                                                                                         }))
+
+
+@require_POST
+@login_required
+@user_passes_test(mod_test)
+def chapter_assignment_ajax(request):
+    user_id = request.POST.get('user_id', None)
+    chapter_id = request.POST.get('chapter_id', None)
+    if user_id and chapter_id:
+        chapter = Chapter.objects.get(id=chapter_id)
+
+        # if user chooses blank object, then assignment is deleted
+        if user_id == 'REMOVE':
+            assignments = ChapterAssignment.objects.filter(chapter=chapter)
+            for assignment in assignments:
+                assignment.delete()
+            return HttpResponse()
+
+        user = User.objects.get(id=user_id)
+        try:
+            assignment = ChapterAssignment.objects.filter(chapter=chapter)[0]
+            assignment.user = user
+            assignment.save()
+        except IndexError:
+            try:
+                assignment = ChapterAssignment.objects.create(user=user, chapter=chapter)
+            except IntegrityError:
+                rdict = {'error': True}
+                json = simplejson.dumps(rdict, ensure_ascii=False)
+                return HttpResponse(json, mimetype='application/json')
+    
+    return HttpResponse()
+
+
+@login_required
+@user_passes_test(mod_test)
+def textbook_details(request, textbook_id):
+    '''
+    Display textbook progress details for a specific display textbook
+    '''
+
+    try:
+        textbook = Textbook.objects.get(id=textbook_id)
+        chapters = Chapter.active_objects.filter(textbook=textbook)
+
+        potential_chapter_users = User.objects.filter(Q(groups__name="contributors") | Q(groups__name="new_contrib")).order_by('username')
+
+        context = RequestContext(request, {'chapters': chapters,
+                                           'textbook': textbook,
+                                           'potential_chapter_users': potential_chapter_users,
+                            })
+
+        details = render_to_string('moderator/display_textbook_dashboard_details.html',
+                              context_instance=context)
+        rdict = {'details': details, 'id': textbook_id}
+        json = simplejson.dumps(rdict, ensure_ascii=False)
+        return HttpResponse(json, mimetype='application/json')
+
+    except Textbook.DoesNotExist:
+        pass
+
+    return http.HttpResponseServerError()
+
+
+@login_required
+@user_passes_test(mod_test)
+def textbook_make_live(request, textbook_id):
+    '''
+    Make a textbook live:
+    create a display textbook from the textbook
+    '''
+
+    try:
+        textbook = Textbook.objects.get(id=textbook_id)
+        if hasattr(textbook, 'display_textbook'):
+            pass
+        else:
+            all_fields = ['title', 'edition', 'isbn', 'publisher',
+                          'year_published', 'num_pages',
+                          'authors', 'subjects', 'cover_image']
+            special_fields = ['authors', 'subjects', 'cover_image', 'publisher']
+
+            vals = {}
+            for field in all_fields:
+                t = textbook
+                if field not in special_fields:
+                    vals[field] = getattr(t, field)
+                else:
+                    if field == 'cover_image':
+                        vals[field] = getattr(t, field)
+                    elif field == 'publisher':
+                        vals[field] = getattr(t, field)
+                    elif field == 'authors':
+                        vals[field] = t.authors.all()
+                    elif field == 'subjects':
+                        vals[field] = t.subjects.all()  
+        
+            dt = DisplayTextbook()  
+            for key, value in vals.items():
+                if key not in special_fields:
+                    setattr(dt, key, value)
+                else:
+                    if key == 'cover_image':
+                        dt.cover_image = value
+                    elif key == 'publisher':
+                        dt.publisher = value
+            if dt.edition:
+                dt.composite_slug = '%s-%s-%s' %(dt.isbn, slugify(dt.title), slugify(dt.edition))
+            else:
+                dt.composite_slug = '%s-%s' %(dt.isbn, slugify(dt.title))
+            
+            dt.textbook = textbook
+
+            dt.save()
+            dt.authors = vals['authors']
+            dt.subjects = vals['subjects']
+            dt.save()
+
+            # some manual cache invalidations
+            cache.invalidate(Textbook, DisplayTextbook)
+
+        rdict = {'id': textbook_id}
+        json = simplejson.dumps(rdict, ensure_ascii=False)
+        return HttpResponse(json, mimetype='application/json')
+
+    except Textbook.DoesNotExist:
+        pass
+
+    return http.HttpResponseServerError()
+
+
+@user_passes_test(mod_test)
+def dupe_textbook_exercise_offset(request, to_be_processed=[], ignoring=[], successes=[]):
+    
+    if request.method == 'POST':
+        form = DupeExerciseOffsetForm(request.POST)
+        if form.is_valid():
+
+            # handle file upload
+            if request.FILES:
+                input = request.FILES['offset_file']
+                lines = input
+
+                form = DupeExerciseOffsetForm(initial={'offset_input': input.read()})
+            
+            # handle textbox input
+            else:
+                if 'offset_input' in request.POST:
+                    input = request.POST['offset_input']
+                else:
+                    input = ''
+                lines = input.split( os.linesep )
+           
+            reader = csv.DictReader(lines)
+            
+            to_be_processed = []
+            ignoring = []
+            for row in reader:
+                try:
+                    # check to see if we think we have a valid row
+                    from_isbn = re.sub(',', '', row['FROM_ISBN'])
+                    to_isbn = re.sub(',', '', row['TO_ISBN'])
+                    int(from_isbn)
+                    int(to_isbn)
+
+                    row['FROM_ISBN'] = from_isbn
+                    row['TO_ISBN'] = to_isbn
+                    
+                    from_pg = row['FROM_PG']
+                    from_ex = row['FROM_EX']
+                    from_ex_ltr = row['FROM_EX_LTR']
+    
+                    to_pg = row['TO_PG']
+                    to_ex = row['TO_EX']
+                    to_ex_ltr = row['TO_EX_LTR']
+                    to_grp_id = row['TO_GROUP_ID']
+
+                    #fix the data in the row
+                    if not row['TO_GROUP_ID']: row['TO_GROUP_ID'] = ''
+
+                    rev_no = row['REV_ND']
+                    remarks = row['REMARKS']
+                    
+                    if remarks and remarks.lower() != 'same':
+                        row['REASON'] = 'Please address comments in the remarks.'
+                        ignoring.append(row)
+                    elif from_ex_ltr or to_ex_ltr:
+                        row['REASON'] = 'Please note multi-part exercises with the letter in the exercise name, exactly as shown in each book/exercise.'
+                        ignoring.append(row)
+                    else:
+
+                        try:
+                            from_textbook = Textbook.objects.get(isbn=from_isbn)
+                            to_textbook = Textbook.objects.get(isbn=to_isbn)
+                        except Textbook.DoesNotExist:
+                            row['REASON'] = 'One or both of these textbooks is not in the database.'
+                            ignoring.append(row)
+                            continue #not to be processed
+
+                        try:
+                            # get the original EIG
+                            from_eig = ExerciseInGroup.objects.get(page__textbook=from_textbook, page__name=from_pg, name=from_ex)
+                        except (ExerciseInGroup.DoesNotExist, ExerciseInGroup.MultipleObjectsReturned):
+                            row['REASON'] = 'This exercise cannot be found in the source textbook or there is an issue with duplicating it.'
+                            ignoring.append(row)
+                            continue #not to be processed
+
+                        try:
+                            # get the exercise group and page into which we will place the new EIG
+                            page = TextbookPage.objects.get(textbook=to_textbook, name=to_pg)
+                        except TextbookPage.DoesNotExist:
+                            row['REASON'] = 'The page you are duplicating to does not exist.'
+                            ignoring.append(row)
+                            continue #not to be processed
+
+                        try:
+                            if to_grp_id:
+                                group = TextbookExerciseGroup.objects.get(id=to_grp_id, pages=page)
+                            else:
+                                group = TextbookExerciseGroup.objects.get(textbook=to_textbook, pages=page)
+                        except TextbookExerciseGroup.DoesNotExist:
+                            row['REASON'] = 'There is no group with this id on the given page.'
+                            ignoring.append(row)
+                            continue #not to be processed
+                        except TextbookExerciseGroup.MultipleObjectsReturned:
+                            row['REASON'] = 'There is more than one group on the page specified. Please specify the desired group id.'
+                            ignoring.append(row)
+                            continue #not to be processed
+
+                        try:
+                            #make sure there isn't already an EIG that we'll be stomping on
+                            existing_eig = ExerciseInGroup.objects.get(group=group, page=page, name=to_ex)
+                            row['REASON'] = 'An exercise with this name already exists on the page specified - it will be overwritten.'
+
+                        except ExerciseInGroup.DoesNotExist:
+                            # check to see if the exercise does exist, just on a different page (there is uniqueness enforced in db for ex/grp)
+                            try:
+                                eig_on_other_page = ExerciseInGroup.objects.get(group=group, name=to_ex)
+                                row['REASON'] = 'There is an exercise with the name given in this group, but it is on another page. Please delete the existing exercise metadata before continuing.'
+                                ignoring.append(row)
+                                continue #not to be processed
+
+                            except ExerciseInGroup.DoesNotExist:
+                                # that's fine ... we're going to create
+                                existing_eig = None
+                        
+                        # if all exceptions passed, then we can count on this row being processable
+                        to_be_processed.append(row)
+
+                        # if asked to duplicate, we do the actual duplication process by creating the new EIG
+                        if request.POST.has_key('do_the_import'):
+
+                            # if existing eig, just switch out exercise with exercise of from_eig
+                            if existing_eig:
+                                old_exercise = existing_eig.exercise
+                                
+                                # replace the old exercise with the new one
+                                existing_eig.exercise = from_eig.exercise
+                                existing_eig.save()
+                                eig = existing_eig
+
+                                #check to see if old exercise has any other eig. if not, deactivate it
+                                other_eig = old_exercise.exerciseingroup_set.count()
+                                if not other_eig:
+                                    old_exercise.delete()
+
+                            # if not existing eig, then we create all new
+                            else:
+                                eig = ExerciseInGroup.objects.create(group=group, page=page, exercise=from_eig.exercise, name=to_ex)
+
+                            row['FROM_PG'] = '<a href="%s" target="_blank">%s</a>' %(reverse('contributor_progress_textbook_page', kwargs={'page_id': from_eig.page.id}), from_eig.page.name)
+                            row['TO_PG'] = '<a href="%s" target="_blank">%s</a>' %(reverse('contributor_progress_textbook_page', kwargs={'page_id': eig.page.id}), eig.page.name)
+                            successes.append(row)
+                        
+                except (ValueError, IndexError): #not an isbn, so no go.
+                    row['REASON'] = 'There is some issue with this row'
+                    ignoring.append(row)
+            
+            # process duplication results to different template, show failures in useful format
+            if request.POST.has_key('do_the_import'):
+                
+                if ignoring:
+                    # for items in ignoring, we'll spit those back out in a text field so that the user can edit/address them later
+                    headers = ['FROM_ISBN','FROM_PG','FROM_EX','FROM_EX_LTR','TO_ISBN','TO_PG','TO_EX','TO_EX_LTR','REV_ND','REMARKS','TO_GROUP_ID','REASON']
+                    ignored_output = [ ','.join(headers) ]
+                    for row in ignoring:
+                        this_row = [ row[h] or '' for h in headers ]
+                        _row = ','.join(this_row)
+                        ignored_output.append( _row )
+                    failures = '\n'.join( ignored_output )
+                else:
+                    failures = ''
+
+                return render_to_response('moderator/dupe_textbook_exercise_offset_results.html', 
+                                          RequestContext(request, {'successes': successes, 
+                                                                   'failures': failures, 
+                                                                  }))
+
+    else:
+        form = DupeExerciseOffsetForm(initial={'offset_input':'FROM_ISBN,FROM_PG,FROM_EX,FROM_EX_LTR,TO_ISBN,TO_PG,TO_EX,TO_EX_LTR,REV_ND,REMARKS,TO_GROUP_ID\n'})
+    
+    return render_to_response('moderator/dupe_textbook_exercise_offset.html', RequestContext(request, {'form': form, 'to_be_processed': to_be_processed, 'ignoring': ignoring}))
+
+
+
+
+@login_required
+@user_passes_test(mod_test)
+def feather_postback(request):
+    """used to handle the postback from aviery's feather image editor, for images in the imagequeue.
+    Should get post data of a explanation cell id, and a review id tied to a solution that contains that cell."""
+    
+    if request.method != "POST":
+        return Http404()
+
+    cell_id = request.POST['id']
+    review_id = request.POST['review']
+    image_url = request.POST['url']
+    
+    cell = get_object_or_404(ExplanationCell, id=cell_id)
+    review = get_object_or_404(ReviewNeeded, id=review_id)
+
+    #make sure the review is right for the solution, it's currently open, and currently being reviewed
+    if review.solution == cell.solution.solution and review.closed == False and review.solution.moderation_lock == True:
+        #download the image at the url
+        o = urlparse.urlparse(image_url)
+        if o.netloc != "featherfiles.aviary.com":
+            return HttpResponseNotAuthorized()
+
+        cell.handle_uploaded_image(urllib2.urlopen(image_url))
+
+        return HttpResponse()
+    return HttpResponseNotAuthorized()
+
+
+@login_required
+def referrals(request):
+    """
+    For each user, list number of referrals
+    """
+
+    referrals = []
+    for user in User.objects.all():
+        referrals.append( {'user': user, 'count': user.referrals.count(), 'link': '/admin/auth/user/?userprofile__referred_by__id=%s'%user.id} )  
+
+    referrals.sort(key=lambda r: r['count'], reverse=True)
+
+    return render_to_response('moderator/referrals.html', 
+                              RequestContext(request, {'referrals': referrals,
+                                                      }))
+
+
+@login_required
+def milestone_progress(request):
+    """
+    Show progress on indicators for milestones
+    """
+    
+    #Number of users at number of schools
+    schools_with_users = School.objects.filter(userprofile__isnull=False).annotate(user_count=Count('userprofile__user')).order_by('-user_count')[:10]
+    real_users = User.objects.exclude(is_superuser=True).filter(is_active=True).exclude(groups__name='contributors').exclude(groups__name='moderators').exclude(groups__name='friends_and_family').exclude(id__lt=250)
+
+
+    # ratios anon to registered users
+    _real_users = User.objects.exclude(is_superuser=True).exclude(groups__name='contributors').exclude(groups__name='friends_and_family').exclude(userprofile__ip_used_for_registration__in=settings.COMMON_IPS_TO_EXCLUDE).filter(date_joined__gte='2011-03-29')
+    real_anonymous_sessions = AnonymousSession.objects.exclude(ip__in=settings.COMMON_IPS_TO_EXCLUDE).filter(time_stamp__gte='2011-03-29')
+    real_anonymous_views = AnonymousUserView.objects.exclude(ip__in=settings.COMMON_IPS_TO_EXCLUDE).filter(time_stamp__gte='2011-03-29')
+    unique_anon_solution_views = real_anonymous_views.filter(solution__isnull=False).values('ip').annotate(ip_count=Count('ip'))
+    unique_anon_solution_views_to_user_accounts = _real_users.filter(userprofile__ip_used_for_registration__in=[ip['ip'] for ip in unique_anon_solution_views]).distinct()
+    unique_anon_page_views = real_anonymous_views.filter(textbook_page__isnull=False).exclude(ip__in=[ip['ip'] for ip in unique_anon_solution_views]).values('ip').annotate(ip_count=Count('ip'))
+    unique_anon_page_views_to_user_accounts = _real_users.filter(userprofile__ip_used_for_registration__in=[ip['ip'] for ip in unique_anon_page_views]).distinct()
+    unique_anon_sessions = real_anonymous_sessions.values('ip').exclude(ip__in=[ip['ip'] for ip in unique_anon_page_views]).exclude(ip__in=[ip['ip'] for ip in unique_anon_solution_views]).annotate(ip_count=Count('ip'))
+    unique_anon_sessions_to_user_accounts = _real_users.filter(userprofile__ip_used_for_registration__in=[ip['ip'] for ip in unique_anon_sessions]).distinct()
+    anon_stats = {
+                    'unique_anon_sessions': len(unique_anon_sessions),
+                    'unique_anon_sessions_to_user_accounts': unique_anon_sessions_to_user_accounts.count(),
+                    'unique_anon_sessions_ratio': float(unique_anon_sessions_to_user_accounts.count()) / float(len(unique_anon_sessions)),
+                    'unique_anon_page_views': len(unique_anon_page_views),
+                    'unique_anon_page_views_to_user_accounts': unique_anon_page_views_to_user_accounts.count(),
+                    'unique_anon_page_views_ratio': float(unique_anon_page_views_to_user_accounts.count()) / float(len(unique_anon_page_views)),
+                    'unique_anon_solution_views': len(unique_anon_solution_views),
+                    'unique_anon_solution_views_to_user_accounts': unique_anon_solution_views_to_user_accounts.count(),
+                    'unique_anon_solution_views_ratio': float(unique_anon_solution_views_to_user_accounts.count()) / float(len(unique_anon_solution_views)),
+                    'registered_since': _real_users.count(),
+                    'visited_since': real_anonymous_sessions.values('ip').annotate(ip_count=Count('ip')).count(),
+                 }
+
+    # conversion rates of specific books
+    featured = ['9781439048474', '9780131362215', '9780131918450', '9780078884849', '9780030358272', '9780030358296', '9780030995767', '9780030923517', '9780030416644', '9780201324457', '9780132014083', '9780130631312', '9780547315157', '9780618887699', '9780618595419', '9780547315263', '9780618811816', '9780618595556', '9780618595549', '9780547315171', '9780618595402', '9780618811946', '9780618912322', '9780618851508', '9780618394807', '9780618851522', '9780136015789', '9780395360866', '9780395550694']
+    featured_views = 0
+    featured_conversions = 0
+    all_textbooks = Textbook.objects.all()
+    textbook_conversions = {}
+    for textbook in all_textbooks:
+        anon_views = real_anonymous_views.filter( Q(textbook_page__textbook=textbook) | Q(solution__exercise__exerciseingroup__page__textbook=textbook) ).values('ip').annotate(ip_count=Count('ip'))
+        if anon_views:
+            conversions = _real_users.filter(userprofile__ip_used_for_registration__in=[ip['ip'] for ip in anon_views]).distinct()
+            textbook_conversions[textbook] = [ anon_views.count(), conversions.count(), float(conversions.count())/float(anon_views.count()) ]
+            if textbook.isbn in featured:
+                featured_views += anon_views.count()
+                featured_conversions += conversions.count()
+    textbook_conversions = [ (k,v) for k,v in textbook_conversions.iteritems() ]
+    textbook_conversions.sort(key=lambda tc: tc[1][2], reverse=True)
+    featured_conversions = [featured_views, featured_conversions, float(featured_conversions)/float(featured_views)]
+
+    #Percent of users that are returning with accounts
+    total_users = User.objects.all()
+    users_have_returned = total_users.filter(last_login__gt=F('date_joined'))
+    users_have_not_returned = total_users.filter(last_login=F('date_joined'))
+    all_returned_percentage = 100* float(users_have_returned.count()) / float(total_users.count())
+
+    real_users_have_returned = real_users.filter(last_login__gt=F('date_joined'))
+    real_users_have_not_returned = real_users.filter(last_login=F('date_joined'))
+    real_returned_percentage = 100* float(real_users_have_returned.count()) / float(real_users.count())
+
+
+    #Average Solutions uploaded per week, Total as well
+    week_start = datetime.date.today() - datetime.timedelta(days=datetime.datetime.now().weekday()) - datetime.timedelta(days=7)
+    prev_week_start = datetime.date.today() - datetime.timedelta(days=datetime.datetime.now().weekday()) - datetime.timedelta(days=14)
+    finished_total = Solution.objects.filter(finished=True, populated=True, reviewneeded__specialization__speciality='omglatex')
+    annotated_finished_total = finished_total.annotate(first_created=Min('reviewneeded__created_on'))
+    finished_week = annotated_finished_total.filter(first_created__gt=week_start).distinct().count()
+    finished_prev_week = annotated_finished_total.filter(first_created__lt=week_start, first_created__gt=prev_week_start).distinct().count()
+
+    
+    #90% of books finished
+    active_exercises = Exercise.active_objects.filter(groups__textbook__target_release_date__lte='2011-06-01')
+    completed_exercises = active_exercises.filter(solutions__reviewed=True, solutions__populated=True, solutions__finished=True).distinct()
+    percent_complete = float(completed_exercises.count()) / float(active_exercises.count()) * 100
+
+    return render_to_response('moderator/milestones.html', 
+                              RequestContext(request, {'total_users': total_users.count(),
+                                                       'total_real_users': real_users.count(),
+                                                       'anon_stats': anon_stats,
+                                                       'schools_with_users': schools_with_users,
+                                                       'users_have_returned': users_have_returned,
+                                                       'all_returned_percentage': all_returned_percentage,
+                                                       'real_users_have_returned': real_users_have_returned,
+                                                       'real_returned_percentage': real_returned_percentage,
+                                                       'percent_complete': percent_complete,
+                                                       'finished_week': finished_week,
+                                                       'finished_prev_week': finished_prev_week,
+                                                        'textbook_conversions': textbook_conversions,
+                                                        'featured_conversions': featured_conversions,
+                                                      }))
+
+
+@login_required
+def visualize(request):
+    """
+    Show progress on indicators for milestones
+    """
+
+    start = datetime.date.today() - datetime.timedelta(days=30)
+    start_year = int(request.GET.get('year', start.year))
+    start_month = int(request.GET.get('month', start.month))
+    start_day = int(request.GET.get('day', start.day))
+    start_hour = int(request.GET.get('hour', 18))
+
+    start_date = datetime.datetime(year=start_year, month=start_month, day=start_day, hour=start_hour, minute=00)
+    all_time_start = datetime.datetime(year=2011, month=01, day=01, hour=18, minute=00)
+    end_date = datetime.datetime.now() - datetime.timedelta(hours=12)
+    all_users = User.objects.all()
+
+    real_users = User.objects.exclude(is_superuser=True).filter(is_active=True).exclude(groups__name='contributors').exclude(groups__name='moderators').exclude(groups__name='friends_and_family').exclude(id__lt=250) #putting in a cutoff here for what seems like 'real users' based on data
+    real_def = 'all users, excluding those in the following groups: contributors, superusers, moderators, friends_and_family and anyone with an id of less than 250'
+
+
+    ## users over time
+    dates_users = []
+    dates_real_users_per_week = []
+    current_end = start_date
+    current_start = current_end - datetime.timedelta(days=7)
+    while current_end < end_date:
+        dates_users.append( [js_ts(current_end), real_users.filter(date_joined__lte=current_end).count()] )
+
+        week_active_count = real_users.filter(solutionviews__time_stamp__gt=current_start, solutionviews__time_stamp__lte=current_end).distinct().count()
+        dates_real_users_per_week.append( [js_ts(current_end), week_active_count] )
+
+        current_end = current_end + datetime.timedelta(days=1)
+        current_start = current_start + datetime.timedelta(days=1)
+
+
+    ## contributions over time
+    contributions_over_time = {'total': [], 'omg': []}
+
+    finished_total = Solution.objects.filter(finished=True, populated=True)
+    annotated_finished_total = finished_total.annotate(first_created=Min('reviewneeded__created_on'))
+
+    one_day = datetime.timedelta(days=1)        
+    current_start = start_date
+    current_end = current_start + one_day
+    while current_end < end_date:
+        
+        finished_current = annotated_finished_total.filter(first_created__gte=current_start, first_created__lt=current_end)
+        finished_current_total = finished_current.distinct().count()
+
+        contributions_over_time['total'].append( [js_ts(current_end), finished_current_total] )
+
+        current_end = current_end + one_day
+        current_start = current_start + one_day
+
+
+    ## user growth week to week
+    user_growth_weeks = []
+    user_growth_weeks_active = []
+    current_end = datetime.datetime(year=2011, month=01, day=02, hour=00, minute=00)
+    current_start = current_end - datetime.timedelta(days=7)
+    previous_week_count = real_users.filter(date_joined__lte=current_end).count()
+    previous_week_active_count = real_users.filter(solutionviews__time_stamp__gt=current_start, solutionviews__time_stamp__lte=current_end).distinct().count()
+    current_end = current_end + datetime.timedelta(days=7)
+    current_start = current_start + datetime.timedelta(days=7)
+    while (end_date - current_end).days > 0:
+        this_week_count = real_users.filter(date_joined__lte=current_end).count()
+        this_week_growth_percentage = (float(this_week_count - previous_week_count)) / float(real_users.count()) * 100
+        user_growth_weeks.append( [js_ts(current_end), this_week_growth_percentage] )
+
+        this_week_active_count = real_users.filter(solutionviews__time_stamp__gt=current_start, solutionviews__time_stamp__lte=current_end).distinct().count()
+        this_week_active_percentage = (float(this_week_active_count - previous_week_active_count)) / float(real_users.count()) * 100
+        user_growth_weeks_active.append( [js_ts(current_end), this_week_active_percentage] )
+
+        current_end = current_end + datetime.timedelta(days=7)
+        current_start = current_start + datetime.timedelta(days=7)
+        previous_week_count = this_week_count
+        previous_week_active_count = this_week_active_count
+
+
+    """
+    ## average solution views for a day, real_users
+    all_solution_views = SolutionView.objects.all()
+    dates_solution_views_real = {}
+    dates_solution_views_real['avg'] = []
+    dates_solution_views_real['min'] = []
+    dates_solution_views_real['max'] = []
+    dates_solution_views_real['count_users'] = []
+    dates_solution_views_real['total'] = []
+    current_date = start_date 
+    while current_date < end_date:
+        current_start = current_date
+        current_end = current_start + datetime.timedelta(days=1)
+        active_users = real_users.filter(solutionviews__time_stamp__gt=current_start, solutionviews__time_stamp__lte=current_end).distinct()
+        num_users = active_users.count()
+        _u_counts = active_users.annotate(view_count=Count('solutionviews')).aggregate(max_count=Max('view_count'), min_count=Min('view_count'), avg_count=Avg('view_count'))
+        dates_solution_views_real['avg'].append( [ js_ts(current_date), _u_counts['avg_count'] or 0 ] )
+        dates_solution_views_real['min'].append( [ js_ts(current_date), _u_counts['min_count'] or 0 ] )
+        dates_solution_views_real['max'].append( [ js_ts(current_date), _u_counts['max_count'] or 0 ] )
+        dates_solution_views_real['count_users'].append( [ js_ts(current_date), num_users or 0 ] )
+        dates_solution_views_real['total'].append( [js_ts(current_date), all_solution_views.filter(user__in=real_users, time_stamp__gt=current_start, time_stamp__lte=current_end).count()] )
+        current_date = current_date + datetime.timedelta(days=1)
+    
+
+    ## solutions views per visit, real users
+    all_solution_views = SolutionView.objects.all()
+    current_date = start_date 
+    _view_counts_per_visit = {}
+    while current_date < end_date:
+        current_start = current_date
+        current_end = current_start + datetime.timedelta(days=1)
+        active_users = real_users.filter(solutionviews__time_stamp__gt=current_start, solutionviews__time_stamp__lte=current_end).distinct()
+        _u_counts = active_users.annotate(view_count=Count('solutionviews'))
+        for count in _u_counts:
+            try:
+                _view_counts_per_visit[count.view_count] += 1
+            except KeyError:
+                _view_counts_per_visit[count.view_count] = 1
+        current_date = current_date + datetime.timedelta(days=1)
+    view_counts_per_visit_real = [ [k,v] for k,v in _view_counts_per_visit.iteritems() ]
+
+    
+    ## Scatter plots for user view averages by user
+    all_solution_views = SolutionView.objects.all()
+    current_date = start_date 
+    _user_counts = {}
+    while current_date < end_date:
+        current_start = current_date
+        current_end = current_start + datetime.timedelta(days=1)
+        active_users = real_users.filter(solutionviews__time_stamp__gt=current_start, solutionviews__time_stamp__lte=current_end).distinct()
+        _u_counts = active_users.annotate(view_count=Count('solutionviews'))
+        for user in _u_counts:
+            try:
+                _user_counts[user].append( user.view_count )
+            except KeyError:
+                _user_counts[user] = [user.view_count]
+        current_date = current_date + datetime.timedelta(days=1)
+ 
+
+    # average solution views per day for days viewing solutions
+    _user_averages = []
+    for user,value in _user_counts.iteritems():
+        _user_averages.append( [ user, numpy.mean(value) ] )
+    user_averages = {}
+    user_averages['plot'] = [ [u.id, avg] for u,avg in _user_averages]
+    mean = numpy.mean( [avg for u,avg in _user_averages] )
+    median = numpy.median( [avg for u,avg in _user_averages] )
+    stddev = numpy.std( [avg for u,avg in _user_averages] )
+    user_averages['mean'] = mean
+    user_averages['median'] = median
+    user_averages['stddev_low'] = mean-stddev
+    user_averages['stddev_high'] = mean+stddev
+
+    # average solution views per day for days viewing solutions
+    _user_averages = []
+    for user,value in _user_counts.iteritems():
+        if len(value) > 1:
+            _user_averages.append( [ user, numpy.mean(value) ] )
+    user_averages_excl = {}
+    user_averages_excl['plot'] = [ [u.id, avg] for u,avg in _user_averages]
+    mean = numpy.mean( [avg for u,avg in _user_averages] )
+    median = numpy.median( [avg for u,avg in _user_averages] )
+    stddev = numpy.std( [avg for u,avg in _user_averages] )
+    user_averages_excl['mean'] = mean
+    user_averages_excl['median'] = median
+    user_averages_excl['stddev_low'] = mean-stddev
+    user_averages_excl['stddev_high'] = mean+stddev
+
+
+    # average solutions views per day for days registered
+    _user_averages = []
+    for user,value in _user_counts.iteritems():
+        user_life = datetime.datetime.now() - user.date_joined
+        if user_life.days != 0:
+            _user_averages.append( [ user, float(sum(value))/float(user_life.days) ] )
+    user_averages_over_life = {}
+    user_averages_over_life['plot'] = [ [u.id, avg] for u,avg in _user_averages]
+    mean = numpy.mean( [avg for u,avg in _user_averages] )
+    median = numpy.median( [avg for u,avg in _user_averages] )
+    stddev = numpy.std( [avg for u,avg in _user_averages] )
+    user_averages_over_life['mean'] = mean
+    user_averages_over_life['median'] = median
+    user_averages_over_life['stddev_low'] = mean-stddev
+    user_averages_over_life['stddev_high'] = mean+stddev
+
+
+    # average solutions views per day for days registered (excluding users who only viewed on one day)
+    _user_averages = []
+    for user,value in _user_counts.iteritems():
+        user_life = datetime.datetime.now() - user.date_joined
+        if len(value) > 1 and user_life.days != 0:
+            _user_averages.append( [ user, float(sum(value))/float(user_life.days) ] )
+    user_averages_over_life_excl = {}
+    user_averages_over_life_excl['plot'] = [ [u.id, avg] for u,avg in _user_averages]
+    mean = numpy.mean( [avg for u,avg in _user_averages] )
+    median = numpy.median( [avg for u,avg in _user_averages] )
+    stddev = numpy.std( [avg for u,avg in _user_averages] )
+    user_averages_over_life_excl['mean'] = mean
+    user_averages_over_life_excl['median'] = median
+    user_averages_over_life_excl['stddev_low'] = mean-stddev
+    user_averages_over_life_excl['stddev_high'] = mean+stddev
+
+
+    # return visit days for users
+    _day_counts = {}
+    for user,value in _user_counts.iteritems():
+        day_key = len(value)
+        try:
+            _day_counts[day_key].append(user)
+        except:
+            _day_counts[day_key] = [user]
+    day_counts = [ [k,len(v)] for k,v in _day_counts.iteritems()]
+
+
+    ## Average views per day **independent of solutions viewed or not ** by user on the bottom and percent of users or number of users on the vertical.
+    all_solution_views = SolutionView.objects.all() 
+    _view_counts_averaged_over_user_life = {}
+    for user in real_users:
+        days_registered = (current_date - user.date_joined)
+        try:
+            _view_counts_averaged_over_user_life[user.username] = math.ceil( user.solutionviews.count() / days_registered.days )
+        except ZeroDivisionError:
+            _view_counts_averaged_over_user_life[user.username] = math.ceil( user.solutionviews.count() )
+    _view_counts = {}
+    for key,value in _view_counts_averaged_over_user_life.iteritems():
+        try:
+            _view_counts[value] += 1
+        except:
+            _view_counts[value] = 1
+    view_counts_averaged_over_user_life = [ [k,v] for k,v in _view_counts.iteritems() if k > 0]
+    """
+
+    """
+    # auditing code
+    #print _user_counts #dict of user: day counts
+    #print user_averages['plot'] # list of user id, averages
+    #print user_averages_excl['plot'] # list of user id, averages
+    #print user_averages_over_life['plot']  # list of user id, averages
+    #print user_averages_over_life_excl['plot']  # list of user id, averages
+
+    now = datetime.datetime.now()
+    print 'username', '\t', 'id', '\t', 'counts', '\t', 'avg', '\t', 'excl', '\t', 'days', '\t', 'life', '\t', 'life excl'
+    for user,value in _user_counts.iteritems():
+        u_ct = value
+        u_days = (now - user.date_joined).days
+        for v in user_averages['plot']:
+            if int(v[0]) == user.id:
+                u_avg = v[1]
+                break
+            else:
+                u_avg = '--'
+        for v in user_averages_excl['plot']:
+            if int(v[0]) == user.id:
+                u_avg_excl = v[1]
+                break
+            else:
+                u_avg_excl = '--'
+        for v in user_averages_over_life['plot']:
+            if int(v[0]) == user.id:
+                u_avg_life = v[1]
+                break
+            else:
+                u_avg_life = '--'
+        for v in user_averages_over_life_excl['plot']:
+            if int(v[0]) == user.id:
+                u_avg_life_excl = v[1]
+                break
+            else:
+                u_avg_life_excl = '--'
+        print user.username, '\t', user.id, '\t', u_ct, '\t', u_avg, '\t', u_avg_excl, '\t', u_days, '\t', u_avg_life, '\t', u_avg_life_excl
+    """
+
+    return render_to_response('moderator/visualize.html', 
+                              RequestContext(request, {'dates_users': dates_users,
+                                                       'dates_real_users_per_week': dates_real_users_per_week,
+                                                       'user_growth_weeks': user_growth_weeks,
+                                                       'user_growth_weeks_active': user_growth_weeks_active,
+                                                       'real_def': real_def,
+                                                       #'dates_solution_views_real': dates_solution_views_real,
+                                                       #'view_counts_per_visit_real': view_counts_per_visit_real,
+                                                       #'view_counts_averaged_over_user_life': view_counts_averaged_over_user_life,
+                                                       #'day_counts': day_counts,
+                                                       #'user_averages': user_averages,
+                                                       #'user_averages_excl': user_averages_excl,
+                                                       #'user_averages_over_life': user_averages_over_life,
+                                                       #'user_averages_over_life_excl': user_averages_over_life_excl,
+                                                       'contributions_over_time': contributions_over_time,
+                                                      }))
+
+@login_required
+def edit_specific_exercise(request, solution_id):
+    return render_to_response('edit/edit-specific.html', RequestContext(request, {'solution_id':solution_id,
+    'solution':Solution.objects.get(data__id=solution_id),
+    }))
+
+
+@login_required
+@require_POST
+def flag_content(request):
+    """
+    Add flags to an object
+    """
+
+    # then get the object, whatever it is and add the tags
+    flagged_object = get_object_from_form_ident(request.POST['flagged_object'])
+    form = AddFlagForm(flagged_object, request.POST)
+    if form.is_valid():
+        flagged_object = form.save(user=request.user)
+        form = AddFlagForm(flagged_object)
+
+        context = RequestContext(request, {'form': form, 'object_to_flag': flagged_object})
+        rendered_flags = render_to_string('moderator/includes/flags_for_object.html',
+                              context_instance=context)
+    else:
+        context = RequestContext(request, {'form': form, 'object_to_flag': flagged_object})
+        rendered_flags = render_to_string('moderator/includes/flags_for_object.html',
+                              context_instance=context)
+    
+    rdict = {'rendered_flags': rendered_flags}
+    json = simplejson.dumps(rdict, ensure_ascii=False)
+    return HttpResponse(json, mimetype='application/json')
+
+
+@login_required
+@user_passes_test(mod_test)
+@require_POST
+def reject_solution(request, solution_id):
+    solution = get_object_or_404(Solution, id=solution_id)
+    review_queue.reject_solution(solution)
+    return HttpResponse()
+
+
+@login_required
+@user_passes_test(mod_test)
+def live_contributor_feed(request):
+
+    solution_count = ExerciseInGroup.objects.filter(exercise__solutions__populated=True, exercise__solutions__finished=True).distinct().count()
+    ten_minutes_ago = datetime.datetime.now() - datetime.timedelta(minutes=10)
+    submittals = Solution.objects.filter(finished=True, populated=True)
+    submittals_annotated = submittals.annotate(first_created=Min('reviewneeded__created_on')).filter(first_created__gte=ten_minutes_ago).order_by('-first_created')
+
+    last_updated = datetime.datetime.now().isoformat(' ')
+
+    return render_to_response('moderator/dashboards/live_contributor_feed.html', RequestContext(request, {'submittals': submittals_annotated, 'last_updated': last_updated, 'solution_count': solution_count}))
+
+
+@require_POST
+@login_required
+@user_passes_test(mod_test)
+def update_live_contributor_feed(request):
+
+    solution_count = ExerciseInGroup.objects.filter(exercise__solutions__populated=True, exercise__solutions__finished=True).distinct().count()
+    last_updated = request.POST.get('last_updated', None)
+    submittals = Solution.objects.filter(finished=True, populated=True)
+    submittals_annotated = submittals.annotate(first_created=Min('reviewneeded__created_on')).filter(first_created__gt=last_updated).order_by('-first_created')
+    new_rows = ''
+    for solution in submittals_annotated:
+        new_row = render_to_string('moderator/dashboards/includes/live_contributor_feed_row.html',
+                              context_instance=RequestContext(request, {'solution': solution, 'updated': True}))
+        new_rows = new_rows + new_row
+    
+    last_updated = datetime.datetime.now().isoformat(' ')
+    rdict = {'new_rows': new_rows, 'last_updated': last_updated, 'solution_count': solution_count}
+    json = simplejson.dumps(rdict, ensure_ascii=False)
+    return HttpResponse(json, mimetype='application/json')
+
+
+@login_required
+@user_passes_test(mod_test)
+def bulk_moderation(request):
+
+    #build filter_options
+    filter_options = {}
+    filter_options['users'] = User.objects.filter(solution__isnull=False).distinct().order_by('username')
+    filter_options['textbooks'] = Textbook.objects.filter(display_textbook__isnull=False)
+    
+    filters = []
+    user_being_moderated = None
+    user_id = request.GET.get('user_id', None)
+    textbook_id = request.GET.get('textbook_id', None)
+    page_id = request.GET.get('page_id', None)
+    exercise_group_id = request.GET.get('exercise_group_id', None)
+    solution_status = request.GET.get('solution_status', None)
+
+    if user_id or textbook_id or exercise_group_id or page_id:
+        base_set = Solution.objects.filter(finished=True, populated=True)
+    else:
+        base_set = None
+        solutions = None
+
+    if base_set:
+        if user_id:
+            user = User.objects.get(id=user_id)
+            user_being_moderated = user
+            base_set = base_set.filter(user=user)
+            filters.append('user:%s' %user.username)
+    
+        if textbook_id:
+            textbook = Textbook.objects.get(id=textbook_id)
+            base_set = base_set.filter(exercise__exerciseingroup__group__textbook=textbook)
+            filters.append('textbook:%s' %textbook.display_textbook.title)
+
+        if solution_status:
+            if solution_status == 'unreviewed':
+                base_set = base_set.filter(reviewed=False)
+            elif solution_status == 'reviewed':
+                base_set = base_set.filter(reviewed=True)
+            else: #both reviewed and unreviewed
+                base_set = base_set
+
+        solutions = base_set
+
+    filters.append('status:%s' %solution_status)    
+
+    specialists = SPECIAL_TYPES.keys()
+    if 'textbook' in specialists: specialists.remove('textbook')
+
+    filters_string = ', '.join(filters)
+
+    return render_to_response('moderator/bulk_moderation.html', RequestContext(request, {'filter_options': filter_options, 'solutions': solutions, 
+                                                                                         'specialists': specialists, 'filters_string': filters_string,
+                                                                                         'user_being_moderated': user_being_moderated}))
+
+
+@login_required
+@user_passes_test(mod_test)
+def process_bulk_moderated_solution(request):
+
+    solution_id = request.POST['solution_id']
+    solution = Solution.objects.get(id=solution_id)
+
+    action = request.POST["action-%s" % solution.id]
+    if action == "reviewed":
+        #approve
+        review_queue.approve_solution(solution, request.user)
+    elif action == "reject":
+        #reject the solution
+        review_queue.reject_solution(solution)
+    elif action == "user":
+        #close open reviews and send back to the user
+        notes = request.POST.get('notes-%s' % solution.id, '')
+        review_queue.send_solution_back(solution, notes=notes, user=request.user)
+    elif action == "specialist":
+        #close open base reviews, make sure solution's not approved and create new review needed 
+        notes = request.POST.get('notes-%s' % solution.id, '')
+        specialists  = request.POST.get('specialist-%s' % solution.id, '').split(',')
+        specialists = Specialization.objects.filter(speciality__in=specialists)
+        #TODO: if specialists is empty, make base one
+        for specialist in specialists:
+            review_queue.specialize_problem(solution, request.user, specialist, notes=notes)
+
+    solution = Solution.objects.get(id=solution_id)
+    rdict = {'solution_status': '%s, %s' %(solution.status, solution.midwife.get_moderation_status()), 'solution_style_status': solution.style_status}
+    json = simplejson.dumps(rdict, ensure_ascii=False)
+    return HttpResponse(json, mimetype='application/json')
+
+
+@login_required
+@user_passes_test(mod_test)
+def process_bulk_moderated_solution_many(request):
+
+    solution_ids = request.POST.getlist('solution_id')
+    common_notes = request.POST.get('common_notes', None)
+
+    resultdict = {}
+    for solution_id in solution_ids:
+        solution = Solution.objects.get(id=solution_id)
+        
+        try:
+            action = request.POST["action-%s" % solution.id]
+            if action == "reviewed":
+                #approve
+                review_queue.approve_solution(solution, request.user)
+            elif action == "reject":
+                #reject the solution
+                review_queue.reject_solution(solution)
+            elif action == "user":
+                #close open reviews and send back to the user
+                notes = request.POST.get('notes-%s' % solution.id, '')
+                if notes == '' and common_notes:
+                    notes = common_notes
+                review_queue.send_solution_back(solution, notes=notes, user=request.user)
+            elif action == "specialist":
+                #close open base reviews, make sure solution's not approved and create new review needed 
+                notes = request.POST.get('notes-%s' % solution.id, '')
+                specialists  = request.POST.get('specialist-%s' % solution.id, '').split(',')
+                specialists = Specialization.objects.filter(speciality__in=specialists)
+                #TODO: if specialists is empty, make base one
+                for specialist in specialists:
+                    review_queue.specialize_problem(solution, request.user, specialist, notes=notes)
+        
+            solution = Solution.objects.get(id=solution_id)
+            
+            resultdict['%s'%solution.id] = {'solution_status': '%s, %s' %(solution.status, solution.midwife.get_moderation_status()), 'solution_style_status': solution.style_status}
+        except KeyError:
+            pass
+
+    rdict = {'solution_results': resultdict}
+    json = simplejson.dumps(rdict, ensure_ascii=False)
+    return HttpResponse(json, mimetype='application/json')
+
+
+@login_required
+@user_passes_test(mod_test)
+def show_duplicated_textbooks(request):
+
+    all_textbooks = Textbook.objects.all().order_by('title')
+    isbn = request.GET.get('isbn', None)
+    if isbn:
+        duplicated_from = Textbook.objects.get(isbn=isbn)
+        duplicated_to = Textbook.objects.raw('''select distinct txt.id from solutions_textbook txt
+                                          inner join solutions_textbookpage pg
+                                                on txt.id = pg.textbook_id
+                                          inner join solutions_exerciseingroup eig
+                                                on eig.page_id = pg.id
+                                          where eig.exercise_id in (select exercise_id from solutions_exerciseingroup eig
+                                          inner join solutions_textbookpage pg
+                                                on pg.id = eig.page_id
+                                          inner join solutions_textbook txt
+                                                on txt.id = pg.textbook_id
+                                          where txt.id = %s);''', (duplicated_from.id,))
+    else:
+        duplicated_from = duplicated_to = None
+
+    return render_to_response('moderator/show_duplicated_textbooks.html', RequestContext(request, {'all_textbooks': all_textbooks, 
+                                                                                                   'duplicated_from': duplicated_from, 
+                                                                                                   'duplicated_to': duplicated_to}))
+
+
+@login_required
+@user_passes_test(mod_test)
+def award_badge(request, error_msg='', success=False):
+
+    username = request.POST.get('username', None)
+    badge_id = request.POST.get('badge_id', None)
+
+    if username and badge_id:
+        try:
+            user = User.objects.get(username=username)
+            badge = Badge.objects.get(id=badge_id)
+            if user and badge:
+                badge.award_to(user)
+            success = True            
+
+        except User.DoesNotExist:
+            error_msg = "That user doesn't exist"
+
+    badges = Badge.objects.all()
+
+    return render_to_response('moderator/award_badge_manually.html', RequestContext(request, {'badges': badges, 'error_message': error_msg, 'success': success}))

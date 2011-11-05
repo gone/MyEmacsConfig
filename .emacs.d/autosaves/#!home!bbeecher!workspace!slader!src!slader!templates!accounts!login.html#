@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+
+{% load main_tags form_tags facebook_tags %}
+
+
+{% block title %}Login{% endblock %}
+
+{% block main-nav %}
+    {% nav_links 'login' %}
+{% endblock %}
+
+{% block content %}
+    <div class="loginContent">
+
+    {% if user.is_authenticated %}
+        <h1>You're already logged in. Go to your <a href="/">homepage</a>.</h1>
+    
+    {% else %}
+        <h1>Login <span>Get into the beta</span></h1>
+
+        {% if not facebook_omit %}
+        <div class="facebookLogin">
+            {% facebook_js %}{% facebook_button %}
+        </div>
+        {% endif %}
+
+        <form method="post" action="." class="standardLogin">
+            {% show_form_errors "form" "We cannot find an account with this username/password. Please try again. Remember your username and password are case sensitive!" %}
+            <div>
+                <ol>
+                    {% formatted_form_field form.username "Username" "standard" "" %}
+                    {% formatted_form_field form.password "Password" "standard" "Forgotten your password?" "auth_password_reset" %}
+                    {% manual_formatted_form_field "checkbox" "remember_me" "Remember me" "" %}
+                    {% manual_formatted_form_field "submit" "login_now" "Login now" "" %}
+                    <input type="hidden" name="next" value="{{ next }}" />
+                </ol>
+            </div>
+        </form>
+        
+    {% endif %}
+
+    </div>
+{% endblock content %}

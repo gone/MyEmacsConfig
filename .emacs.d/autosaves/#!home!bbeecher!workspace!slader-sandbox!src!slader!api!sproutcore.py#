@@ -1,0 +1,465 @@
+from socket import gethostname
+import simplejson
+import re
+import os.path
+
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponse, Http404
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError, transaction
+from django.template.defaultfilters import slugify
+
+from actstream import action
+from actstream.models import follow, unfollow
+
+from slader.solutions.models import Solution, SolutionData, SolutionLabel, ExplanationCell, ResultCell, Exercise
+from slader.moderator import review_queue
+from slader.moderator.models import Specialization, FurtherAction
+from slader.common.util import mod_test, HttpResponseNotAuthorized
+from slader.payment.util import UserPointsLogic, solution_has_transfer
+from slader.payment.models import TransactionType
+
+
+
+from django.views.decorators.csrf import csrf_exempt
+
+MEDIA_DOMAIN = {'sladerbox':"http://slader.com",
+                'sandbox':"http://sandbox.slader.com",
+                'slader-default-www-0': "http://8916bbe1.dotcloud.com/",
+                }.get(gethostname().lower(), "http://localhost:8000")
+
+def solution_data_guid(data):
+    """returns a guid for a solutiondata (in url format becaus sc wants that)"""
+    if not data: return None
+    return "/solution/" + str(data.id)
+
+def explanation_guid(id):
+    if not id: return None
+    return "/explanation/" + str(id)
+
+def result_guid(id):
+    if not id: return None
+    return "/result/" + str(id)
+
+def label_guid(id):
+    if not id: return None
+    return "/label/" + str(id)
+
+guid_re = re.compile(r"/(solution|explanation|result|label)/\d+")
+def strip_guid(guid):
+    if guid_re.match(guid):
+        id = re.search("\d+$", guid).group(0)
+        return int(id)
+    else:
+        raise Exception(guid)
+
+
+def explanation_to_raw(cell):
+    if cell.editor_latex_image:
+        editor_latex_image =  MEDIA_DOMAIN + "/latex_media/" + cell.editor_latex_image.name
+    else:
+        editor_latex_image = None
+    if cell.image:
+        image = cell.image.url
+    else:
+        image = None
+    if cell.editor_exp:
+        editor_exp = cell.editor_exp
+    else:
+        editor_exp = ""
+
+    return {
+        "guid" : explanation_guid(cell.id),
+        "x" : cell.x,
+        "y" : cell.y,
+        "latex" : cell.latex,
+        "solution_id" : solution_data_guid(cell.solution),
+        "image" : image,
+        "editor_latex_image" : editor_latex_image,
+        "editor_exp" :editor_exp,
+        }
+
+@transaction.autocommit
+def raw_to_cell(raw, cell):
+    for x in ['editor_latex_image', 'solution', 'solution_id', 'guid']:
+        try:
+            del raw[x]
+        except:
+            pass
+
+    raw_to_model(raw, cell)
+    cell.save()
+    return cell
+
+
+def result_to_raw(cell):
+    if cell.image:
+        image = cell.image.url
+    else:
+        image = None
+    if cell.editor_exp:
+        editor_exp = cell.editor_exp
+    else:
+        editor_exp = ""
+    return {
+        "guid" : result_guid(cell.id),
+        "latex" : cell.latex,
+        "editor_latex_image" : MEDIA_DOMAIN + "/latex_media/" + cell.editor_latex_image.name,
+        "solution_id" : solution_data_guid(cell.solution),
+        "image" : image,
+        "editor_exp": editor_exp,
+        }
+
+def label_to_raw(label):
+    return {
+        "guid" : label_guid(label.id),
+        "x" : label.x,
+        "label" : label.label,
+        "solution_id" : solution_data_guid(label.solution),
+        }
+
+def raw_to_model(raw, record):
+    """applies a raw dictionary to a model instance"""
+    for k, v in raw.iteritems():
+        setattr(record, k, v)
+    return record
+
+def raw_to_data(raw, data):  
+    """convert a raw dict into a solution data, and update the solution data"""
+    class missingNode(object):
+        """If an object has a req with missing node, assume it's stale and just play it safe that there's not a pending
+        create request."""
+        pass
+    
+    def update_kind(klass, manager, raw_data):
+        updated =  []
+        for item in raw_data:
+            if 'guid' in item:
+                try:
+                    model = klass.objects.get(id=strip_guid(item.get('guid', None)))
+                    try:
+                        model = raw_to_cell(item, model)
+                    except IntegrityError: #there was a race and you lost
+                        return
+                except ObjectDoesNotExist:
+                    model = missingNode()
+                    model.id =strip_guid(item.get('guid'))
+                    
+                updated.append(model)
+        manager.exclude(id__in=[item.id for item in updated]).delete()
+
+    update_kind(ExplanationCell, data.cells, raw['cells'])
+    update_kind(SolutionLabel, data.labels, raw['labels'])
+            
+    if 'result' in raw:
+        result = raw['result']
+        #is it a full result cell or just the id
+        if 'guid' in result:
+            result = result['guid']
+        data.result = ResultCell.objects.get(id=strip_guid(result))
+        raw_to_cell(result, data.result)
+    data.columns = int(raw['columns'])
+    data.rows = int(raw['rows'])
+    return data
+
+def data_to_raw(data):
+    """converts a solution data to a dict"""
+    rv = {
+        "guid" : solution_data_guid(data),
+        "rows" : data.rows,
+        "columns" : data.columns,
+        "finished" : data.solution.finished,
+        "reviewed" : data.solution.reviewed,
+        "further_action" : bool(FurtherAction.objects.filter(closed=False, review__solution=data.solution)),
+        "solution" : data.solution.id,
+    }
+    rv['cells'] = [explanation_to_raw(cell) for cell in data.cells.all()]
+    rv['labels'] = [label_to_raw(label) for label in data.labels.all()]
+    rv['slug'] = data.solution.slug
+    if hasattr(data, 'result'):
+        rv['result'] = result_to_raw(data.result)
+    return rv
+
+
+def solutions(request, start=1, finish=100):
+    if request.method == "GET":
+        # list of solution datas in range
+        raw_data = [data_to_raw(data) for data in SolutionData.objects.filter(id__gte=start, id__lte=finish)]
+        return_data = { "contents": raw_data }
+        return HttpResponse(simplejson.dumps(return_data), mimetype="application/json")
+
+def has_permission(request, solution):
+    """ given an object, make sure the user is either a moderator/super user or the owner of the object"""
+    if request.user == solution.user:
+        return True
+    if mod_test(request.user):
+        return True
+    return False
+
+def access_control(fn):
+    """Mangages the options preflight request, and handles the outgoing http headers"""
+    def new_fn(*args, **kwargs):
+        request = args[0]
+        if request.method == "OPTIONS":
+            response =  HttpResponse()            
+        else:
+            response  = fn(*args, **kwargs)
+        if response:
+            response["Access-Control-Allow-Methods"] = "GET, PUT, POST, DELETE, OPTIONS"
+            if 'staging' in request.META.get("HTTP_ORIGIN", ""):
+                response["Access-Control-Allow-Origin"] = "http://staging.slader.com"
+            else:
+                response["Access-Control-Allow-Origin"] = "http://www.slader.com"
+            response["Access-Control-Allow-Headers"] = "X-SproutCore-Version, X-Requested-With, Content-Type"
+            response["Access-Control-Allow-Credentials"] = "true"
+            response['Access-Control-Max-Age'] = "1728000"
+            transaction.commit_unless_managed()
+        return response
+    return new_fn
+
+
+OMGLATEX_SP = Specialization.objects.get(speciality="omglatex")
+pa = TransactionType.objects.get_or_create(type="pa")[0]
+
+
+
+@csrf_exempt
+@access_control
+@login_required
+def finish_solution(request, solution_data_id):
+    """ Finishes a solution and creates review needed object"""
+    data = get_object_or_404(SolutionData, id=solution_data_id)
+    if request.user != data.solution.user:
+        if mod_test(request.user):
+            transaction.commit()
+            return HttpResponse()
+        else:
+            transaction.rollback()
+            return HttpResponseNotAuthorized()
+
+    if data.solution.finished:
+        data.solution.finished = False
+        data.solution.save()
+        transaction.commit()
+        review_queue.invalidate_review(data.solution) 
+    else:
+        for cell in data.cells.all():
+            cell.copy_to_s3()
+        if hasattr(data, 'result'):
+            data.result.copy_to_s3()
+        data.solution.finished = True
+        data.solution.save()
+        transaction.commit()
+
+        review_queue.specialize_problem(data.solution, data.solution.user, OMGLATEX_SP)
+    
+    #auto moderate the content if the user has been flagged for auto_moderation
+    if request.user.reputation.auto_moderate: 
+       review_queue.auto_moderate(data.solution)
+
+    # activity stream actions
+    #action.send(data.solution.user, verb='added a solution to', action_object=data.solution, target=data.solution.exercise)
+
+    return HttpResponse("%s" % data.solution.finished)
+
+
+@login_required
+@csrf_exempt
+@access_control
+def exercise_solutions(request, exercise_id):
+    exercise = get_object_or_404(Exercise, id=exercise_id)
+    try:
+        solution = Solution.objects.filter(user=request.user, exercise=exercise)[0]
+        status = 200
+    except: #not created yet
+        solution  = Solution.objects.create(user=request.user, exercise=exercise)
+        status = 201
+    r = HttpResponse(simplejson.dumps({"content": data_to_raw(solution.data)}), mimetype="application/json")
+    r.status_code = status
+    return r
+
+@csrf_exempt
+@access_control
+def solution(request, data_id):
+    data = get_object_or_404(SolutionData, id=data_id)
+    if not has_permission(request, data.solution):
+        return HttpResponseNotAuthorized()
+
+    if request.method == "GET":
+        return HttpResponse(simplejson.dumps({"content": data_to_raw(data)}), mimetype="application/json")
+    elif request.method == "PUT":
+        if request.raw_post_data == "":
+            return HttpResponse()
+        raw = simplejson.loads(request.raw_post_data)
+        if len(raw) == 0:
+            return HttpResponse()
+        data = raw_to_data(raw, data)
+        data.save()
+        return HttpResponse()
+
+
+@csrf_exempt
+@access_control
+def explanation(request, cell_id=None):
+    if cell_id:
+        cell = get_object_or_404(ExplanationCell, id=cell_id)
+        if not has_permission(request, cell.solution.solution):
+                return HttpResponseNotAuthorized()
+
+        if request.method == "GET":
+            return HttpResponse(simplejson.dumps({"content": explanation_to_raw(cell)}), mimetype="application/json")
+        elif request.method == "PUT":
+            raw = simplejson.loads(request.raw_post_data)
+            cell = raw_to_cell(raw, cell)
+            return HttpResponse(simplejson.dumps({"content": explanation_to_raw(cell)}), mimetype="application/json")
+        elif request.method == "DELETE":
+            cell.delete()
+            return HttpResponse()
+        
+    elif request.method == "POST":
+        raw = simplejson.loads(request.raw_post_data)
+        solution_id = raw.get('solution', "")
+        if not solution_id:
+            raise Http404(raw)
+        solution_id = strip_guid(solution_id)
+        solution = get_object_or_404(SolutionData, id=solution_id)
+
+        if not has_permission(request, solution.solution):
+            return HttpResponseNotAuthorized()
+
+        try:
+            cell = ExplanationCell.objects.get(x=raw.get('x', 1),
+                                               y=raw.get('y', 1),
+                                               solution=solution,)
+            cell.latex =raw.get('latex', '')
+
+        except ObjectDoesNotExist:
+            cell = ExplanationCell(latex=raw.get('latex', ''),
+                               x=raw.get('x', 1),
+                               y=raw.get('y', 1),
+                               solution=solution,
+                               )
+            if cell.latex == None:
+                cell.latex = ""
+        cell.save()
+        response =  HttpResponse(simplejson.dumps({"content": explanation_to_raw(cell)}), mimetype="application/json")
+        response.status_code = 201
+        response['Content-Length'] = str(len(response.content))
+        return response
+
+@csrf_exempt
+@access_control
+def result(request, cell_id=None):
+    if cell_id:
+        data = get_object_or_404(ResultCell, id=cell_id)
+        if not has_permission(request, data.solution.solution):
+            return HttpResponseNotAuthorized()
+    
+        if request.method == "GET":
+            return HttpResponse(simplejson.dumps({"content": result_to_raw(data)}), mimetype="application/json")
+        elif request.method == "PUT":
+            raw = simplejson.loads(request.raw_post_data)
+            data = raw_to_cell(raw, data)
+            return HttpResponse(simplejson.dumps({"content": result_to_raw(data)}), mimetype="application/json")
+    elif request.method == "POST":
+        raw = simplejson.loads(request.raw_post_data)
+        solution_id = raw.get('solution', "")
+        if not solution_id:
+            raise Http404(raw)
+        solution_id = strip_guid(solution_id)
+        solution = get_object_or_404(SolutionData, id=solution_id)
+
+        if not has_permission(request, solution.solution):
+            return HttpResponseNotAuthorized()
+
+        cell = ResultCell(latex=raw.get('latex', ''),
+                          solution=solution,
+                          )
+        try:
+            cell.save()
+        except IntegrityError:
+            try:
+                transaction.rollback()
+            except:
+                pass #stupid django
+            #There was an exisiting cell, and we got a post request
+            response =  HttpResponse(simplejson.dumps({"content": result_to_raw(solution.result)}), mimetype="application/json")
+            response.status_code = 200
+            response["Access-Control-Allow-Origin"] = "http://www.slader.com"            
+            return response
+
+        response =  HttpResponse(simplejson.dumps({"content": result_to_raw(cell)}), mimetype="application/json")
+        response.status_code = 201
+        response["Access-Control-Allow-Origin"] = "http://www.slader.com"            
+        response['Content-Length'] = str(len(response.content))
+        return response
+
+@csrf_exempt
+@access_control
+def label(request, label_id=None):
+    if label_id:
+        data = get_object_or_404(SolutionLabel, id=label_id)
+        if not has_permission(request, data.solution.solution):
+            return HttpResponseNotAuthorized()
+        if request.method == "GET":
+            return HttpResponse(simplejson.dumps({"content": label_to_raw(data)}), mimetype="application/json")
+        elif request.method == "PUT":
+            raw = simplejson.loads(request.raw_post_data)
+            data = raw_to_cell(raw, data)
+            return HttpResponse(simplejson.dumps({"content": label_to_raw(data)}), mimetype="application/json")
+        elif request.method == "DELETE":
+            data.delete()
+            return HttpResponse()
+    else:
+        if request.method == "POST":
+            raw = simplejson.loads(request.raw_post_data)
+            solution_id = raw.get('solution', "")
+            if not solution_id:
+                raise Http404(raw)
+            solution_id = strip_guid(solution_id)
+            solution = get_object_or_404(SolutionData, id=solution_id)
+
+            if not has_permission(request, solution.solution):
+                return HttpResponseNotAuthorized()
+
+            try:
+                label = SolutionLabel.objects.get(x=raw.get('x', 1),
+                                                  solution=solution,)
+                label.label =raw.get('label', '')
+
+            except ObjectDoesNotExist:
+                label = SolutionLabel(label=raw.get('label', ''),
+                                      x=raw.get('x', 1),
+                                      y=1,
+                                      solution=solution,
+                                      )
+                if label.label == None:
+                    label.label = ""
+            label.save()
+            response =  HttpResponse(simplejson.dumps({"content": label_to_raw(label)}), mimetype="application/json")
+            response.status_code = 201
+            response["Access-Control-Allow-Origin"] = "http://www.slader.com"            
+            response['Content-Length'] = str(len(response.content))
+            return response
+
+
+@csrf_exempt   
+@access_control
+def upload_picture(request, id, model_type=ExplanationCell):
+    if request.method == "POST":
+        if not 'image-upload' in request.FILES or request.FILES['image-upload'].size == 0:
+            return HttpResponse(simplejson.dumps(""))
+
+        cell = get_object_or_404(model_type, id=id)
+        if not has_permission(request, cell.solution.solution):
+            return HttpResponseNotAuthorized()
+
+        image = request.FILES['image-upload']
+        cell.image = image
+        root, ext = os.path.splitext(cell.image.name)
+        cell.image.name = slugify(root) + ext
+        cell.save()
+
+    return HttpResponse(simplejson.dumps(""))
+

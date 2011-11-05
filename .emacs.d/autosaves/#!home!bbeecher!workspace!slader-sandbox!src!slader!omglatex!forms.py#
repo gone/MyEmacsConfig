@@ -1,0 +1,6 @@
+from django import forms
+
+class OMGForm(forms.Form):
+    explanation = forms.CharField(widget=forms.Textarea)
+    result      = forms.CharField(widget=forms.Textarea)
+    

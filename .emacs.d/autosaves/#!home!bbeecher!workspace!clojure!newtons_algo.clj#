@@ -1,0 +1,107 @@
+(defn abs
+  "Finds the aboslute value of a number"
+  [n]
+  (if (> 0 n)
+    (- n)
+    n))
+
+(defn avg
+  "finds the avg of two  numbers"
+  [x y]
+  (/ (+ x y) 2))
+
+(defn good-enough?
+  "huristic for if a guess is close enough to the real sqroot"
+  [number guess]
+  (let [diff ( - (* guess guess) number)]
+    (println diff)
+    (if (> 0.001 (abs diff))
+      true
+      false)))
+
+(defn sqrt
+  "returns the square root of a number"
+  ([number] (sqrt number 1.0))
+  ([number guess]
+     (if (good-enough? number guess)
+       guess
+       (sqrt number (avg guess (/ number guess))))))
+
+
+(defn power-iter
+  "returns the number to the pow"
+  ([number pow] (power-iter number 1 pow))
+  ([orig progress left]
+     (if (zero? left)
+       progress
+       (power-iter orig (* orig progress) (- left 1)))))
+
+
+(defn power
+  "returns the number to the pow"
+  [number exponent]
+  (if (zero? exponent)
+      1
+      (* number (power number (- exponent 1)))))
+
+
+(defn add-up
+  "sum of the range"
+  ([number] (add-up number 0 0))
+  ([number current sum]
+     (if (> current number)
+       sum
+       (recur number (+ 1 current) (+ sum current)))))
+
+
+(defn sqrt-loop
+  [number]
+  (loop [guess 1.0]
+    (if (good-enough? number guess)
+      guess
+      (recur (avg guess (/ number guess))))))
+;side effects 
+
+(defn side-effects-hello
+  []
+  (do
+    (println "hello")
+    (println "from")
+    (println "sideeffects")
+    (+ 5 5)))
+
+(defn square-sideeffects
+  [x]
+  (println "squaring x")
+  (println "the value will be " (* x x))
+  (* x x)
+  )
+
+
+(defn range-checker
+  "returns a function that takes an interger and returns true if the integer is between max and min"
+  [max min]
+  (fn
+    [x]
+    (and (>= x min) (>= max x))))
+    
+  
+
+
+(defn printall
+  "prints every element in a sequence"
+  [seq]
+  (if (not (empty? seq))
+          (do
+            (println (first seq))
+            (recur (printall (rest seq))))))
+           
+
+
+(defn make-int-seq
+  "makes a sequence of 1 to the provided int"
+  [max]
+  (loop [accum nil n max]
+    (if (zero? n)
+      accum
+      (recur (cons n accum) (dec n))))) 

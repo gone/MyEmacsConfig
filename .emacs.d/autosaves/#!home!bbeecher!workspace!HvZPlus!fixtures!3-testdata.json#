@@ -1,0 +1,244 @@
+[
+    {
+        "pk": 1, 
+        "model": "sites.site", 
+        "fields": {
+            "domain": "example.com", 
+            "name": "example.com"
+        }
+    },
+    {
+        "pk": "Customer", 
+        "model": "contact.contactrole", 
+        "fields": {
+            "name": "Customer"
+        }
+    }, 
+    {
+        "pk": "Supplier", 
+        "model": "contact.contactrole", 
+        "fields": {
+            "name": "Supplier"
+        }
+    }, 
+    {
+        "pk": "Distributor", 
+        "model": "contact.contactrole", 
+        "fields": {
+            "name": "Distributor"
+        }
+    }, 
+    {
+        "pk": "Company", 
+        "model": "contact.contactorganization", 
+        "fields": {
+            "name": "Company"
+        }
+    }, 
+    {
+        "pk": "Government", 
+        "model": "contact.contactorganization", 
+        "fields": {
+            "name": "Government"
+        }
+    }, 
+    {
+        "pk": "Non-profit", 
+        "model": "contact.contactorganization", 
+        "fields": {
+            "name": "Non-profit"
+        }
+    }, 
+    {
+        "pk": "Supplier", 
+        "model": "contact.contactorganizationrole", 
+        "fields": {
+            "name": "Supplier"
+        }
+    }, 
+    {
+        "pk": "Distributor", 
+        "model": "contact.contactorganizationrole", 
+        "fields": {
+            "name": "Distributor"
+        }
+    }, 
+    {
+        "pk": "Manufacturer", 
+        "model": "contact.contactorganizationrole", 
+        "fields": {
+            "name": "Manufacturer"
+        }
+    }, 
+    {
+        "pk": "Customer", 
+        "model": "contact.contactorganizationrole", 
+        "fields": {
+            "name": "Customer"
+        }
+    }, 
+    {
+        "pk": "Email", 
+        "model": "contact.contactinteractiontype", 
+        "fields": {
+            "name": "Email"
+        }
+    }, 
+    {
+        "pk": "Phone", 
+        "model": "contact.contactinteractiontype", 
+        "fields": {
+            "name": "Phone"
+        }
+    }, 
+    {
+        "pk": "In Person", 
+        "model": "contact.contactinteractiontype", 
+        "fields": {
+            "name": "In Person"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "product.productimage", 
+        "fields": {
+            "sort": 1, 
+            "picture": "images/productimage-picture-default.jpg", 
+            "product": null, 
+            "caption": "Photo Not Available"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "product.taxclass", 
+        "fields": {
+            "description": "Default", 
+            "title": "Default"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "product.taxclass", 
+        "fields": {
+            "description": "Shipping", 
+            "title": "Shipping"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "games.game", 
+        "fields": {
+            "is_paused": false, 
+            "access": 1, 
+            "kind": "O", 
+            "end": null, 
+            "description": "The Archetypal Game", 
+            "creator": 1, 
+            "rules": "<ul>\r\n    <li>Don't be a D-Bag!</li>\r\n    <li>No realistic looking blaster</li>\r\n    <li>Blasters may not be visible inside of academic buildings or jobs on campus</li>\r\n    <li>No cars (segways allowed)</li>\r\n</ul>\r\n<p><strong>Required Equipment:</strong></p>\r\n<ul>\r\n    <li>Bandana</li>\r\n    <li>Dart Blaster (or socks)</li>\r\n    <li>One ID index card</li>\r\n</ul>\r\n<p>\u00a0</p>\r\n<p><strong>Safe Zones:</strong><br />\r\nDorm rooms, Bathrooms, Academic buildings, Library, SRC,    Health Center, Dining Halls.<br />\r\nEverywhere else is Free Game. <br />\r\n<br />\r\n*A zombie must have both feet    outside of a safe zone to tag a human.</p>\r\n<p><strong>Non-participants</strong><br />\r\nPeople who are not registered participants may not directly    interact with the game.</p>\r\n<p><strong>Human Rules</strong></p>\r\n<p><strong>Conditions for Winning:</strong><br />\r\nHumans win when the last    zombie starves to death.</p>\r\n<p><strong>Staying on campus:<br />\r\n</strong>Humans must sleep on campus. If for whatever reason you need to leave    campus for longer than 24 hours, we apologize, but there are no exceptions.</p>\r\n<p><strong>ID number:</strong><br />\r\nEvery Human player must keep one index card with their unique identification    number on them at all times.</p>\r\n<p><strong>Stunning a Zombie:</strong><br />\r\nHumans may stun a Zombie for 15 minutes by blasting them with a dart blaster or throwing a sock at them.</p>\r\n<p>*Only single shot/Non-automatic blasters are allowed until the Humans are notified otherwise.</p>\r\n<p><strong>When tagged by a Zombie:<br />\r\n</strong>When tagged by a Zombie, a Human is required to distribute their ID    card. One hour from being tagged a Human becomes a member of the Zombie team.</p>\r\n<p>*One hour from being tagged you must begin wearing your bandana around your head - you are then allowed to tag other Humans.</p>\r\n<p><strong>Zombie Rules </strong></p>\r\n<p><strong>Conditions for Winning:<br />\r\n</strong>The Zombies win when the Human team has no remaining members.</p>\r\n<p><strong>Wearing your Headband:<br />\r\n</strong>The Zombie team must wear a bandana around their head at all times.</p>\r\n<p><strong>Tagging:<br />\r\n</strong>A tag is a firm touch to any part of a Human. After tagging a Human    the Zombie must collect their ID card. Kills must be reported within three hours.</p>\r\n<p><strong>Feeding:<br />\r\n</strong>Zombie must feed every 48 hours. A zombie feeds by reporting their    kill on the website. A zombie may choose two other zombies to join in the feed.</p>\r\n<p><strong>Getting blasted:<br />\r\n</strong>When shot with a dart blaster or hit with a sock a Zombie is stunned for    15 minutes. A stunned zombie may not interact with the game in any way.</p>\r\n<p>*This includes shielding other zombies from darts or continuing to run toward a human.<br />\r\n*If shot while stunned, a zombie remains stunned for the next 15 minutes.</p>\r\n", 
+            "local_timezone": "US/Eastern", 
+            "zombie_feeds": 2, 
+            "actions": [], 
+            "created": "2011-07-02 01:27:02", 
+            "include_mods": true, 
+            "start": "2011-07-01 00:00:00", 
+            "state": 0, 
+            "zombie_reports": 0, 
+            "starve_time": 30, 
+            "registration": true, 
+            "active": true, 
+            "access_domain": "", 
+            "slug": "test-game", 
+            "name": "Test Game"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "profiles.profile", 
+        "fields": {
+            "website": "", 
+            "is_plus": false, 
+            "about": "", 
+            "name": "Player1", 
+            "subscriptions": [], 
+            "twitter": "", 
+            "tumblr": "", 
+            "facebook": "", 
+            "location": "", 
+            "hear_about": "", 
+            "newsletter": true, 
+            "user": 2, 
+            "guns": [], 
+            "badges": [], 
+            "karma": 0
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "profiles.profile", 
+        "fields": {
+            "website": null, 
+            "is_plus": false, 
+            "about": null, 
+            "name": null, 
+            "subscriptions": [], 
+            "twitter": "", 
+            "tumblr": "", 
+            "facebook": "", 
+            "location": null, 
+            "hear_about": null, 
+            "newsletter": true, 
+            "user": 1, 
+            "guns": [], 
+            "badges": [], 
+            "karma": 0
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "profiles.player", 
+        "fields": {
+            "profile": 1, 
+            "want_oz": true, 
+            "last_feed": null, 
+            "killed_by": null, 
+            "idkey": "1235", 
+            "state": 3, 
+            "active": true, 
+            "killed_time": null, 
+            "game": 1, 
+            "user": 2, 
+            "starve_time": null, 
+            "is_mod": false, 
+            "death_time": null, 
+            "revealed": false, 
+            "is_playing": true
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "account.account", 
+        "fields": {
+            "timezone": "UTC", 
+            "user": 1, 
+            "language": "en-us"
+        }
+    }, 
+    {
+        "pk": 2, 
+        "model": "account.account", 
+        "fields": {
+            "timezone": "UTC", 
+            "user": 2, 
+            "language": "en-us"
+        }
+    }, 
+    {
+        "pk": 1, 
+        "model": "badges.badge", 
+        "fields": {
+            "icon": "img/icons/badges/add.png", 
+            "karma": 0, 
+            "name": "Plus Account"
+        }
+    }
+]

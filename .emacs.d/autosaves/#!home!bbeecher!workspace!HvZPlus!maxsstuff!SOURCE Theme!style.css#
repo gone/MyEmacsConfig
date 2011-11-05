@@ -1,0 +1,108 @@
+*{
+padding: 0px;
+margin: 0px;
+}
+
+body{
+background: white url('images/bkgrnd.jpg') top center no-repeat;
+}
+
+a img{
+border: none;
+}
+
+p{
+font-family: helvetica neue, helvetica, arial, sans-serif;
+font-size: 9pt;
+color: white;
+}
+
+h1{
+font-family: helvetica neue, helvetica, arial, sans-serif;
+font-size: 18pt;
+color: white;
+}
+
+a{
+color: red;
+}
+
+div#housing{
+width: 950px;
+background: black;
+margin-top: 55px;
+margin-left: auto;
+margin-right: auto;
+}
+
+div#externallinks{
+margin: 70px 0px 0px 15px;
+}
+
+div#title{
+width: 690px;
+height: 122px;
+margin-top: 15px;
+background: url('images/logo.jpg') top left no-repeat;
+padding-top: 133px;
+padding-left: 260px;
+}
+
+div#navbar{
+width: 930px;
+height: 6z0px;
+background: url('images/navbar.jpg') top left no-repeat;
+padding: 0px 0px 0px 20px;
+margin-bottom: 45px;
+}
+
+div#leftcolumn{
+float: left;
+width: 590px;
+margin-right: 20px;
+}
+
+div#gamestatistics{
+	height: 90px;
+	width: 590px;
+	background: url('images/gamestatisticebkgrnd.jpg') no-repeat;
+	margin-bottom: 40px;
+	}
+	
+	div#announcement{
+	background: url('images/widgetbkgrnd.jpg');
+	width: 590px;
+	}
+	
+		div#announcementheader{
+		width: 590px;
+		height: 10px;
+		background: url('images/announcementheader.jpg') top left no-repeat;
+		}
+		
+		div#announcementtext{
+		margin: 15px 25px 0px 25px;
+		}
+		
+		div#widgetbottom{
+		width: 590px;
+		height: 2px;
+		background: url('images/widgetbottom.jpg') top left no-repeat;
+		margin: 15px 0px 0px 0px;
+		}
+
+div#rightcolumn{
+float: right;
+width: 320px;
+margin-right: 20px;
+}
+
+	div#rightcolumn img{
+	margin-bottom: 20px;
+	}
+
+div#footer{
+background: url('images/footertop.jpg') top left no-repeat #1a1a1a;
+height: 300px;
+margin-top: 50px;
+}

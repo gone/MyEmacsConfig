@@ -1,0 +1,32 @@
+{% extends "modadmin/moderator_base.html" %}
+
+{% load i18n %}
+{% load avatar_tags %}
+{% load group_tags %}
+
+{% block head_title %}{% blocktrans %}Players for {{ game }}{% endblocktrans %}{% endblock %}
+
+{% block body %}
+    <h1>{% blocktrans %}Players for {{ game }}{% endblocktrans %}</h1>
+    <div class="list_players">
+      <ul>
+        {% for player in players %}
+        <li>
+          <div class="profile clearfix">
+            <div class="player-avatar">{% avatar profile.user 40 %}</div>
+            <div class="player-link"><a href="{% url modadmin:edit_player slug=game.slug, username=profile.user.username %}">{{ profile.user.get_full_name }}</a><br />
+            </div>
+          {% if "zombie" in player.status|lower %}
+          <a href="{% url modadmin:revive_player slug=game.slug,username=player.user.username %}">Revive</a><br/>
+          {% else %}
+          <a href="{% url modadmin:kill_player slug=game.slug,username=player.user.username %}">Tag</a><br/>
+          {% endif %}
+          {% if player.name %}<b>{% trans "Name" %}</b>: {{ player.name }}{% endif %}<br />
+          {% if player.about %}<b>{% trans "About" %}</b>: {{ player.about }}{% endif %}<br />
+          {% if player.location %}<b>{% trans "Location" %}</b>: {{ player.location }}{% endif %}<br />
+          {% if player.website %}<b>{% trans "Website" %}</b>: {{ player.website }}{% endif %}<br />
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+{% endblock body %}

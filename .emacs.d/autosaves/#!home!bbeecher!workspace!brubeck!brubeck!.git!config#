@@ -1,0 +1,14 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	fetch = +refs/heads/*:refs/remotes/origin/*
+	url = git@github.com:gone/brubeck.git
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+[remote "j2labs"]
+	url = https://github.com/j2labs/brubeck.git
+	fetch = +refs/heads/*:refs/remotes/j2labs/*

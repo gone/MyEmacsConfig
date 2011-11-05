@@ -1,0 +1,318 @@
+import json
+import datetime
+import re
+
+from django.shortcuts import get_object_or_404, redirect, render_to_response
+from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.template import RequestContext
+from django.http import Http404, HttpRequest
+from django.db.models import Q
+
+from slader.latex.utils import LatexImgMatrix
+from slader.moderator import review_queue
+from slader.moderator.models import ReviewNeeded, ModerationSkillSet, FurtherAction, Specialization
+from slader.moderator.util import notify_user_of_solution_update
+from slader.solutions.models import ResultCell
+from slader.solutions.templatetags.solutions_tags import get_exercise_name_for_textbook
+from slader.common.decorators import simple_decorator
+from slader.moderator.review_queue import delete_solution, send_solution_back, specialize_problem, base_queue_solution, reject_solution
+from slader.moderator.review_queue import approve_solution 
+    
+
+REJECT_REASONS_INFO = {'wrong': "The solutions is obviously wrong",
+                       'looks': "The solution does not look good",
+                       'sense': "The solution is not complete or understandable",}
+REJECT_REASONS = set(['wrong', 'looks', 'sense'])
+
+
+class NoThingException(Exception): pass
+
+
+def cancelable(fn):
+    def get_thing(type, *args, **kwargs):
+        for i in args:
+            if isinstance(i, type):
+                return i
+        for i in kwargs:
+            if isinstance(i, type):
+                return i
+        raise NoThingException
+
+    def check_if_canceled(*args, **kwargs):
+        try:
+            request = get_thing(HttpRequest, *args, **kwargs)
+            review = get_thing(ReviewNeeded, *args, **kwargs)
+        except NoThingException:
+            return fn(*args, **kwargs)
+        if request.method == "POST":
+            if 'cancel' in request.POST and request.POST['cancel']:
+                review.solution.moderation_lock = False
+                review.solution.save()
+                return redirect(reverse('moderator_home'))
+        return fn(*args, **kwargs)
+    return check_if_canceled
+
+
+def rejectable(fn):
+    def get_thing(type, *args, **kwargs):
+        for i in args:
+            if isinstance(i, type):
+                return i
+        for i in kwargs:
+            if isinstance(i, type):
+                return i
+        raise NoThingException
+
+    def check_if_rejected(*args, **kwargs):
+        try:
+            request = get_thing(HttpRequest, *args, **kwargs)
+            review = get_thing(ReviewNeeded, *args, **kwargs)
+        except NoThingException:
+            return fn(*args, **kwargs)
+        if request.method == "POST":
+            if 'reject' in request.POST and request.POST['reject']:
+                reject_solution(review.solution)
+                return redirect_to_next_solution(request, review)
+        return fn(*args, **kwargs)
+    return check_if_rejected
+
+
+def finish_review(request, review):
+    review.closed = True
+    review.resolved_by = request.user
+    review.resolved = datetime.datetime.now()
+    review.save()
+    return resolve_review(request, review)
+
+
+def redirect_to_next_solution(request, review):
+    try:
+        review_needed = review_queue.pop_review(request.user, review.specialization, review.textbook.id)
+    except Http404:
+        return redirect(reverse('moderator_queues'))
+    return redirect(dispatch, review_id=review_needed.id)
+
+
+prefix_len = len("special-")
+def reassign_review(request, review):
+    """When a review is submitted with one of the special-Whatever's clicked, we need to create new review needed objects
+    with the appropriate specialization"""
+    keys = [key for key in request.POST.keys() if re.match('special-', key)]
+    if not keys:
+        return False
+    specializations = [key[prefix_len:] for key in keys]
+    specializations = Specialization.objects.filter(speciality__in=specializations)
+    for special in specializations:
+        specialize_problem(solution=review.solution, user=request.user, specialization=special, review=review)
+    return True
+
+
+def get_notes(review):
+    """return a list of notes from previous reviews"""
+    reviews = ReviewNeeded.objects.filter(solution=review.solution).filter((~Q(notes__exact="") | Q(notes__isnull=False))).order_by("-resolved")
+    return [rev.notes.strip() for rev in reviews if rev.notes]
+
+
+def get_textbook(request, review):
+
+    try:
+        skillset = ModerationSkillSet.objects.get(user=request.user)
+    except ModerationSkillSet.DoesNotExsist:
+        raise Http404
+
+    # if specialization is textbook, make sure this mod can review this textbook
+    if not review.specialization or review.specialization.speciality.lower() == 'textbook':
+        textbook_ids = skillset.textbooks.all().values('id')
+        textbook = review.solution.textbooks.filter(id__in=textbook_ids)
+        if len(textbook) == 0:
+            raise Http404
+
+    # otherwise, just make sure that the user has the specialization available
+    if (review.specialization and not review.specialization in skillset.specialities.all()):
+        raise Http404
+    textbook = review.solution.textbooks.all()
+    try:
+        return textbook[0]
+    except IndexError:
+        raise Http404
+
+
+@rejectable
+@cancelable
+def moderate_textbook(request, review):
+    """Default moderation logic"""
+    if request.method == "POST":
+        notes = request.POST.get('notes', "")
+        reassigned = reassign_review(request, review)
+        if not reassigned and not REJECT_REASONS.issubset(request.POST):
+            #send back to the user
+            
+            reason = ", ".join(REJECT_REASONS_INFO[x] for x in REJECT_REASONS.difference(request.POST))
+            send_solution_back(solution=review.solution, user=request.user, review=review, reason=reason, notes=None)
+
+            review_queue.resolve_review(review, request.user, request.POST.get('notes', ''))
+            
+            return redirect_to_next_solution(request, review)
+        else:
+            #good to go
+            review.notes = notes
+            return finish_review(request, review)
+    else:
+        textbook = get_textbook(request, review)
+        page = review.solution.exercise.pages.get(textbook=textbook)
+        exname = get_exercise_name_for_textbook(review.solution.exercise, textbook)
+        template_args = dict(textbook=textbook,
+                             exname=exname,
+                             page=page,
+                             solution=review.solution,
+                             closed=review.closed,
+                             notes = get_notes(review),
+                             )
+        return render_to_response('moderator/special/textbook.html', template_args, RequestContext(request))
+
+
+@simple_decorator
+def require_skillset(f, speciality):
+    def require_skillset_fn(request, *args, **kwargs):
+        try:
+            ms = ModerationSkillSet.objects.get(user=request.user, specialities__speciality=speciality)
+            return f(request, *args, **kwargs)
+        except ModerationSkillSet.DoesNotExist:
+            raise 440
+    return require_skillset_fn
+
+@rejectable
+@cancelable
+def moderate_latex(request, review, template='moderator/special/latex.html'):
+    """ Special Latex moderation logic
+    A special note on this - Generally you should be using require_skillset as a decorator for special moderation types,
+    but since this is being used over and over with different specializations,
+    I needed to be able to control the sp that this requires.
+    To call this - use require_skillset function like require_skillset(moderate_latex, 'math'),
+    and call the result of that"""
+    def create_latex_response(request, review, **kwargs):
+        """Convenience function to handle common latex response logic"""
+
+        textbook   = get_textbook(request, review)
+
+
+        exname = get_exercise_name_for_textbook(review.solution.exercise, textbook)
+        template_args = dict(textbook=textbook,
+                             exname = exname,
+                             page = review.solution.exercise.pages.get(textbook=textbook),
+                             solution=review.solution,
+                             closed=review.closed,
+                             notes = get_notes(review),
+                             specialization = review.specialization,
+                            )
+        if kwargs:
+            template_args.update(kwargs)
+        return render_to_response(template, template_args, RequestContext(request))
+
+    if request.method == "POST":
+        if 'delete' in request.POST:
+            redirect = redirect_to_next_solution(request, review)
+            delete_solution(review.solution)
+            return redirect
+        if 'Finalize' in request.POST:
+            reassign_review(request, review)
+            return create_latex_response(request, review, preview=True)
+        if "bad-flag" in request.POST:
+            review_queue.bad_flag(request, review)
+            return redirect_to_next_solution(request, review)
+        if 'further-review' in request.POST:
+            notes = request.POST.get('notes', '')
+            if request.POST['further-review'] == "ready":
+                review.solution.finished = True
+                review.solution.save()
+                return finish_review(request, review)
+            elif request.POST['further-review'] == "user":
+                send_solution_back(solution=review.solution, user=request.user, review=review, notes=notes, reason="failed latex review")
+                return redirect_to_next_solution(request, review)
+            elif request.POST['further-review'] == "specialist":
+                reassign_review(request, review)
+                return redirect_to_next_solution(request, review)
+            else:
+                return create_latex_response(request, review)
+    else:
+        return create_latex_response(request, review)
+
+
+@rejectable
+@cancelable
+def moderate_image(request, review):
+    if request.method == "POST":
+        if 'delete' in request.POST:
+            redirect = redirect_to_next_solution(request, review)
+            review.solution.delete()
+            review.delete()
+            return redirect
+        if 'Finish' in request.POST:
+            if 'further-review' in request.POST:
+                notes = request.POST.get('notes', '')
+                if request.POST['further-review'] == "user":
+                    f = FurtherAction(review=review, reason="failed image review", notes=notes)
+                    f.save()
+
+                    # notify user of this action
+                    notify_user_of_solution_update(review.solution.user, 'fan')
+
+                    review_queue.resolve_review(review, request.user, notes)
+                    return redirect_to_next_solution(request, review)
+                elif request.POST['further-review'] == "specialist":
+                    reassign_review(request, review)
+                    review_queue.resolve_review(review, request.user, notes)
+                    return redirect_to_next_solution(request, review)
+                else:
+                    # notify user of this action
+                    notify_user_of_solution_update(review.solution.user, 'approved')
+
+                    return finish_review(request, review)
+    textbook = get_textbook(request, review)
+    page = review.solution.exercise.pages.get(textbook=textbook)
+    exname = get_exercise_name_for_textbook(review.solution.exercise, textbook)
+
+    return render_to_response('moderator/special/image.html', RequestContext(request, {'review':review,
+                                                                                       'solution':review.solution,
+                                                                                       'textbook':textbook,
+                                                                                       'exname':exname,
+                                                                                       'page':page,
+                                                                                       }))
+
+
+SPECIAL_TYPES = {'textbook': moderate_textbook,
+                 'latex': require_skillset(moderate_latex, 'latex'),
+                 'math': require_skillset(moderate_latex, 'math'),
+                 'escalate': require_skillset(moderate_latex, 'escalate'),
+                 'urgent': require_skillset(moderate_latex, 'urgent'),
+                 'urgent': require_skillset(lambda *args, **kwargs: moderate_latex(*args, template='moderator/special/urgent.html', **kwargs), 'urgent'),
+                 'layout': require_skillset(moderate_latex, 'layout'),
+                 'spelling': require_skillset(moderate_latex, 'spelling'),
+                 'ipad': require_skillset(moderate_latex, 'ipad'),
+                 'delta': require_skillset(moderate_latex, 'delta'),
+                 'omglatex': require_skillset(moderate_latex, 'omglatex'),
+                 'image': require_skillset(moderate_image, 'image'),
+                 'scan': require_skillset(moderate_image, 'scan'),
+                 }
+
+
+@login_required
+def dispatch(request, review_id):
+    """ Takes a request for moderation and redirects it to the correct special moderation type"""
+    review = get_object_or_404(ReviewNeeded, id=review_id)
+    sp = review.specialization.speciality.lower() if review.specialization else 'textbook'
+    sptype = SPECIAL_TYPES[sp]
+    return sptype(request, review)
+
+
+def resolve_review(request, review):
+    """ after the special type postprocess is called, this finishes up and redirects to the next one"""
+    outstanding = ReviewNeeded.objects.filter(solution=review.solution, closed=False)
+    futher_actions = FurtherAction.objects.filter(review__solution=review.solution, closed=False)
+    if len(outstanding) == 0 and len(futher_actions) == 0:
+        approve_solution(review.solution, request.user)
+    review_queue.resolve_review(review, request.user, request.POST.get('notes', ''))
+    return redirect_to_next_solution(request, review)
+
+

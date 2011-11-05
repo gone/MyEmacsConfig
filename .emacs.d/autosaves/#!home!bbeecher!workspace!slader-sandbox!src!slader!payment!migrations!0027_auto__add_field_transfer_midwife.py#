@@ -1,0 +1,292 @@
+# encoding: utf-8
+import datetime
+from south.db import db
+from south.v2 import SchemaMigration
+from django.db import models
+
+class Migration(SchemaMigration):
+
+    depends_on = (
+        ('midwife', '0001_initial.py'),
+        )
+
+    def forwards(self, orm):
+        
+        # Adding field 'Transfer.midwife'
+        db.add_column('payment_transfer', 'midwife', self.gf('django.db.models.fields.related.ForeignKey')(related_name='transfers', null=True, to=orm['midwife.Midwife']), keep_default=False)
+
+
+    def backwards(self, orm):
+        
+        # Deleting field 'Transfer.midwife'
+        db.delete_column('payment_transfer', 'midwife_id')
+
+
+    models = {
+        'auth.group': {
+            'Meta': {'object_name': 'Group'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
+            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
+        },
+        'auth.permission': {
+            'Meta': {'unique_together': "(('content_type', 'codename'),)", 'object_name': 'Permission'},
+            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
+        },
+        'auth.user': {
+            'Meta': {'object_name': 'User'},
+            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
+            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
+            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
+            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
+            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
+        },
+        'contenttypes.contenttype': {
+            'Meta': {'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
+            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
+        },
+        'midwife.midwife': {
+            'Meta': {'object_name': 'Midwife'},
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
+            'flagged': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'moderation_lock': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'moderation_lock_time_stamp': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'reviewed': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'})
+        },
+        'payment.anonymoussession': {
+            'Meta': {'object_name': 'AnonymousSession'},
+            'browser': ('django.db.models.fields.CharField', [], {'default': "'unknown'", 'max_length': '255'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'ip': ('django.db.models.fields.IPAddressField', [], {'default': "'0.0.0.0'", 'max_length': '15'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'points_granted': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'referer': ('django.db.models.fields.CharField', [], {'default': "'unknown'", 'max_length': '2048'}),
+            'time_stamp': ('django.db.models.fields.DateTimeField', [], {})
+        },
+        'payment.anonymoususerview': {
+            'Meta': {'unique_together': "(('ip', 'solution'), ('ip', 'textbook_page'))", 'object_name': 'AnonymousUserView'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'ip': ('django.db.models.fields.IPAddressField', [], {'default': "'0.0.0.0'", 'max_length': '15'}),
+            'solution': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['solutions.Solution']", 'null': 'True', 'blank': 'True'}),
+            'textbook_page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['solutions.TextbookPage']", 'null': 'True', 'blank': 'True'}),
+            'time_stamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'})
+        },
+        'payment.payoutrequest': {
+            'Meta': {'object_name': 'PayoutRequest'},
+            'approved': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'approved_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'payout_approvals'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'cash_value': ('django.db.models.fields.DecimalField', [], {'max_digits': '6', 'decimal_places': '2'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'paid': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'paypal_email': ('django.db.models.fields.EmailField', [], {'max_length': '75'}),
+            'transfer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['payment.Transfer']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'payout_requests'", 'to': "orm['auth.User']"})
+        },
+        'payment.solutionview': {
+            'Meta': {'object_name': 'SolutionView'},
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'duplicate': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'ip_used': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'solution': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'views'", 'to': "orm['solutions.Solution']"}),
+            'time_stamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'transfers': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'views'", 'symmetrical': 'False', 'to': "orm['payment.Transfer']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'solutionviews'", 'to': "orm['auth.User']"})
+        },
+        'payment.transactiontype': {
+            'Meta': {'object_name': 'TransactionType'},
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'type': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
+        'payment.transfer': {
+            'Meta': {'object_name': 'Transfer'},
+            'amount': ('django.db.models.fields.IntegerField', [], {}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'credit': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'midwife': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'transfers'", 'null': 'True', 'to': "orm['midwife.Midwife']"}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'time_stamp': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['payment.TransactionType']"}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+        },
+        'reputation.contentvote': {
+            'Meta': {'unique_together': "(('content_type', 'object_id', 'user'),)", 'object_name': 'ContentVote'},
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['contenttypes.ContentType']"}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'up_or_down': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"})
+        },
+        'solutions.author': {
+            'Meta': {'object_name': 'Author'},
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'slug': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'})
+        },
+        'solutions.chapter': {
+            'Meta': {'unique_together': "(('textbook', 'name'),)", 'object_name': 'Chapter'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'pct_complete': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'textbook': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'chapters'", 'null': 'True', 'to': "orm['solutions.Textbook']"})
+        },
+        'solutions.exercise': {
+            'Meta': {'object_name': 'Exercise'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+        },
+        'solutions.exerciseingroup': {
+            'Meta': {'unique_together': "(('slug', 'group'), ('name', 'group'))", 'object_name': 'ExerciseInGroup'},
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'exercise': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['solutions.Exercise']"}),
+            'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['solutions.TextbookExerciseGroup']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
+            'page': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['solutions.TextbookPage']"}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '20'})
+        },
+        'solutions.publisher': {
+            'Meta': {'object_name': 'Publisher'},
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'slug': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '100'})
+        },
+        'solutions.section': {
+            'Meta': {'object_name': 'Section'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
+            'chapter': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'sections'", 'null': 'True', 'to': "orm['solutions.Chapter']"}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'description': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'textbook': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'sections'", 'null': 'True', 'to': "orm['solutions.Textbook']"})
+        },
+        'solutions.solution': {
+            'Meta': {'unique_together': "(('exercise', 'user'),)", 'object_name': 'Solution'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'exercise': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'solutions'", 'to': "orm['solutions.Exercise']"}),
+            'finished': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'flagged': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'moderation_lock': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'moderation_lock_time_stamp': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'populated': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'reviewed': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.User']"}),
+            'uuid': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'unique': 'True', 'max_length': '36', 'blank': 'True'})
+        },
+        'solutions.textbook': {
+            'Meta': {'object_name': 'Textbook'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
+            'authors': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'textbooks'", 'blank': 'True', 'to': "orm['solutions.Author']"}),
+            'composite_slug': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '120', 'blank': 'True'}),
+            'cover_image': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'edition': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'isbn': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '13'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'num_pages': ('django.db.models.fields.IntegerField', [], {}),
+            'publisher': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'textbooks'", 'to': "orm['solutions.Publisher']"}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'starred': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
+            'subjects': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "'textbooks'", 'blank': 'True', 'to': "orm['subjects.Subject']"}),
+            'target_release_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'year_published': ('django.db.models.fields.IntegerField', [], {'max_length': '4'})
+        },
+        'solutions.textbookexercisegroup': {
+            'Meta': {'object_name': 'TextbookExerciseGroup'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
+            'chapter': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'groups'", 'to': "orm['solutions.Chapter']"}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'exercises': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'groups'", 'symmetrical': 'False', 'through': "orm['solutions.ExerciseInGroup']", 'to': "orm['solutions.Exercise']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
+            'pages': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'groups'", 'symmetrical': 'False', 'to': "orm['solutions.TextbookPage']"}),
+            'pct_complete': ('django.db.models.fields.SmallIntegerField', [], {'default': '0'}),
+            'section': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'groups'", 'null': 'True', 'to': "orm['solutions.Section']"}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'textbook': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'groups'", 'to': "orm['solutions.Textbook']"})
+        },
+        'solutions.textbookpage': {
+            'Meta': {'unique_together': "(('textbook', 'slug'),)", 'object_name': 'TextbookPage'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'exercises': ('django.db.models.fields.related.ManyToManyField', [], {'related_name': "'pages'", 'symmetrical': 'False', 'through': "orm['solutions.ExerciseInGroup']", 'to': "orm['solutions.Exercise']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            'slug': ('django.db.models.fields.CharField', [], {'max_length': '10'}),
+            'textbook': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'pages'", 'to': "orm['solutions.Textbook']"})
+        },
+        'subjects.subject': {
+            'Meta': {'object_name': 'Subject'},
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True', 'blank': 'True'}),
+            'modified_on': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'ordering': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
+            'parent': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'child'", 'null': 'True', 'to': "orm['subjects.Subject']"}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '50', 'db_index': 'True'})
+        },
+        'taggit.tag': {
+            'Meta': {'object_name': 'Tag'},
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
+            'slug': ('django.db.models.fields.SlugField', [], {'unique': 'True', 'max_length': '100', 'db_index': 'True'})
+        },
+        'taggit.taggeditem': {
+            'Meta': {'object_name': 'TaggedItem'},
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'taggit_taggeditem_tagged_items'", 'to': "orm['contenttypes.ContentType']"}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'object_id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True'}),
+            'tag': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'taggit_taggeditem_items'", 'to': "orm['taggit.Tag']"})
+        }
+    }
+
+    complete_apps = ['payment']

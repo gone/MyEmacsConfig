@@ -1,0 +1,111 @@
+{% load main_tags payment_tags %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+          _____                    _____            _____                    _____                    _____                    _____          
+         /\    \                  /\    \          /\    \                  /\    \                  /\    \                  /\    \         
+        /::\    \                /::\____\        /::\    \                /::\    \                /::\    \                /::\    \        
+       /::::\    \              /:::/    /       /::::\    \              /::::\    \              /::::\    \              /::::\    \       
+      /::::::\    \            /:::/    /       /::::::\    \            /::::::\    \            /::::::\    \            /::::::\    \      
+     /:::/\:::\    \          /:::/    /       /:::/\:::\    \          /:::/\:::\    \          /:::/\:::\    \          /:::/\:::\    \     
+    /:::/__\:::\    \        /:::/    /       /:::/__\:::\    \        /:::/  \:::\    \        /:::/__\:::\    \        /:::/__\:::\    \    
+    \:::\   \:::\    \      /:::/    /       /::::\   \:::\    \      /:::/    \:::\    \      /::::\   \:::\    \      /::::\   \:::\    \   
+  ___\:::\   \:::\    \    /:::/    /       /::::::\   \:::\    \    /:::/    / \:::\    \    /::::::\   \:::\    \    /::::::\   \:::\    \  
+ /\   \:::\   \:::\    \  /:::/    /       /:::/\:::\   \:::\    \  /:::/    /   \:::\ ___\  /:::/\:::\   \:::\    \  /:::/\:::\   \:::\____\ 
+/::\   \:::\   \:::\____\/:::/____/       /:::/  \:::\   \:::\____\/:::/____/     \:::|    |/:::/__\:::\   \:::\____\/:::/  \:::\   \:::|    |
+\:::\   \:::\   \::/    /\:::\    \       \::/    \:::\  /:::/    /\:::\    \     /:::|____|\:::\   \:::\   \::/    /\::/   |::::\  /:::|____|
+ \:::\   \:::\   \/____/  \:::\    \       \/____/ \:::\/:::/    /  \:::\    \   /:::/    /  \:::\   \:::\   \/____/  \/____|:::::\/:::/    / 
+  \:::\   \:::\    \       \:::\    \               \::::::/    /    \:::\    \ /:::/    /    \:::\   \:::\    \            |:::::::::/    /  
+   \:::\   \:::\____\       \:::\    \               \::::/    /      \:::\    /:::/    /      \:::\   \:::\____\           |::|\::::/    /   
+    \:::\  /:::/    /        \:::\    \              /:::/    /        \:::\  /:::/    /        \:::\   \::/    /           |::| \::/____/    
+     \:::\/:::/    /          \:::\    \            /:::/    /          \:::\/:::/    /          \:::\   \/____/            |::|  ~|          
+      \::::::/    /            \:::\    \          /:::/    /            \::::::/    /            \:::\    \                |::|   |          
+       \::::/    /              \:::\____\        /:::/    /              \::::/    /              \:::\____\               \::|   |          
+        \::/    /                \::/    /        \::/    /                \::/____/                \::/    /                \:|   |          
+         \/____/                  \/____/          \/____/                  ~~                       \/____/                  \|___|          
+                                                                                                                                              
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+
+    {% if not DEV_MODE %}
+    <!-- optimizely start -->
+    <script src="//cdn.optimizely.com/js/1471012.js"></script>
+    <!-- optimizely end -->
+    {% endif %}
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>{% block title %}{% endblock %}</title>
+
+    <meta http-equiv="imagetoolbar" content="no" />
+    <meta name="keywords" content="{% block meta-keywords %}Prealgebra, Algebra, Geometry, Algebra II, Trigonometry, Precalculus, Calculus, Statistics{% endblock %}" />
+
+    <link rel="shortcut icon" href="/media/images/interface/favicon.ico" />
+    <link href="/media/css/omg.css" rel="stylesheet" type="text/css" media="screen" />
+    <!--[if IE 7]><link href="/media/css/ie7.css" rel="stylesheet" type="text/css" media="screen" /><![endif]-->
+    <!--[if IE 6]><link href="/media/css/ie6.css" rel="stylesheet" type="text/css" media="screen" /><![endif]-->
+    {% block extra-style %}{% endblock %}
+    
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
+    <script type="text/javaScript">
+    <!--
+    if ((navigator.appVersion.indexOf("Mac") != -1)) {
+       document.write("<link rel=stylesheet href=\"/media/css/mac.css\" type=\"text/css\" />"); }
+    // -->
+    </script>
+    {% block extra-script %}{% endblock %}
+
+    <!-- google analytics start -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-19871516-1']);
+      _gaq.push(['_trackPageview']);
+    
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <!-- google analytics end -->
+
+</head>
+
+<body>
+<!-- container start -->
+<div id="container">
+
+    <!-- header start -->
+    <div id="header">
+        <div id="logo"><div id="logo-content"></div></div>
+        {% block header %}
+        {% endblock %}
+    </div>
+    <!-- header end -->
+    
+    <!-- content start -->
+    <div id="content">
+    
+        {% block content %}
+        {% endblock %}
+            
+    </div>
+    <!-- content end -->
+    
+    
+</div>
+
+{% if not DEV_MODE %}
+<!-- reinvorgorate start -->
+<script type="text/javascript" src="http://include.reinvigorate.net/re_.js"></script>
+<script type="text/javascript">
+try {
+var re_name_tag = "{{ user.username }}"
+reinvigorate.track("d692r-98b7609vd4");
+} catch(err) {}
+</script>
+<!-- reinvorgorate end -->
+{% endif %}
+
+</body>
+</html>

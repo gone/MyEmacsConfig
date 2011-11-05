@@ -1,0 +1,59 @@
+# Copyright 2010 by Gerrity Labs. All Rights Reserved.
+# Project settings for the Slader site.
+
+from slader.settings import *
+
+    
+### below are the only differences needed for the API-only site instance
+
+MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.locale.LocaleMiddleware',  
+    'django.middleware.doc.XViewMiddleware',
+    'django.contrib.csrf.middleware.CsrfMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'socialregistration.middleware.FacebookMiddleware',
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
+)
+
+ROOT_URLCONF = 'slader.urls_meta'
+
+INSTALLED_APPS = (
+    'django.contrib.sites',
+    #'grappelli',
+    #'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    #'django.contrib.humanize',
+    #'django.contrib.sitemaps',
+    #'django.contrib.markup',
+    #'django.contrib.admindocs',
+    'django.contrib.messages',
+
+    #'ajax_select',
+    #'forum',
+    'piston',
+    'johnny',
+    #'sorl.thumbnail',
+    #'south',
+
+    'slader.accounts',
+    'slader.common',
+    'slader.demographics',
+    'slader.main',
+    'slader.moderator',
+    'slader.payment',
+    'slader.meta',
+    'slader.solutions',
+    'slader.subjects',
+    'slader.latex',
+    'slader.api',
+    #'slader.splash',
+    #'slader.thirdparty.twitter',
+    #'slader.thirdparty.facebook',
+
+)

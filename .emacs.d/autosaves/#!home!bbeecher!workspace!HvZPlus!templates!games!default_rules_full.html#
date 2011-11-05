@@ -1,0 +1,75 @@
+{% extends "games/base.html" %}
+
+{% load i18n %}
+
+{% block body %}
+{% trans "Rules for Humans Vs Zombies" %}
+  * Don't be a D-Bag!
+  * No realistic looking weaponry
+  * Blasters may not be visible inside of academic buildings or jobs on campus
+  * No cars (segways allowed)
+
+**Required Equipment:**
+
+  * Bandana
+  * Dart Launcher (or socks)
+  * One ID index card
+
+ 
+
+**Safe Zones:**  
+Dorm rooms, Bathrooms, Academic buildings, Library, Health Center, Dining
+Halls.
+
+Everywhere else is Free Game.
+
+  
+*A zombie must have both feet outside of a safe zone to tag a human.
+
+**Non-participants**  
+People who are not registered participants may not directly interact with the
+game.
+
+**Human Rules**
+
+**Conditions for Winning:**  
+Humans win when the last zombie starves to death.
+
+**Staying on campus:  
+**Humans must sleep on campus. If for whatever reason you need to leave campus for longer than 24 hours, we apologize, but there are no exceptions.
+
+**ID number:**  
+Every Human player must keep one index card with their unique identification
+number on them at all times.
+
+**Stunning a Zombie:**  
+Humans may stun a Zombie for 15 minutes by shooting them with a dart blaster
+or throwing a sock at them.
+
+*Only single shot/Non-automatic blasters are allowed until the Humans are notified otherwise.
+
+**When tagged by a Zombie:  
+**When tagged by a Zombie, a Human is required to distribute their ID card. One hour from being tagged a Human becomes a member of the Zombie team.
+
+*One hour from being tagged you must begin wearing your bandana around your head - you are then allowed to tag other Humans.
+
+**Zombie Rules **
+
+**Conditions for Winning:  
+**The Zombies win when the Human team has no remaining members.
+
+**Wearing your Headband:  
+**The Zombie team must wear a bandana around their head at all times.
+
+**Tagging:  
+**A tag is a firm touch to any part of a Human. After tagging a Human the Zombie must collect their ID card. Tags must be reported within three hours.
+
+**Feeding:  
+**Zombie must feed every 48 hours. A zombie feeds by reporting their tag on the website. A zombie may choose two other zombies to join in the feed.
+
+**Getting shot:  
+**When shot with a dart blaster or hit with a sock a Zombie is stunned for 15 minutes. A stunned zombie may not interact with the game in any way.
+
+*This includes shielding other zombies from bullets or continuing to run toward a human.  
+*If shot while stunned, a zombie remains stunned for the next 15 minutes.
+{% endblock %}

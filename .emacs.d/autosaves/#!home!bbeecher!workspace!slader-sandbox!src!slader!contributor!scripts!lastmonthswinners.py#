@@ -1,0 +1,35 @@
+import datetime
+from django.contrib.auth.models import User
+from django.db.models import Min
+
+from meta.models import TextbookReservation
+from solutions.models import Solution
+
+
+stats = []
+
+month_end = datetime.date.today() - datetime.timedelta(days=datetime.datetime.now().weekday())
+month_start = datetime.date.today() - datetime.timedelta(days=datetime.datetime.now().weekday()) - datetime.timedelta(days=28)
+
+class Stat(object):
+    def __init__(self, textbook, user, lastmonth, total):
+        self.textbook = textbook
+        self.user = user
+        self.lastmonth = lastmonth
+        self.total = total
+
+    def __str__(self):
+        return "%s | %s | %s | %s" % (self.textbook, self.user, self.lastmonth, self.total)
+        
+stats = []    
+for reservation in TextbookReservation.objects.all():
+    finished_total = Solution.objects.filter(user=reservation.user, finished=True, populated=True, exercise__pages__textbook=reservation.textbook)
+    finished_month = Solution.objects.filter(user=reservation.user, finished=True, exercise__pages__textbook=reservation.textbook)
+    annotated_finished_month = finished_month.annotate(first_created=Min('reviewneeded__created_on'))
+    finished_month = annotated_finished_month.filter(first_created__gt=month_start, first_created__lt=month_end).distinct()
+    s = Stat(reservation.textbook, reservation.user, finished_month.count(), finished_total.count())
+    stats.append(s)
+
+for s in stats:
+    print s
+

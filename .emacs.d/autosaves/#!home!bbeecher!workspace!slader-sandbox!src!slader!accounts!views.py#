@@ -1,0 +1,649 @@
+#Copyright 2010 by Gerrity Labs. All Rights Reserved.
+import re, base64, datetime
+from urllib2 import HTTPError, URLError
+
+from django.conf import settings
+from django.contrib import messages 
+from django.contrib.auth import authenticate, REDIRECT_FIELD_NAME
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+import django.contrib.auth.views as auth_views
+from django.contrib.sites.models import Site, RequestSite
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
+from django.core.urlresolvers import reverse, resolve
+from django.db.models import Count, Min
+from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template import RequestContext
+from django.template.defaultfilters import urlencode
+from django.template.loader import render_to_string
+from django.utils import simplejson
+from django.utils.http import urlquote, base36_to_int
+from django.utils.translation import ugettext as _
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.http import require_POST
+
+from badges.models import Badge
+from endless_pagination.decorators import page_template
+from notification.models import Notice
+from taggit.models import Tag
+
+from slader.accounts.forms import RegistrationForm, UserProfileForm, UserAccountForm, BetaRegistrationForm
+from slader.accounts.models import RegistrationKey, UserTextbook, UserProfile
+from slader.accounts.signals import user_registered
+from slader.accounts.util import get_share_link_for_request, encode_share_code, decode_share_code
+from slader.common.util import bitly_shorten_url
+from slader.demographics.models import School
+from slader.discussion.models import Question
+from slader.main.models import QuestionOfTheWeek, ShoutOut
+from slader.payment.models import Transfer
+from slader.payment.util import UserPointsLogic, get_redeemable_balance
+from slader.payment.tranches import UserTranche, totalTranche
+from slader.solutions.models import Solution, DisplayTextbook, Textbook
+
+
+@csrf_protect
+@never_cache
+def login(request, template_name='registration/login.html',
+          redirect_field_name=REDIRECT_FIELD_NAME,
+          authentication_form=AuthenticationForm):
+    """Displays the login form and handles the login action."""
+
+    redirect_to = request.REQUEST.get(redirect_field_name, '')
+    facebook_omit = request.REQUEST.get('fb_btn_omit', False)
+
+    if 'balance' in getattr(request, 'session', []):
+        del request.session['balance']
+    
+    if request.method == "POST":
+        form = authentication_form(data=request.POST)
+        if form.is_valid():
+            # Light security check -- make sure redirect_to isn't garbage.
+            if not redirect_to or ' ' in redirect_to:
+                redirect_to = settings.LOGIN_REDIRECT_URL
+            
+            # Heavier security check -- redirects to http://example.com should 
+            # not be allowed, but things like /view/?param=http://example.com 
+            # should be allowed. This regex checks if there is a '//' *before* a
+            # question mark.
+            elif '//' in redirect_to and re.match(r'[^\?]*//', redirect_to):
+                    redirect_to = settings.LOGIN_REDIRECT_URL
+            
+            # Okay, security checks complete. Log the user in.
+            auth_login(request, form.get_user())
+
+            if request.session.test_cookie_worked():
+                request.session.delete_test_cookie()
+
+            #modification of standard Django login: set session expiration manually
+            if not request.POST.get('remember_me', False):
+                request.session.set_expiry(0)
+
+            return HttpResponseRedirect(redirect_to)
+
+    else:
+        form = authentication_form(request)
+    
+    request.session.set_test_cookie()
+    
+    if Site._meta.installed:
+        current_site = Site.objects.get_current()
+    else:
+        current_site = RequestSite(request)
+    
+    return render_to_response(template_name, {
+        'form': form,
+        redirect_field_name: redirect_to,
+        'site': current_site,
+        'site_name': current_site.name,
+        'facebook_omit': facebook_omit,
+    }, context_instance=RequestContext(request))
+
+
+
+def logout(*args, **kwargs):
+    if not 'next_page' in kwargs:
+        kwargs['next_page'] ="/"
+    return auth_views.logout(*args, **kwargs)
+
+
+def register(request):
+    """
+    Allow a new user to register an account.
+    
+    Following successful registration, issue a redirect; by default,
+    this will be whatever URL corresponds to the named URL pattern
+    ``registration_complete``, which will be
+    ``/accounts/register/complete/`` if using the included URLConf. To
+    change this, point that named pattern at another URL, or pass your
+    preferred URL as the keyword argument ``success_url``.
+    
+    By default, ``slader.accounts.forms.RegistrationForm`` will be used
+    as the registration form; to change this, pass a different form
+    class as the ``form_class`` keyword argument. The form class you
+    specify must have a method ``save`` which will create and return
+    the new ``User``.
+    
+    """
+
+    if request.method == 'POST':
+        form = RegistrationForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            new_user = form.save()
+            
+            # send a signal that this user has registered
+            user_registered.send(sender=User, user=new_user, email=form.cleaned_data['email'], request=request)
+            
+            # attempt to get a valid IP for the user and populate this in their profile
+            # we may want to use this for tracking of users/spam/etc in the future
+            ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
+            new_profile = new_user.profile
+            new_profile.referring_site = request.session.get('PROFILE_REFERRING_SITE', 'unknown')[:200]
+            new_profile.ip_used_for_registration = ip
+            new_profile.save()
+            
+            try:
+                referred_by_user_id = request.session['REFERRING_USER_ID']
+                ref_user = User.objects.get(id=referred_by_user_id)
+                new_profile.referred_by = ref_user
+                new_profile.save()
+            except (KeyError, User.DoesNotExist):
+                pass
+
+            try:
+                textbook_slug = request.session['TB_COMPOSITE_SLUG']
+                selected_textbook = DisplayTextbook.objects.get(composite_slug=textbook_slug)
+            except KeyError:
+                selected_textbook = None
+
+            if selected_textbook:
+                user_textbook, created = UserTextbook.objects.get_or_create(user=new_user, textbook=selected_textbook)
+
+            return HttpResponseRedirect(reverse('accounts_registration_complete'))
+    else:
+        if request.user.is_authenticated():
+            return HttpResponseRedirect('/')
+
+        form = RegistrationForm()
+    return render_to_response('accounts/registration/registration_form.html',
+                              RequestContext(request, {'form': form }),
+                              )
+
+
+def register_step2(request):
+    """
+    Allow a user to create their user profile
+    """
+    
+    user = request.user
+
+    if user.is_authenticated():
+
+        if request.method == 'POST':
+            profile_form = UserProfileForm(user, request.POST, request.FILES)
+            if profile_form.is_valid():
+                profile_form.save(request, user)
+
+                # try to redirect the user to the textbook they signed up with
+                try:
+                    user_textbooks = UserTextbook.objects.filter(user=user)
+                    if user_textbooks.count():
+                        display_textbook = user_textbooks[0].textbook
+                        return HttpResponseRedirect(reverse('solutions_textbook_detail', kwargs={'composite_slug': display_textbook.composite_slug}))
+                   
+                except (DisplayTextbook.DoesNotExist, AttributeError):
+                    pass
+
+                return HttpResponseRedirect(reverse('subjects_subject_detail', kwargs={'subject_path': 'math'}))
+    
+        else:
+            profile_form = UserProfileForm(user)
+        return render_to_response('accounts/registration/registration_form_step2.html',
+                                      RequestContext(request, {'user': user,
+                                                               'profile_form': profile_form,
+                                                               }))
+    else:
+        return HttpResponseRedirect(reverse('auth_login'))
+
+
+def register_ipad(request):
+    """
+    Allow a new user to register an account for an ipad Slader app
+    Copy and simplification of normal registration flow.
+    
+    """
+
+    if request.method == 'POST':
+        form = RegistrationForm(data=request.POST, files=request.FILES)
+        if form.is_valid():
+            new_user = form.save()
+            
+            # attempt to get a valid IP for the user and populate this in their profile
+            # we may want to use this for tracking of users/spam/etc in the future
+            ip = request.META.get('REMOTE_ADDR', '0.0.0.0')
+            new_profile = new_user.profile
+            new_profile.referring_site = request.session.get('PROFILE_REFERRING_SITE', 'unknown')
+            new_profile.ip_used_for_registration = ip
+            new_profile.post_registration_redirect = 'i'
+            new_profile.save()
+            
+            # send a signal that this user has registered
+            user_registered.send(sender=User, user=new_user, email=form.cleaned_data['email'], request=request)
+
+            return HttpResponseRedirect(reverse('accounts_registration_complete'))
+    else:
+        if request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('subjects_subject_detail_ipad_select', kwargs={'subject_path': 'math'}))
+        form = RegistrationForm()
+
+    return render_to_response('ipad/registration_form_ipad.html',
+                              RequestContext(request, {'form': form}),
+                              )
+
+
+def activate(request, activation_key):
+    """
+    Activate a ``User``'s account from an activation key, if their key
+    is valid and hasn't expired.
+    
+    By default, use the template ``accounts/registration/activate.html``; to
+    change this, pass the name of a template as the keyword argument
+    ``template_name``.
+    
+    Any extra variables supplied in the ``extra_context`` argument
+    (see above).
+    
+    **Template:**
+    
+    accounts/registration/activate.html or ``template_name`` keyword argument.
+    
+    """
+    
+    activation_key = activation_key.lower() # Normalize before trying anything with it.
+    account = RegistrationKey.objects.activate_user(activation_key)
+
+    # handle sending this user to the correct next link to get started from ipad
+    ipad_next = False
+    if account and account.is_active and account.profile.post_registration_redirect == 'i':
+        ipad_next = True
+    
+    return render_to_response('accounts/registration/activate.html', 
+                                  RequestContext(request, {'account': account,
+                                                           'expiration_days': settings.ACCOUNT_ACTIVATION_DAYS,
+                                                           'ipad_next': ipad_next,
+                                                            }))
+    
+
+@csrf_protect
+@login_required
+def user_profile_private(request, user_solutions=None):
+    """
+    Show the user's profile for editing
+    """
+    
+    user = request.user
+
+    if user.is_authenticated():
+
+        if request.method == 'POST':
+            profile_form = UserProfileForm(user, request.POST, request.FILES)
+            if profile_form.is_valid():
+
+                # save the form
+                profile_form.save(request, user)
+                # reinitialize the form to ensure we get the new HS
+                profile_form = UserProfileForm(user)
+
+        else:
+            profile_form = UserProfileForm(user)
+
+        return render_to_response('accounts/user_profile_private.html',
+                                  RequestContext(request, {'user': user,
+                                                           'profile_form': profile_form,
+                                                           }))
+    else:
+        return HttpResponseRedirect(reverse('auth_login'))
+    
+
+@csrf_protect
+@login_required
+def user_account_settings(request, user_solutions=None):
+    """
+    Show the user's profile for editing
+    """
+    
+    user = request.user
+
+    if user.is_authenticated():
+
+        if request.method == 'POST':
+            account_form = UserAccountForm(user, request.POST)
+            if account_form.is_valid():
+                cleaned_data = account_form.cleaned_data
+                user_profile = user.profile
+                user_profile.privacy_setting = cleaned_data['privacy_setting']
+                user_profile.save()
+
+                user.email = cleaned_data['email']
+                user.save()    
+
+        else:
+            account_form = UserAccountForm(user)
+
+        return render_to_response('accounts/user_account_settings.html',
+                                  RequestContext(request, {'user': user,
+                                                           'account_form': account_form,
+                                                           }))
+    else:
+        return HttpResponseRedirect(reverse('auth_login'))
+
+
+@login_required
+def user_profile_public(request, profile_user):
+    """
+    Show the user's public profile
+    """
+    
+    profile_user = get_object_or_404(User, username=profile_user)
+    
+    to_show = {}
+    privacy_setting = profile_user.profile.privacy_setting
+
+    if privacy_setting == 'all':
+        to_show['display_name'] = profile_user.profile.get_full_name_or_username()
+        to_show['picture'] = profile_user.profile.get_profile_picture()
+        to_show['high_school'] = profile_user.profile.high_school
+        to_show['dream_college'] = profile_user.profile.dream_college
+        to_show['favorite_subject'] = profile_user.profile.favorite_subject
+        to_show['my_textbooks'] = profile_user.my_textbooks.all()
+        to_show['contributed_solutions_count'] = Solution.objects.filter(finished=True, populated=True, active=True, user=profile_user).count()
+    else:
+        to_show['display_name'] = profile_user.username
+        to_show['picture'] = profile_user.profile.get_default_profile_picture()
+
+    return render_to_response('accounts/user_profile_public.html',
+                                  RequestContext(request, {'profile_user': profile_user, 'to_show': to_show}))
+
+
+@page_template("accounts/includes/points_table.html", key="page")
+@login_required
+def user_account_points(request, extra_context=None, template='accounts/user_account_points.html'):
+    """
+    Show the user's points page
+    """
+    
+    profile_user = request.user
+
+    tranche = UserTranche(request.user, totalTranche)
+    
+    transfer_groups = tranche.get_grouped_running()
+    transfer_groups.reverse()
+    redeemable = get_redeemable_balance(profile_user)
+    
+    point_values = {'flag': settings.FLAG_SOLUTION_POINTS, 'survey': settings.SURVEY_POINTS, 
+                    'profile': settings.PROFILE_COMPLETE_POINTS,}
+
+    context = {'profile_user': profile_user,
+               'transfer_groups': transfer_groups,
+               'point_values': point_values,
+               'redeemable' : redeemable,
+               }
+    
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return render_to_response(template, RequestContext(request, context))
+
+
+@login_required
+def user_account_points_error(request):
+    """
+    Show an error about points for user account, shown when an error processing SG
+    currency purchase, and only then.
+    """
+
+    UserPointsLogic(request.user).get_balance()
+
+    return render_to_response('accounts/user_account_points_error.html',
+                                  RequestContext(request, {}))
+
+
+@login_required
+def user_account_points_success(request):
+    """
+    Show a success about points for user account, shown when a success processing SG
+    currency purchase, and only then.
+    """
+    
+    UserPointsLogic(request.user).get_balance()
+
+    return render_to_response('accounts/user_account_points_success.html',
+                                  RequestContext(request, {}))
+
+
+@login_required
+def community(request):
+    """
+    Community Page
+    """
+    
+    past_week = datetime.datetime.now() - datetime.timedelta(days=7)
+    top_contributors = User.objects.filter(solution__modified_on__gte=past_week, solution__finished=True, solution__populated=True).annotate(solution_count=Count('solution')).order_by('-solution_count')[:5]
+
+    # just exclude users who don't want to be public public so we don't have to special case the template
+    #top_contributors = users_annotated.exclude(userprofile__privacy_setting='none').order_by('-solution_count')[:5]
+    #trend_setters = users_annotated.exclude(userprofile__privacy_setting='none').exclude(userprofile__picture='').order_by('?')[:33]
+    
+    #top high schools
+    top_high_schools = School.objects.filter(userprofile__user__solution__modified_on__gte=past_week, userprofile__user__solution__finished=True, userprofile__user__solution__populated=True).annotate(solution_count=Count('userprofile__user__solution')).order_by('-solution_count')[:5]
+
+    #top colleges
+    #top_colleges = UserProfile.objects.exclude(dream_college='').values('dream_college').annotate(college_count=Count('dream_college')).order_by('-college_count')[:10]
+
+    contributor_tag, _c = Tag.objects.get_or_create(name='contributing')
+
+    try:
+        qotw = QuestionOfTheWeek.objects.filter(active=True).order_by('-created_on')[0]
+    except IndexError:
+        qotw = None
+
+    try:
+        shoutout = ShoutOut.objects.filter(active=True).order_by('-created_on')[0]
+        shoutout.the_user.solution_count = Solution.objects.filter(finished=True, populated=True, user=shoutout.the_user).count()
+    except IndexError:
+        shoutout = None
+    
+    return render_to_response('accounts/community.html',
+                                  RequestContext(request, {'top_contributors': top_contributors,
+                                                           'top_high_schools': top_high_schools,
+                                                           'contributor_tag': contributor_tag,
+                                                           'qotw': qotw,
+                                                           'shoutout': shoutout,
+                                                            }))
+    
+
+def share_landing_page(request, share_code):
+    """
+    A share link comes here, sets the referrer in session, then redirects to homepage
+    """
+
+    next = request.GET.get('next', '/')
+
+    if share_code:
+        try:
+            # try share_code as username first
+            user = User.objects.get(username=share_code)
+        except User.DoesNotExist:
+            # then try decoding the share code
+            try:
+                username = decode_share_code(share_code)
+                user = User.objects.get(username=username)
+            except: #handle all exceptions - we want this view to work
+                user = None
+
+        if user:
+            request.session['REFERRING_USER_ID'] = user.id
+        else:
+            return render_to_response('accounts/failed_share_link.html',
+                                        RequestContext(request, {}))
+            
+
+    return HttpResponseRedirect(next)
+
+
+@login_required
+def user_account_referrals(request):
+    """
+    Show the user's referrals page
+    """
+
+    profile_user = request.user
+    referrals = profile_user.referrals.all().order_by('-created_on')
+    for ref in referrals:
+        ref.solution_count = Solution.objects.filter(user=ref.user, finished=True, populated=True, _midwife__transfers__isnull=False).distinct().count()
+
+    referral_points = [ (k,v) for k,v in settings.INVITE_USER_POINTS.iteritems()]
+    referral_points.sort(key=lambda p: p[0])
+
+    return render_to_response('accounts/user_account_referrals.html',
+                                  RequestContext(request, {'profile_user': profile_user,
+                                                           'referrals': referrals,
+                                                           'referral_points': referral_points}))
+
+
+@login_required
+def ipad_my_textbooks(request):
+    """
+    Show my textbooks for an ipad user and allow to redirect to iPad
+    """
+
+    user_textbooks = UserTextbook.objects.filter(user=request.user)
+
+    return render_to_response('ipad/my_textbooks.html',
+                                  RequestContext(request, {'user_textbooks': user_textbooks,
+                                                           }))
+
+
+@login_required
+def acknowledge_contribute(request):
+    """
+    """
+    profile = request.user.profile
+    profile.contribute_banner_acknowledged = True
+    profile.save()
+    return HttpResponse()
+
+
+@page_template("notification/includes/notices_table.html", key="page")
+@login_required
+def user_account_notifications(request, extra_context=None, template='notification/notices.html'):
+    """
+    User account notifications detail page
+    """
+
+    notices = Notice.objects.notices_for(request.user, on_site=True)
+
+    context = {'notices': notices,
+              }
+
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return render_to_response(template, context, 
+                                context_instance=RequestContext(request))
+
+
+@page_template("accounts/includes/accounts_content_fan_table.html", key="fan_page")
+@page_template("accounts/includes/accounts_content_all_table.html", key="all_page")
+@login_required
+def user_account_content(request, extra_context=None, template='accounts/user_account_content.html'):
+    """
+    Show the user's content page
+    """
+
+    profile_user = request.user
+    
+    # mark outstanding_action attribute as False, as the user has now visited this page
+    profile = profile_user.profile
+    profile.outstanding_actions = False
+    profile.save()
+
+    all_solutions = Solution.objects.filter(user=profile_user, populated=True).order_by('-modified_on')
+    all_count = all_solutions.count()
+
+    fan_solutions = all_solutions.filter(reviewneeded__action__closed=False)
+    fan_count = fan_solutions.count()
+
+    context = {
+        'all_solutions': all_solutions,
+        'all_count': all_count,
+        'fan_count': fan_count,
+        'fan_solutions': fan_solutions,
+    }
+
+    if extra_context is not None:
+        context.update(extra_context)
+
+    return render_to_response(template, context,
+                              context_instance=RequestContext(request))
+
+
+@require_POST
+def share_links_for_page(request):
+
+    if request.is_ajax():
+
+        user = request.user
+        header_color = request.POST.get('header_color', 'black')
+        exclude_header = request.POST.get('exclude_header', False)
+        next = request.POST.get('next', None)
+    
+        share_link = get_share_link_for_request(request)
+
+        if next:
+            try:
+                # only include the next link if we can resolve the link to the Slader.com site
+                func, args, kwargs = resolve(next)
+                share_link = '%s?next=%s' %(share_link, next)
+            except Http404:
+                pass #this url apparently doesn't resolve to the slader site ...
+    
+        try:
+            shortened = bitly_shorten_url(share_link)
+            encoded_shortened = urlencode(shortened)
+            
+            context = RequestContext(request, {'header_color': header_color,
+                                                'request': request,
+                                                'exclude_header': exclude_header,
+                                                'user': user,
+                                                'shortened': shortened,
+                                                'encoded_shortened': encoded_shortened,}
+                                     )
+            rendered_contents = render_to_string('includes/share_link_contents.html', context_instance=context)
+
+        except (HTTPError, URLError): #in case we get a bad response from Bitly
+            rendered_contents = ''
+
+        return HttpResponse(rendered_contents)
+        
+    else:
+        raise Http404
+
+
+@login_required
+def user_account_badges(request):
+    """
+    Show the user's badges page
+    """
+
+    profile_user = request.user
+    badges = Badge.objects.active().order_by("level")
+    for badge in badges:
+        badge.random24 = badge.user.order_by('?')[:24]
+
+    return render_to_response('badges/overview.html',
+                                  RequestContext(request, {'profile_user': profile_user, 'badges': badges}))

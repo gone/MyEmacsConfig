@@ -1,0 +1,545 @@
+String.prototype.trim=function(){a=this.replace(/^\s+/,'');return a.replace(/\s+$/,'');};
+var profile_url_prefix = "/players"
+
+function set_gray_white(id){
+    var elems = $(id).data('isotope').$filteredAtoms
+    elems.removeClass('glwhite glgray')
+    elems.filter(":even").addClass('glwhite')
+    elems.filter(":odd").addClass('glgray')
+}
+
+
+
+
+$(document).ready(function(){
+
+    // [name] is the name of the event "click", "mouseover", .. 
+    // same as you'd pass it to bind()
+    // [fn] is the handler function
+    $.fn.bindFirst = function(name, fn) {
+        // bind as you normally would
+        // don't want to miss out on any jQuery magic
+        this.bind(name, fn);
+
+        // Thanks to a comment by @Martin, adding support for
+        // namespaced events too.
+        var handlers = this.data('events')[name.split('.')[0]];
+        // take out the handler we just inserted from the end
+        var handler = handlers.pop();
+        // move it at the beginning
+        handlers.splice(0, 0, handler);
+    };
+
+    var cooldate = $(".cooldate")
+    cooldate.keyup(function (e) {
+        var input = $(this)
+        var feedback = input.next('.datefeedback');
+        var hiddenvalue = feedback.next('.realdate');
+        feedback.removeClass("accept error");
+	    if (input.val().length > 0) {
+	        date = Date.parse(input.val());
+            feedback.show()
+	        if (date !== null) {
+	            feedback.addClass("accept").text(date.toString("dddd, MMMM dd, yyyy h:mm:ss tt"));
+                hiddenvalue.val(date.toString("M/d/yyyy HH:mm"))
+	        } else {
+	            feedback.addClass("error").text("I couldn't understand your date");
+                hiddenvalue.val("")
+	        }
+	    } else {
+            feedback.hide()
+	    }
+	})
+
+    $(".clickbox").click(function(e){
+        $(this).children('a').click()
+    })
+    $(".clickbox-link").click(function(e){
+        window.location = $(this).children('a').attr('href')
+    })
+
+
+	$(".chzn-select").chosen()
+
+    var slideupTimeout = null;
+    $(".topnav").click(function(){
+        window.clearTimeout(slideupTimeout)
+        $(this).unbind("mouseleave").mouseleave(function(){
+            slideupTimeout =  window.setTimeout(function(){$(".subnav").slideUp(300)}, 500)
+        })
+        $(".subnav").slideToggle(300)
+    });
+    $(".topnav").mouseenter(function(){
+        window.clearTimeout(slideupTimeout)
+    });
+
+
+    $("a.endless_more").live("click", function() {
+        var container = $(this).closest(".endless_container");
+        var loading = container.find(".endless_loading");
+        $(this).hide();
+        loading.show();
+        var data = "querystring_key=" + $(this).attr("rel").split(" ")[0];
+        $.get($(this).attr("href"), data, function(data) {
+            container.before(data);
+            container.remove();
+        });
+        return false;
+    });
+    
+    $("a.endless_page_link").live("click", function() {
+        var page_template = $(this).closest(".endless_page_template");
+        if (!page_template.hasClass("endless_page_skip")) {
+            var data = "querystring_key=" + $(this).attr("rel").split(" ")[0];
+            page_template.load($(this).attr("href"), data);
+            return false;
+        };
+    });
+
+
+
+	function checkAboutLength( o, max ) {
+			if ( o.val().length > max ) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+    
+    function checkRegexp( o, regexp) {
+			if ( !( regexp.test( o.val() ) ) ) {
+				return false;
+			} else {
+				return true;
+			}
+	}
+
+
+    jQuery.fn.autoscroll = function() {
+        $('html,body').animate({scrollTop: this.offset().top}, 500);
+    }
+
+    $('.loginbutton').click(
+        function(){ 
+            $('#sidebar-login')[0].submit();
+            return false;
+        }
+    )
+    $('.signupbutton').click(
+        function(){
+            $('#sidebar-signup')[0].submit();
+            return false;
+        }
+    )
+
+
+    $(function() {
+        var icons = {
+			header: "ui-icon-circlesmall-plus",
+			headerSelected: "ui-icon-circlesmall-minus"
+		};
+		$( "#profilesettings" ).accordion(
+            {
+                header: "h3",
+                icons: icons,
+                autoHeight: false,
+                collapsible: true,
+                active: false,
+            });
+	});
+	$('#profilesettings').click(function() {
+        $(this).next().toggle('slow');
+    }).next().hide();
+    $(".button").button()
+
+
+    var oldpassword = $( "#oldpasswordfield" ),
+    confirmpassword = $( "#passwordconfirmfield" ),
+    password = $( "#passwordfield" ),
+	passwords = $( [] ).add( oldpassword ).add( confirmpassword ).add( password ),
+	passwordtips = $( "#passwordtips" );	
+    
+    $( "#password-form" ).dialog({
+		autoOpen: false,
+		height: 300,
+		width: 350,
+		modal: true,
+		buttons: {
+			"Submit": function() {
+				passwords.removeClass( "ui-state-error" );
+
+				if ( password.val() == confirmpassword.val() ) {
+                    domain = window.location.hostname
+                    $.post(profile_url_prefix + "/edit/password/", {'oldpassword': oldpassword.val(),
+                                                         'password1' : password.val(),
+                                                         'password2' : confirmpassword.val(),
+                                                        })                    
+					$( this ).dialog( "close" );
+				}
+                else {
+                    passwordtips.text("Your new passwords must match").css('color','red');
+                }
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			passwords.val( "" ).removeClass( "ui-state-error" );
+		}
+	});
+    $(".change-password").click(function(e){
+        $("#password-form").dialog("open");
+        return false;
+    });
+
+    aboutyoufield = $("#aboutyoufield")
+    abouttips = $("#abouttips")
+
+    $( "#about-form" ).dialog({
+		autoOpen: false,
+		height: 320,
+		width: 350,
+		modal: true,
+		buttons: {
+			"Submit": function() {
+				aboutyoufield.removeClass( "ui-state-error" );
+
+				if (checkAboutLength( aboutyoufield, 1000)) {
+                    $.post( profile_url_prefix + "/edit/about/", {'about': aboutyoufield.val()})
+                    $( this ).dialog( "close" );
+				} else{
+                    aboutyoufield.addClass( "ui-state-error" );
+				    abouttips.val("This must be under 1000 characters" ).css('color', 'red')
+                }
+
+
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			aboutyoufield.removeClass( "ui-state-error" );
+		}
+	});
+
+    facebookfield = $("#facebookfield")
+    twitterfield = $("#twitterfield")
+    tumblrfield = $("#tumblrfield")
+
+    $( "#tumblr-form"  ).dialog({
+		autoOpen: false,
+		height: 220,
+		width: 390,
+		modal: true,
+		buttons: {
+			"Submit": function() {
+				tumblrfield.removeClass( "ui-state-error" );                
+                $.post( profile_url_prefix + "/edit/blogs/", {'tumblr': tumblrfield.val()})
+				$( this ).dialog( "close" );
+
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			tumblrfield.val( "" ).removeClass( "ui-state-error" );
+		}
+	});
+
+    $( "#facebook-form"  ).dialog({
+		autoOpen: false,
+		height: 220,
+		width: 390,
+		modal: true,
+		buttons: {
+			"Submit": function() {
+				facebookfield.removeClass( "ui-state-error" );                
+                $.post( profile_url_prefix + "/edit/blogs/", {'facebook': facebookfield.val()})
+				$( this ).dialog( "close" );
+
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			facebookfield.val( "" ).removeClass( "ui-state-error" );
+		}
+	});
+
+    $( "#twitter-form"  ).dialog({
+		autoOpen: false,
+		height: 220,
+		width: 390,
+		modal: true,
+		buttons: {
+			"Submit": function() {
+				twitterfield.removeClass( "ui-state-error" );                
+                $.post( profile_url_prefix + "/edit/blogs/", {'twitter': twitterfield.val()})
+				$( this ).dialog( "close" );
+
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			twitterfield.val( "" ).removeClass( "ui-state-error" );
+		}
+	});
+
+
+    
+    
+    $(".aboutyou").click(function(e){
+        $("#about-form").dialog("open");
+        return false;
+    });
+
+    $(".tumblr").click(function(e){
+        $("#tumblr-form").dialog("open");
+        return false;
+    });
+
+    $(".facebook").click(function(e){
+        $("#facebook-form").dialog("open");
+        return false;
+    });
+
+    $(".twitter").click(function(e){
+        $("#twitter-form").dialog("open");
+        return false;
+    });
+
+
+    emailfield = $("#emailfield")
+    emailconfirmfield = $("#emailconfirmfield")
+    emailtips = $("#emailtips")
+
+    $( "#email-form" ).dialog({
+		autoOpen: false,
+		height: 300,
+		width: 350,
+		modal: true,
+		buttons: {
+			"Submit": function() {
+				emailtips.removeClass( "ui-state-error" );
+					var valid = checkRegexp( emailfield, /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+                
+				if (valid && emailfield.val() == emailconfirmfield.val()) {
+                    $.post( profile_url_prefix + "/edit/email/", {'email': emailfield.val()})
+					$( this ).dialog( "close" );
+				} else if (!valid){
+                    emailtips.text("Please enter a real email address!").css('color', 'red')
+                    emailfield.addClass( "ui-state-error" );
+                } else{
+                    emailfield.addClass( "ui-state-error" );
+                    emailconfirmfield.addClass( "ui-state-error" );
+				    emailtips.text("your email address don't match!").css('color', 'red')
+                }
+
+
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+            emailfield.removeClass( "ui-state-error" );
+            emailconfirmfield.removeClass( "ui-state-error" );
+			emailtips.text( "Enter your new email" ).removeClass( "ui-state-error" ).css('color', 'white');
+		}
+	});
+    $(".change-email").click(function(e){
+        $("#email-form").dialog("open");
+        return false;
+    });
+
+    function avatarChange(){
+        $("#avatarloading").prepend($('<img style="float:right;" id="avatarloadingpic" width="20" height="20" src="/media/static/images/loading.gif" alt="loading..."/>'));
+        return ajaxFileUpload(this);
+    };
+
+    $('#avatar-upload').change(avatarChange);
+
+    function onAvatarSuccess(img_urls){
+        function remove_qs(url){
+            query_loc = url.search(/\?.*/)
+            if (query_loc > 0){
+                url = url.slice(0,query_loc)
+            }
+            return url
+        }
+        $(".avatar").each(function(){
+        
+            var that = $(this);
+            var size =that.data("size");
+            var url  = img_urls[size];
+            if (url == undefined){
+                return 
+            }
+            that.attr('src', remove_qs(url))
+        })
+
+        $("#avatarloadingpic").remove()
+        $('#avatar-upload').unbind('change')
+        $('#avatar-upload').change(avatarChange);
+    }
+        
+
+    function ajaxFileUpload(fileInput) {
+        //starting setting some animation when the ajax starts and completes
+        var img_url;
+        var id = $(fileInput).attr('id')
+
+
+        var imagetypes = ['bmp', 'cod', 'gif', 'ief', 'jpe', 'jpeg', 'jpg', 
+                          'jfif', 'jpeg', 'png', 'svg', 'tif', 'tiff', 'ras', 
+                          'cmx', 'ico', 'png', 'pnm', 'pbm', 'pgm', 'ppm', 'rgb', 'xbm', 'xpm', 'xwd'];
+
+        filename = $("#avatar-upload").val()
+        parts = filename.split('.')
+        ext = parts[parts.length-1]
+        if (imagetypes.indexOf(ext.toLowerCase()) == -1){
+            alert("We can only accept image files, such as jpg, bmp, png, or gif")
+            $("#avatarloadingpic").remove()
+            return false
+        }
+
+
+
+        //preparing ajax file upload
+        //url: the url handling the uploaded files
+        //fileElementId: the file type of input element id and it will be the index of  $_FILES Array()
+        //dataType: it support json, xml
+        //secureuri: use secure protocol
+        //success: call back function when the ajax complete
+        //error: callback function when the ajax failed
+        $.ajaxFileUpload({
+            url: profile_url_prefix + "/edit/avatar/",
+            secureuri: false,
+            fileElementId: id,
+            dataType: 'xml',
+            success: function (data, status) {
+                content = JSON.parse(data.body.innerHTML)
+                if (content['valid'] == false) {
+                    alert("please upload a file under 4 megs")
+                    $("#avatarloadingpic").remove()
+                    return
+                }
+                setTimeout(function(){onAvatarSuccess(content)}, 500)
+                if(typeof(data.error) != 'undefined') {
+                    if(data.error != '') {
+                        alert(data.error);
+                    } else {
+                        alert(data.msg);
+                    }
+                }
+            },
+            error: function (data, status, e) {
+                alert("please upload a file under 4 megs")
+            }
+        });
+        return false;
+    }
+
+function dialogThree(){
+        $( "#dialog-confirm-3" ).dialog({
+			resizable: false,
+			height:200,
+            width:370,
+			modal: true,
+			buttons: {
+				"Leave the Game": function() {
+					$.post(profile_url_prefix + '/leave-game/', {'not':'empty'}, function(){
+                        window.location.replace('/games/')
+                    })
+				},
+				"Do not leave the game" : function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+}
+function dialogTwo(){
+        $( "#dialog-confirm-2" ).dialog({
+			resizable: false,
+			height:200,
+            width:370,
+			modal: true,
+			buttons: {
+				"Leave the Game": function() {
+					$( this ).dialog( "close" );
+                    dialogThree();
+				},
+				"Do not leave the game" : function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+    }
+ 
+    function dialogOne(){
+        $( "#dialog-confirm-1" ).dialog({
+			resizable: false,
+			height:200,
+            width:370,
+			modal: true,
+			buttons: {
+				"Leave the Game": function() {
+					$( this ).dialog( "close" );
+					dialogTwo();
+				},
+				"Do not leave the game" : function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+    }
+    $("#leave-game").click(function(){
+        dialogOne();
+        return false;
+    });
+
+    $(document).ajaxSend(function(event, xhr, settings) {
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        function sameOrigin(url) {
+            // url could be relative or scheme relative or absolute
+            var host = document.location.host; // host + port
+            var protocol = document.location.protocol;
+            var sr_origin = '//' + host;
+            var origin = protocol + sr_origin;
+            // Allow absolute or scheme relative URLs to same origin
+            return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+                (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+                // or any other URL that isn't scheme relative or absolute i.e relative.
+                !(/^(\/\/|http:|https:).*/.test(url));
+        }
+        function safeMethod(method) {
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        if (!safeMethod(settings.type) && sameOrigin(settings.url)) {
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        }
+    });
+
+
+
+});

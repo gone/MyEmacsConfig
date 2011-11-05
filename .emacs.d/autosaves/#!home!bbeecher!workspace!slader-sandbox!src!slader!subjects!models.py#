@@ -1,0 +1,187 @@
+# Copyright 2010 by Gerrity Labs. All Rights Reserved.
+
+from django import forms
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils.translation import ugettext_lazy as _
+
+from taggit.managers import TaggableManager
+from taggit.models import Tag
+
+from slader.common.models import AbstractBase
+
+
+class SubjectManager(models.Manager):
+    def active(self):
+        return self.filter(is_active=True)
+    
+    def root_subjects(self, **kwargs):
+        """Get all root subjects."""
+        return self.active().filter(parent__isnull=True, **kwargs)
+
+
+class Subject(AbstractBase):
+    """
+    Basic hierarchical subject model for organizing textbooks
+
+    """
+
+    name = models.CharField(_("Name"), max_length=200)
+    slug = models.SlugField(_("Slug"), help_text=_("Used for URLs, auto-generated from name if blank"), unique=True)
+    parent = models.ForeignKey('self', blank=True, null=True, related_name='child')
+    ordering = models.IntegerField(_("Ordering"), default=0, help_text=_("Override alphabetical order in category display"))
+
+    is_active = models.BooleanField(default=True, blank=True)
+    
+    objects = SubjectManager()
+
+    class Meta:
+        app_label = 'subjects'
+        ordering = ['parent__id', 'ordering', 'name']
+        verbose_name = "subject"
+        verbose_name_plural = "subjects"
+
+    def __unicode__(self):
+        name_list = [subj.name for subj in self._recurse_for_parents(self)]
+        name_list.append(self.name)
+        return ' > '.join(name_list)
+
+    def _recurse_for_parents(self, subj_obj):
+        p_list = []
+        if subj_obj.parent_id:
+            p = subj_obj.parent
+            p_list.append(p)
+            if p != self:
+                more = self._recurse_for_parents(p)
+                p_list.extend(more)
+        if subj_obj == self and p_list:
+            p_list.reverse()
+        return p_list
+        
+    def parents(self):
+        return self._recurse_for_parents(self)
+
+    def slug_list_for_urls(self):
+        parents = self._recurse_for_parents(self)
+        slug_list = [subj.slug for subj in parents] + [self.slug]
+        if slug_list:
+            slug_list = "/".join(slug_list)
+        else:
+            slug_list = ""
+        return slug_list
+    
+    @models.permalink
+    def get_absolute_url(self):
+        slug_list = self.slug_list_for_urls()
+        return ('subjects_subject_detail', (slug_list,))
+
+    def _parents_repr(self):
+        name_list = [subj.name for cat in self._recurse_for_parents(self)]
+        return self.get_separator().join(name_list)
+    _parents_repr.short_description = "Category parents"
+
+    def get_url_name(self):
+        # Get all the absolute URLs and names for use in the site navigation.
+        name_list = []
+        url_list = []
+        for cat in self._recurse_for_parents(self):
+            name_list.append(subj.translated_name())
+            url_list.append(subj.get_absolute_url())
+        name_list.append(self.translated_name())
+        url_list.append(self.get_absolute_url())
+        return zip(name_list, url_list)
+
+    def save(self, force_insert=False, force_update=False, *args, **kwargs):
+        if self.id:
+            if self.parent and self.parent_id == self.id:
+                raise forms.ValidationError(_("You must not save a category in itself!"))
+
+            for p in self._recurse_for_parents(self):
+                if self.id == p.id:
+                    raise forms.ValidationError(_("You must not save a category in itself!"))
+
+        if not self.slug:
+            self.slug = slugify(self.name)
+
+        super(Subject, self).save(force_insert=force_insert, force_update=force_update, *args, **kwargs)
+
+    def _flatten(self, L):
+        """
+        Taken from a python newsgroup post
+        """
+        if type(L) != type([]): return [L]
+        if L == []: return L
+        return self._flatten(L[0]) + self._flatten(L[1:])
+
+    def _recurse_for_children(self, node, only_active=False):
+        children = []
+        children.append(node)
+        for child in node.child.active():
+            if child != self:
+                if (not only_active) > 0:
+                    children_list = self._recurse_for_children(child, only_active=only_active)
+                    children.append(children_list)
+        return children
+
+    def get_active_children(self, include_self=False):
+        """
+        Gets a list of all of the children categories which have active textbooks.
+        """
+        return self.get_all_children(only_active=True, include_self=include_self)
+
+    def get_all_children(self, only_active=False, include_self=False):
+        """
+        Gets a list of all of the children categories.
+        """
+
+        children_list = self._recurse_for_children(self, only_active=only_active)
+        if include_self:
+            ix = 0
+        else:
+            ix = 1
+        flat_list = self._flatten(children_list[ix:])
+        return flat_list
+
+
+class TopicDetail(AbstractBase):
+    """
+    Details about a topic. Description contains the latest revision of the description.
+
+    """
+
+    topic = models.OneToOneField(Tag, related_name='details')
+    description = models.TextField(blank=True)
+
+    objects = models.Manager()
+    tags = TaggableManager(blank=True)
+
+    class Meta:
+        app_label = 'subjects'
+        
+    def __unicode__(self):
+        return '%s details' %self.topic
+
+def get_abs_url(tag):
+    return reverse('subjects_topic_detail', kwargs={'topic_slug': tag.slug})
+
+Tag.get_absolute_url = property(get_abs_url)
+
+
+class TopicDetailRevision(AbstractBase):
+    """
+    A revision of a topic detail object. 
+
+    """
+
+    topic_detail = models.ForeignKey('subjects.TopicDetail')
+    description = models.TextField(blank=True)
+    user = models.ForeignKey(User)
+
+    class Meta:
+        app_label = 'subjects'
+        
+    def __unicode__(self):
+        return 'Revision of: %s details' %self.topic_detail.topic
+    

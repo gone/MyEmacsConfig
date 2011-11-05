@@ -1,0 +1,11 @@
+{% if specialties %}
+<div id="reassign-block">
+    <ul>
+        {% for speciality in specialties %}
+        <li>
+            <input id="special-{{ speciality.speciality }}" class="reassign-check" type="checkbox" name="special-{{ speciality.speciality }}" value="True"/> <label for="special-{{ speciality.speciality }}"><b>{{ speciality.speciality|capfirst }}</b> - {{ speciality.description }}</label>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}

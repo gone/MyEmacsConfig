@@ -1,0 +1,28 @@
+#Copyright 2010 by Gerrity Labs. All Rights Reserved.
+
+from slader.demographics.models import School
+from django.db.models import Q
+from haystack.query import SearchQuerySet
+
+class SchoolLookup(object):
+
+    def get_query(self, q, request):
+        """ return a query set. you also have access to request.user if needed """
+        sqs = SearchQuerySet()
+        limit = request.GET.get('limit', 50)
+        return sqs.models(School).filter(requires_review=False).autocomplete(content__autocomplete=sqs.query.clean(q))[:limit]
+        #return School.objects.exclude(requires_review=True).filter(Q(name__icontains=q) | Q(city__icontains=q)).distinct()[:limit]
+
+    def format_result(self, school):
+        """ the search results display in the dropdown menu. may contain html and multiple-lines. will remove any | """
+        return u"%s" %unicode(school)
+
+    def format_item(self, school):
+        """ the display of a currently selected object in the area below the search box. html is OK """
+        return u"%s" %school.name
+
+    def get_objects(self, ids):
+        """ given a list of ids, return the objects ordered as you would like them on the admin page.
+            this is for displaying the currently selected items (in the case of a ManyToMany field)
+        """
+        return School.objects.filter(pk__in=ids).order_by('name')

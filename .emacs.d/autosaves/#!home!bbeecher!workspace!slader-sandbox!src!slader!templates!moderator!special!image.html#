@@ -1,0 +1,170 @@
+{% extends "moderator/moderator_base.html" %}{% load moderatortags %}
+
+{% block title %}
+Moderate exercise {{exname}} in textbook  {{ textbook.title }}
+{% endblock %}
+
+{% block extra-head %}
+    <link rel="stylesheet" type="text/css" href="/media/css/contributor_editing.css" />
+    <link rel="stylesheet" type="text/css" href="/media/css/moderator.css" />
+    <link href="/media/css/solution.css" rel="stylesheet" type="text/css" media="screen" />
+    <script src="/media/js/jquery-1.4.2.js" type="text/javascript"></script>
+    <script src="/media/js/slader_solution_tools.js" type="text/javascript"></script>
+    <meta http-equiv="CACHE-CONTROL" content="NO-CACHE">
+    <script type="text/javascript">
+      var _featherLoaded = false; 
+     
+    Feather_APIKey = 'f3339d7aab9a07639d21306f94be0bad'; 
+    Feather_Theme = 'bluesky'; 
+    Feather_EditOptions = 'all'; 
+    Feather_OpenType = 'lightbox'; 
+    Feather_CropSizes = '320x240,640x480,800x600,1280x1024'; 
+    Feather_Stickers = []; 
+     
+    Feather_OnSave = function(id, url) { 
+      $.ajax({
+      url: "/moderator/featherpostback/",
+      type: "POST",
+      data: {'id':id,
+             'review': {{review.id}},
+             'url' : url,
+            }
+      })
+        var e = document.getElementById(id); 
+      e.src = url; 
+      aviaryeditor_close();
+    } 
+     
+    Feather_OnLoad = function() { 
+        _featherLoaded = true; 
+    } 
+     
+    function launchEditor(imageid, postdata) { 
+      if (_featherLoaded) { 
+            var src = document.getElementById(imageid).src; 
+            aviaryeditor(imageid); 
+        } 
+    } 
+
+
+      $(document).ready(function(){
+
+
+        if ($('#further-review-specialist').val() == $('input[name=further-review]:radio:checked').val()){
+            $("#notesdiv").hide();
+            $("#reassign").show();
+            $("#reassign-block").show();
+        }
+        else if ($('#further-review-user').val() == $('input[name=further-review]:radio:checked').val()){
+            $("#reassign").hide();
+            $("#notesdiv").show();
+            }
+        else{
+            $("#reassign").hide();
+            $("#notesdiv").hide();
+        };
+    
+        $('input[name=further-review]:radio').change(function(){
+            if ($('#further-review-specialist').val() == $('input[name=further-review]:radio:checked').val()){
+                $("#notesdiv").hide();
+                $("#reassign").show();
+                $("#reassign-block").show();
+            }
+            else if ($('#further-review-user').val() == $('input[name=further-review]:radio:checked').val()){
+                $("#reassign").hide();
+                $("#notesdiv").show();
+            }
+            else{
+                $("#reassign").hide();
+                $("#notesdiv").hide();
+            }});
+      });    
+    
+    </script> 
+    <script type="text/javascript" src="http://feather.aviary.com/js/feather.js"></script>  
+    {% endblock %}
+
+{% block content %}
+
+{% show_moderator_stats %}
+<h1>Moderate speciality: click an image to moderate it</h1>
+
+{% include "moderator/includes/solution_details.html" %}
+
+{% if closed %}
+<h1 class="closed"> This Review has already been processed </h1>
+{% endif %}
+
+{% if notes %}
+<div id="oldnotes">
+    <h3><p>Notes by Previous Reviewers</p></h3>
+    <ol>
+    {% for note in notes %}
+        <li class="oldnote">
+            {{ note }}
+        </li>
+    {% endfor %}
+    </ol>
+</div>
+{% endif %}
+
+<div id="images">
+  {% for cell in solution.data.cells.all %}
+  {% if cell.image %}
+  <div class="image">
+    <img id="{{cell.id}}" src="{{cell.image.url}}" onclick='launchEditor("{{cell.id}}", { id:{{cell.id}}, review: {{review.id}} })' />
+    <script type="text/javascript">
+    $(function(){
+        $("#{{cell.id}}").load(function(){
+            img = $(this)
+            if (img.width() > 500 ){
+                ratio = img.width() / 500
+                new_height = img.height()
+                    / ratio
+                img.height(new_height)
+                img.width(500)
+            }
+        })})
+    </script>
+
+
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+
+            {% load_moderator_tools %}
+
+<div>
+  <h5>Select what action should happen next</h5>
+  <form action="." method="post" id="imageForm">
+        <div>
+            <input type="radio" name="further-review" value="ready" id="ready" />
+            <label for="ready">This solution is <b>ready to appear on the website</b></label>
+        </div>
+        <div>
+            <input type="radio" name="further-review" value="user" id="further-review-user" />
+            <label for="further-review-user">The user needs to take further action on this item</label>
+        </div>
+        <div>
+            <input type="radio" name="further-review" value="specialist" id="further-review-specialist" />
+            <label for="further-review-specialist">A specialist needs to look at this item (select at least one specialty below)</label>
+        </div>
+        <div id="reassign">
+            {% reassign %}
+        </div>
+        <div id="notesdiv">
+            <br>
+            <label for="notes">Notes:</label><br>
+            <textarea id="notes" name="notes"></textarea>
+            <br>
+        </div>
+        <input type="submit" value="submit" name="Finish" id="specialSubmitFinal"/>
+        <div id="specialSubmit">
+          <input type="submit" value="Cancel this Review!" name="cancel" id="special-submit-cancel"/>
+          <input type="submit" value="Reject this solution!" name="reject" id="special-submit-reject"/>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

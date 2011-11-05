@@ -1,0 +1,78 @@
+Proposals for speedups:
+
+test: 
+
+explain analyze select * from solutions_exercise where id in (SELECT eig.exercise_id FROM solutions_exerciseingroup eig
+       INNER JOIN solutions_textbookpage p
+             ON p.id = eig.page_id
+       INNER JOIN solutions_textbook t
+             ON t.id=p.textbook_id
+       where t.isbn='2222222222222'
+union
+SELECT eig.exercise_id FROM solutions_exerciseingroup eig
+       INNER JOIN solutions_textbookexercisegroup g
+             ON g.id = eig.group_id 
+       INNER JOIN solutions_textbook t
+             ON t.id=g.textbook_id
+       where t.isbn='2222222222222'
+ );
+
+
+
+best run - 4.9 ms with hashjoin - false
+           70 ms with true
+
+           3.9 with hashjoin false and low random_page_cost
+           5 ms with true
+
+
+
+
+sql settings altered:
+checkpoint_segments = 10
+checkpoint_completion_target = 0.9
+shared_buffers should be 1/4 of system ram - THIS WAS PROBLEMATIC. EXPLORE FURTHER
+               - requires shmmax to be raised via sysctl. Didn't seem to do anything.
+                 sysctl -w kernel.shmmax=1000554423
+
+               
+
+effective_cache_size should be 3/4 system ram 
+Raised the working mem to 10 megs
+
+
+could random_page_cost be why it's slower on server? after all, ssd local... (setting this lower made MAJOR speed ups locally)
+      - Upped server as well, this is a winner
+      - After upping, seemed really slow - so not as good I hoped? 
+      
+
+look into rasing the default stats target?
+
+
+todo:
+vaccuming - Are we vaccuming reguralry?
+check into pgavd
+SET UP PSQL BASED LOGGING - this will help with splunk!
+
+
+insql tuning:
+
+indexes added:
+ public | solutions_exerciseingroup_group                                 
+ public | solutions_exerciseingroup_page  
+ public | solutions_textbookexercisegroup_textbook
+
+
+solutions_solutions on id
+so
+
+
+
+Subdivide solutions and exercises based on exercise-in-group's presense in textbook (solution-in-textbook and exercise-in-textbook)
+redefine natural order indexes on solution and exercise to apply only at solution-in-textbook and exercise-in-textbook level
+create 2 natural order indexes on exercise-in-textbook and solution-in-textbook for acending and decending orders
+
+
+
+
+p

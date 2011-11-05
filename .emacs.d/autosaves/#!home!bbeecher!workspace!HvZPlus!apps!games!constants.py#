@@ -1,0 +1,6 @@
+# Constants for Zombie instances.
+CLOSED = 0
+OZ_SELECTED = 1
+STARTED = 2
+OZ_REVEALED = 3
+OVER = 4

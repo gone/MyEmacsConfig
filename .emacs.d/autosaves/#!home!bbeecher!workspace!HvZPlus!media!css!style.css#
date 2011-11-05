@@ -1,0 +1,845 @@
+/* CSS RESET */
+
+*{
+	margin: 0px;
+	padding: 0px;
+}
+
+a img{
+	border: none;
+}
+
+/* TYPOGRAPHY */
+
+p, li, #plable{
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-size: 12px;
+	color: #525252;
+	margin-bottom: 18px;
+	line-height: 18px;
+}
+
+a{
+	color: #f68a1f;
+	text-decoration: none;
+}
+
+	a:hover{
+		text-decoration: underline;
+	}
+	
+h1, h1 a, h1 a:hover{
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-size: 24px;
+	font-weight: bold;
+	color: #525252;
+	line-height: 24px;
+	margin-bottom: 10px;
+	margin-top: 35px;
+	text-decoration: none;
+}
+
+h2{
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	color: #525252;
+	border-bottom: 1px solid #e2e2e2;
+	padding-bottom: 5px;
+	margin-bottom: 10px;
+}
+
+h3{
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-size: 12px;
+	color: #b9b9b9;
+	font-weight: bold;
+	margin-bottom: 15px;
+	line-height: 16px;
+}
+
+h4{
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #525252;
+	margin: 35px 0px 10px 0px;
+}
+
+h5{
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-size: 18px;
+	font-weight: bold;
+	color: #f68a1f;
+	margin-bottom: 20px;
+}
+
+.biglink{
+	font-size: 16px;
+	margin: 0px;
+}
+
+	div#playerstatus a:hover{
+		text-decoration: none;
+	}
+
+.statnumber{
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.datefeedback{
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-size: 12px;
+	font-style: italic;
+	color: #525252;
+	margin: 5px 0px 0px 0px;
+	line-height: 18px;
+}
+
+	.accept{
+		background: url('images/accept.png') no-repeat;
+		padding-left: 19px;
+	}
+	
+	.error{
+		background: url('images/exclamation.png') no-repeat;
+		padding-left: 19px;
+	}
+
+.idkey{
+    text-align: center;
+    font-size: 65px;
+    text-shadow: 0px 2px 3px #b9b9b9;
+    letter-spacing: 5px;
+}
+
+/* BUTTONS AND FIELDS */
+
+.rightinput{
+	width: 190px;
+	height: 22px;
+	margin-bottom: 10px;
+	padding: 5px;
+	background: #f1f1f1;
+	border: 1px solid #b9b9b9;
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+	color: #b9b9b9;
+}
+
+.signupinput{
+	width: 340px;
+	height: 22px;
+	margin-bottom: 20px;
+	padding: 5px;
+	background: white;
+	border: 1px solid #b9b9b9;
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+	color: #b9b9b9;
+}
+
+.orangebutton{
+	height: 26px;
+	padding: 5px 17px 5px 15px;
+	border: 1px solid black;
+	background: #f68a1f;
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+	color: white;
+	float: right;
+	cursor: pointer;
+}
+
+        .centerorangebutton{
+                height: 26px;
+                padding: 5px 17px 5px 15px;
+                border: 1px solid #525252;
+                background: #f68a1f;
+                font-family: 'helvetica neue', helvetica, arial, sans-serif;
+                font-weight: bold;
+                font-size: 12px;
+                color: white;
+                cursor: pointer;
+                margin-bottom: 20px;
+        }
+
+.graybutton{
+	height: 15px;
+	padding: 5px 17px 5px 10px;
+	border: 1px solid #b9b9b9;
+	background: #f1f1f1;
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+	color: #525252;
+	cursor: pointer;
+	margin-bottom: 10px;
+}
+
+	div#leftcolumn a:hover{
+		text-decoration: none;
+	}
+
+	.graybutton a:hover{
+		text-decoration: none !important;
+	}
+
+.reportatag{
+        width: 508px;
+        height: 28px;
+        background: white;
+        border: 1px solid #525252;
+        padding: 10px;
+        font-family: 'helvetica neue', helvetica, arial, sans-serif;
+        font-size: 16px;
+        color: #525252;
+}
+
+.ac_input{
+        width: 508px;
+        height: 28px;
+        background: white;
+        border: 1px solid #525252;
+        padding: 10px;
+        font-family: 'helvetica neue', helvetica, arial, sans-serif;
+        font-size: 16px;
+        color: #525252;
+}
+
+.idkey{
+    text-transform: uppercase; 
+    font-weight: bold;
+}
+
+.chosenform{
+	width: 528px;
+	height: 51px;
+	background: white;
+	border: 1px solid #525252;
+	font-family: 'helvetica neue', helvetica, arial, sans-serif;
+	font-size: 16px;
+	color: #525252;
+}
+
+textarea {
+    resize: none;
+}
+
+.nobottommargin {
+    margin-bottom: 0px;
+}
+
+.zombiesettings{
+        background: white;
+        border: 1px solid #b9b9b9;
+        width: 40px;
+        height: 25px;
+        padding: 0px 5px 0px 5px;
+        float: left;
+        margin-right: 10px;
+        margin-bottom: 25px;
+}
+ 
+.redbutton{
+        height: 30px;
+        width: 115px;
+        padding: 5px 0px 5px 0px;
+        border: 1px solid black;
+        background: red;
+        font-family: 'helvetica neue', helvetica, arial, sans-serif;
+        font-weight: bold;
+        font-size: 12px;
+        color: white;
+        cursor: pointer;
+        margin-bottom: 25px;
+        margin-right: 15px;
+        text-align: center;
+        float: left;
+}
+ 
+        .redbutton:hover{
+                -moz-box-shadow: 0px 0px 5px red;
+                -webkit-box-shadow: 0px 0px 5px red;
+                box-shadow: 0px 0px 5px red;
+        }
+ 
+.switch{
+        float: left;
+        margin-right: 15px;
+        margin-bottom: 20px;
+}
+ 
+        .leftorangebutton{
+                height: 15px;
+                padding: 5px 17px 5px 10px;
+                border: 1px solid black;
+                background: #f68a1f;
+                font-family: 'helvetica neue', helvetica, arial, sans-serif;
+                font-weight: bold;
+                font-size: 12px;
+                color: white;
+                cursor: pointer;
+                margin-bottom: 10px;
+        }
+       
+        .savechanges{
+                height: 30px;
+                width: 115px;
+                padding: 5px 0px 5px 0px;
+                border: 1px solid black;
+                background: #f68a1f;
+                font-family: 'helvetica neue', helvetica, arial, sans-serif;
+                font-weight: bold;
+                font-size: 12px;
+                color: white;
+                cursor: pointer;
+                margin-bottom: 25px;
+                text-align: center;
+}
+
+.formerrors li{
+	list-style: none;
+	background: red url('../images/silk/icons/error.png') 13px 6px no-repeat;
+	border: 1px solid black;
+	color: white;
+	font-weight: bold;
+	width: 300px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	text-align: center;
+	padding: 5px 5px 5px 15px;
+	margin-left: auto;
+	margin-right: auto;
+}
+/* PAGE LAYOUT */
+
+body{
+	background: white;
+}
+
+header{
+	height: 95px;
+	background: black;
+}
+
+	div#headerhousing{
+	width: 950px;
+	height: 95px;
+	margin-left: auto;
+	margin-right: auto;
+	}
+
+div#housing{
+	width: 950px;
+	margin-left: auto;
+	margin-right: auto;
+	background: url('images/bkgrnd.jpg') top center repeat-y;
+}
+
+div#leftcolumn{
+	width: 140px;
+	float: left;
+	margin-right: 21px;
+	padding-bottom: 50px;
+}
+
+div#centercolumn{
+	width: 569px;
+	float: left;
+	padding-bottom: 20px;
+}
+
+div#rightcolumn{
+	width: 200px;
+	margin-left: 20px;
+	float: right;
+	padding-top: 35px;
+}
+
+footer{
+	background: #f1f1f1;
+	border-top: #b9b9b9 1px solid;
+	width: 100%;
+	padding: 50px 0px 15px 0px;
+	margin-top: -20px;
+}
+
+/* HEADER */
+
+header ul{
+	list-style: none;
+	float: right;
+	margin-top: 28px;
+}
+
+header ul.topnav li{
+	display: block;
+	background: #262626;
+	width: 202px;
+	height: 26px;
+	color: white;
+	border: 1px solid #525252;
+	padding: 12px 8px 0px 8px;
+}
+
+	header li img{
+		float: left;
+		margin: -5px 7px 0px 0px;
+	}
+	
+ul.topnav li span{
+	width: 24px;
+	height: 24px;
+	float: right;
+	background: url('images/dropdown.png') no-repeat;
+	margin: -5px 0px 0px 0px;
+	cursor: pointer;
+}
+
+ul.topnav li ul.subnav{
+	list-style: none;
+	position: absolute;
+	top: 68px;
+	margin: 0;
+	padding: 0;
+	display: none;
+	margin: 0px 0px 0px -9px !important;
+}
+
+ul.topnav li ul.subnav li{
+	clear: both;
+	border-top: none !important;
+	border-left: 1px solid #525252;
+	border-right: 1px solid #525252;
+	border-bottom: 1px solid #525252;
+	margin: 0px;
+}
+
+div#headersignin{
+	display: block;
+	background: #262626;
+	width: 270px;
+	text-align: center;
+	height: 28px;
+	color: white;
+	border: 1px solid #525252;
+	padding: 10px 8px 0px 8px;
+	float: right;
+	margin-top: 25px;
+}
+
+div#headersignin p{
+		color: white;
+	}
+
+.clickbox, .clickbox-link {
+    cursor: pointer;
+}
+
+/* CENTER COLUMN */
+
+div#centerhousing{
+	padding: 0px 20px 50px 20px;
+}
+
+div.white{
+	background: white;
+	margin-top: 15px;
+	margin-bottom: 0px;
+	padding: 35px 20px 35px 20px;
+	width: 528px;
+}
+
+div.gray{
+	padding: 45px 20px 20px 20px;
+	width: 528px;
+}
+
+	div.gray p, div.white p{
+		margin: 0px 0px 5px 0px;
+	}
+
+div#centerhousing h2{
+	margin: 50px 0px 10px 0px;
+}
+
+.profilephoto{
+	float: left;
+	padding: 0px 20px 20px 0px;
+}
+
+	.socialmediaicon{
+		margin-right: 10px;
+	}
+
+.bigstat{
+	font-size: 28px;
+	font-weight: bold;
+}
+
+div#centerhousing ul{
+	list-style: none;
+}
+
+div#centerhousing li{
+	margin: 5px 0px 0px 0px;
+	padding: 0px;
+}
+
+/* NAVIGATION */
+
+div#navigation{
+	height: 49px;
+	width: 568px;
+	background: #ebebeb;
+	margin-top: -4px;
+	padding: 0px;
+}
+
+	div#gamenews{
+		height: 49px;
+		width: 112px;
+		background: url('images/gamenews.jpg');
+		float: left;
+	}
+	
+		div#gamenews:hover{
+			background: url('images/gamenewshover.jpg');
+		}
+
+	div#therules{
+		height: 49px;
+		width: 95px;
+		background: url('images/therules.jpg');
+		float: left;
+	}
+	
+		div#therules:hover{
+			background: url('images/theruleshover.jpg');
+		}
+
+	div#players{
+		height: 49px;
+		width: 85px;
+		background: url('images/players.jpg');
+		float: left;
+	}
+	
+		div#players:hover{
+			background: url('images/playershover.jpg');
+		}
+
+	div#reportatag{
+		height: 49px;
+		width: 119px;
+		background: url('images/reportatag.jpg');
+		float: left;
+	}
+	
+		div#reportatag:hover{
+			background: url('images/reportataghover.jpg');
+		}
+
+	div#themoderators{
+		height: 49px;
+		width: 157px;
+		background: url('images/themoderators.jpg');
+		float: left;
+	}
+	
+		div#themoderators:hover{
+			background: url('images/themoderatorshover.jpg');
+		}
+
+/* LANDING PAGE */
+
+div#map{
+	height: 200px;
+	overflow: hidden;
+}
+
+/* GAME NEWS */
+
+.close{
+    float: right;
+	color: red;
+}
+
+/* REPORT A TAG PAGE */
+
+#tag:disabled{
+	display: none;
+}
+
+/* RULES PAGE */
+
+div#rules ul li{
+	list-style: disc;
+	margin-left: 20px;
+}
+
+	div#rules ul{
+		margin-bottom: 18px;
+	}
+
+
+/* CONTACT THE MODS */
+
+#contactthemods{
+	width: 528px;
+	height: 150px;
+	background: url('images/contactthemodsbkgrnd.jpg') no-repeat;
+}
+
+	#contactthemodstext{
+		width: 486px;
+		padding: 20px;
+		height: 97px;
+		border: none;
+		background: none;
+	}
+	
+	#contactthemodsavatar{
+		float: right;
+		padding-top: 5px;
+	} 
+
+#editticket{
+    width: 486px;
+	padding: 20px;
+	height: 97px;
+	border: 1px solid #b9b9b9;
+	background: white;
+}
+
+.smallmargin{
+	list-style: none;
+}
+
+	.smallmargin img{
+		margin-bottom: -6px;
+		margin-right: 3px;
+	}
+
+/* GAME LIST */
+
+.game-tar{
+	float: left;
+	margin: 0px 15px 0px 0px;
+}
+
+.glwhite{
+	background: white;
+	padding: 20px 20px 16px 20px;
+	width: 528px;
+}
+
+.glgray{
+	padding: 20px 20px 20px 20px;
+	width: 528px;
+}
+
+
+/* GAME LIST */
+
+.action-tar{
+	float: left;
+	margin: 0px 15px 0px 0px;
+}
+
+.glwhite{
+	background: white;
+	padding: 20px 20px 16px 20px;
+	width: 528px;
+}
+
+.glgray{
+	padding: 20px 20px 20px 20px;
+	width: 528px;
+}
+
+/* ID CARD PAGE */
+
+div#cardthumb1{
+    width: 250px;
+    height: 250px;
+    float: left;
+    background: url('../images/cardthumb1.jpg');
+}
+
+div#cardthumb2{
+    width: 250px;
+    height: 250px;
+    float: right;
+    background: url('../images/cardthumb2.jpg');
+}
+
+    p.cardtext{
+        color: white;
+        font-weight: bold;
+        font-size: 25px;
+        text-align: center;
+        margin-top: 90px;
+    }
+    
+a.nohover:hover{
+    text-decoration: none;
+}
+
+
+/* RIGHT COLUMN */
+
+div#playerstatus{
+	margin-bottom: 50px;
+}
+
+div#playerstatus img{
+	float: left;
+	margin-right: 10px;
+}
+
+div#profilesettings{
+	margin-top: 30px;
+}
+
+	div#profilesettings li{
+		margin: 0px;
+	}
+
+	div#profilesettings li a{
+		color: #f68a1f;
+	}
+
+	div#profilesettings a{
+		color: #525252;
+	}
+
+	.accordionButton {	
+		background: #f1f1f1 url('images/accordianbkgrnd.jpg') top right no-repeat; 
+		border: #b9b9b9 solid 1px; 
+		cursor: pointer;
+		margin-top: 15px;
+		font-family: 'helvetica neue', helvetica, arial, sans-serif;
+		font-size: 12px;
+		color: #525252;
+		font-weight: normal;
+		padding: 5px 10px 15px 10px !important;
+	    width: 180px !important;
+		overflow: hidden !important;
+		}
+		
+    .ui-accordion-header{
+        margin-top: 15px !important;
+		width: 200px;
+	}
+
+div#login{
+}
+
+div#signup{
+margin-top: 50px;
+margin-bottom: 100px;
+}
+
+/* LEFT COLUMN */
+
+div#notifications{
+	margin-top: 50px;
+}
+
+	div#notifications li{
+		font-size: 11px;
+		margin-bottom: 20px;
+		list-style: none;
+		background: url('images/x.png') no-repeat 0px 3px;
+		padding: 0px 0px 0px 15px;
+	}
+	
+/* FOOTER */
+
+footer p{
+	font-size: 11px;
+	color: #9e9e9e;
+	line-height: 20px;
+	margin-top: 20px;
+	font-weight: normal;
+}
+
+footer .footerp{
+	font-size: 11px;
+	color: #9e9e9e;
+	line-height: 20px;
+	margin-top: 20px;
+	float: left;
+	margin-right: 35px;
+	width: 200px;
+	font-weight: normal;
+}
+
+	footer strong{
+		color: #525252;
+	}
+	
+	footer a strong{
+		color: #f68a1f;
+	}
+
+div#footercontainer{
+	width: 950px;
+	margin-left: auto;
+	margin-right: auto;
+	border: 1px solid #b9b9b9;
+	background: white;
+	padding: 15px 35px 30px 35px;
+}
+
+.footerfooter{
+	width: 900px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 15px;
+}
+.popupdialog {
+    display: none;
+}
+
+
+/**** Isotope filtering ****/
+
+.isotope-item {
+  z-index: 2;
+}
+
+.isotope-hidden.isotope-item {
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+/**** Isotope animation ****/
+.isotope,
+.isotope .isotope-item {
+  /* change duration value to whatever you like */
+  -webkit-transition-duration: 0.8s;
+     -moz-transition-duration: 0.8s;
+          transition-duration: 0.8s;
+}
+
+.isotope {
+  -webkit-transition-property: height, width;
+     -moz-transition-property: height, width;
+          transition-property: height, width;
+}
+
+.isotope .isotope-item {
+  -webkit-transition-property: -webkit-transform, opacity;
+     -moz-transition-property:    -moz-transform, opacity;
+          transition-property:         transform, opacity;
+}
+

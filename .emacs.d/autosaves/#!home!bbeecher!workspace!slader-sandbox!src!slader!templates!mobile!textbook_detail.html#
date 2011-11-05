@@ -1,0 +1,10 @@
+{% extends "mobile_base.html" %}
+
+{% block content %}
+{{display_textbook}}
+<ul>
+      {% for chapter in chapters %}
+      <li><a href="#"> {{textbook}} </a></li>
+      {% endfor %}
+</ul>
+{% endblock content %}
