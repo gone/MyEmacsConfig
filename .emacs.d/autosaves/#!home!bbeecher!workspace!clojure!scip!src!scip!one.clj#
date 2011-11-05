@@ -1,4 +1,0 @@
-;1.3
-(defn sum-squares-max
-  [a b c]
-  if ((== a )) min ( "b a b" c ))

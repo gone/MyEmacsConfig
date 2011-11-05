@@ -1,8 +1,0 @@
-deleting the cells by and
-
-HG: Enter commit message.  Lines beginning with 'HG:' are removed.
-HG: Leave message empty to abort commit.
-HG: --
-HG: user: Ben Beecher <Ben.Beecher@slader.com>
-HG: branch 'default'
-HG: changed src/slader/latex/views.py

@@ -1,9 +1,0 @@
-from django.conf.urls.defaults import (handler404, handler500, include, url,
-                                       patterns)
-
-urlpatterns = patterns('tickets.views',
-    url(r'^create/(?P<slug>[-\w]+)/$', 'create', name='create'),
-    url(r'^create/(?P<ticket_id>\d+)/success/$', 'create_success',
-        name='create_success'),
-    url(r'status/(?P<ticket_id>\d+)/$', 'detail', name='detail'),
-)
