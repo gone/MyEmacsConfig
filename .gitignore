@@ -8,3 +8,6 @@
 *.elc
 *autosave*
 *backup*
+*session.*
+\#*
+%*
