@@ -69,12 +69,13 @@
 (defun esk-turn-on-idle-highlight-mode ()
   (idle-highlight-mode t))
 
-(defun esk-pretty-lambdas ()
-  (font-lock-add-keywords
-   nil `(("(?\\(lambda\\>\\)"
-          (0 (progn (compose-region (match-beginning 1) (match-end 1)
-                                    ,(make-char 'greek-iso8859-7 107))
-                    nil))))))
+(defun esk-pretty-lambdas ())
+;; (defun esk-pretty-lambdas ()
+;;   (font-lock-add-keywords
+;;    nil `(("(?\\(lambda\\>\\)"
+;;           (0 (progn (compose-region (match-beginning 1) (match-end 1)
+;;                                     ,(make-char 'greek-iso8859-7 107))
+;;                     nil))))))
 
 (defun esk-add-watchwords ()
   (font-lock-add-keywords
@@ -85,7 +86,7 @@
 (add-hook 'prog-mode-hook 'esk-local-comment-auto-fill)
 (add-hook 'prog-mode-hook 'esk-turn-on-hl-line-mode)
 (add-hook 'prog-mode-hook 'esk-turn-on-save-place-mode)
-(add-hook 'prog-mode-hook 'esk-pretty-lambdas)
+;(add-hook 'prog-mode-hook 'esk-pretty-lambdas)
 (add-hook 'prog-mode-hook 'esk-add-watchwords)
 (add-hook 'prog-mode-hook 'esk-turn-on-idle-highlight-mode)
 

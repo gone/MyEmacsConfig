@@ -86,7 +86,7 @@ This covers inlined style and javascript and PHP.
 
 See also `mumamo-alt-php-tags-mode'."
   ("nXhtml Family" nxhtml-mode
-   (mumamo-chunk-xml-pi
+   (mumamo-xml-pi
     mumamo-chunk-alt-php
     mumamo-chunk-inlined-style
     mumamo-chunk-inlined-script
