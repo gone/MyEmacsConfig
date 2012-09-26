@@ -6,7 +6,11 @@
       [(1 0)
        nil "Edit all lines matching a given regexp" single])
  (ampc .
+<<<<<<< HEAD
        [(0 2)
+=======
+       [(0 1 1)
+>>>>>>> 8c92cfe520e02cd9de6bba7ce3df2c9b4d4d8c76
 	nil "Asynchronous Music Player Controller" single])
  (auctex .
 	 [(11 86)
@@ -23,6 +27,7 @@
  (debbugs .
 	  [(0 3)
 	   nil "SOAP library to access debbugs servers" tar])
+<<<<<<< HEAD
  (dict-tree .
 	    [(0 12 7)
 	     ((trie
@@ -35,6 +40,11 @@
  (djvu .
        [(0 5)
 	nil "Edit and view Djvu files via djvused" single])
+=======
+ (djvu .
+       [(0 5)
+	nil "edit and view Djvu files via djvused" single])
+>>>>>>> 8c92cfe520e02cd9de6bba7ce3df2c9b4d4d8c76
  (ediprolog .
 	    [(1 0)
 	     nil "Emacs Does Interactive Prolog" single])
@@ -45,6 +55,7 @@
 	     [(0 0 1)
 	      nil "Minor mode to visualize epoch timestamps" single])
  (f90-interface-browser .
+<<<<<<< HEAD
 			[(1 1)
 			 nil "Parse and browse f90 interfaces" single])
  (heap .
@@ -53,6 +64,10 @@
  (ioccur .
 	 [(2 4)
 	  nil "Incremental occur" single])
+=======
+			[(1 0)
+			 nil "Parse and browse f90 interfaces" single])
+>>>>>>> 8c92cfe520e02cd9de6bba7ce3df2c9b4d4d8c76
  (jgraph-mode .
 	      [(0 0)
 	       nil "Major mode for Jgraph files" single])
@@ -84,10 +99,17 @@
 	 [(1 0)
 	  nil "Show line numbers in the margin" single])
  (oauth2 .
+<<<<<<< HEAD
 	 [(0 8)
 	  nil "OAuth 2.0 Authorization Protocol" single])
  (org .
       [(20120827)
+=======
+	 [(0 2)
+	  nil "OAuth 2.0 Authorization Protocol" single])
+ (org .
+      [(20120216)
+>>>>>>> 8c92cfe520e02cd9de6bba7ce3df2c9b4d4d8c76
        nil "Outline-based notes management and organizer" tar])
  (quarter-plane .
 		[(0 1)
@@ -123,7 +145,11 @@
 	  (0 3)))
 	"Trie data structure" single])
  (undo-tree .
+<<<<<<< HEAD
 	    [(0 5 3)
+=======
+	    [(0 3 3)
+>>>>>>> 8c92cfe520e02cd9de6bba7ce3df2c9b4d4d8c76
 	     nil "Treat undo history as a tree" single])
  (uni-confusables .
 		  [(0 1)

@@ -1,0 +1,3 @@
+[submodule ".emacs.d/pylookup"]
+	path = .emacs.d/pylookup
+	url = http://github.com/tsgates/pylookup.git
