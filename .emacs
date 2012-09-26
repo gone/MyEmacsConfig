@@ -8,7 +8,7 @@
              '("marmalade" . "http://marmalade-repo.org/packages/"))
 
 (package-initialize)
-(require 'starter-kit-defuns)
+(remove-hook 'prog-mode-hook 'esk-pretty-lambdas)
 
 ;; turn off that annoying start up screen - yes I know what gnu is.
 (setq inhibit-startup-echo-area-messagee t)
@@ -67,10 +67,6 @@
 (add-to-list 'load-path "~/elisp")
 (load-library "python-mode.el")
 (load-library "ansi-color.el")
-(load-library "espresso.elc")
-(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
-(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
 (load-library "multi-mode.el")
 (load-library "twisted.el")
 ;nxml
@@ -84,9 +80,11 @@
 (global-set-key (kbd "C-'") 'other-frame)
 (global-set-key (kbd "C-;") 'other-window)
 (global-set-key (kbd "s-y") 'clipboard-yank)
-(global-set-key (kbd "s-k") 'clipboard-kill-ring-save)
 (global-set-key (kbd "<f8>") 'apropos)
+(global-set-key (kbd "s-k") 'clipboard-kill-ring-save)
 (global-set-key (kbd "M-p") 'align-regexp)
+(global-set-key (kbd "C-x C-SPC") 'pop-to-mark-command)
+
 
 (defun back-to-indentation-or-beginning ()
    (interactive)
@@ -132,45 +130,27 @@
 (add-to-list 'load-path "~/.emacs.d/color-theme-6.6.0/")
 (require 'color-theme)
 (color-theme-initialize)
+;(color-theme-solarized-dark)
 (eval-after-load "color-theme"
-     (color-theme-arjen))
-
-;haskel
-;; (load "~/.emacs.d/haskell-mode-2.4/haskell-site-file.el")
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-;; (autoload 'haskell-mode "haskell-mode"
-;;   "Major mode for editing Haskell scripts." t)
-;; (autoload 'literate-haskell-mode "haskell-mode"
-;;   "Major mode for editing literate Haskell scripts." t)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-
-;cheetah templating library
-;;(load-library "cheetah-mode.el")
+  (color-theme-arjen))
 
 ;git support
 (add-to-list 'load-path "~/.emacs.d/egg/")
-(load-library "egg.elc")
+(load-library "egg.el")
 
 
 (add-hook 'after-save-hook
     'executable-make-buffer-file-executable-if-script-p)
 
-;(load-library "python-mode.el")
-;(load-library "python.el")
+
 (add-hook 'python-mode-hook
           (setq py-smart-indentation nil))
 
 (load-library "ansi-color.el")
-(load-library "espresso.elc")
-(load-library "js2.elc")
-(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
-(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
 (load-library "multi-mode.el")
 
 ;python
-;(require 'pymacs)
+(require 'pymacs)
 (require 'pythoscope)
 (defun twisted-dev-debug ()
   (interactive)
@@ -196,11 +176,6 @@
 (load-library "init_python")
 (load-library "init_sproutcore.el")
 
-;processing
-;keep these around, but cold storage it - I'm not doing much processing
-;(autoload 'processing-mode "processing-mode" "Processing mode" t)
-;(add-to-list 'auto-mode-alist '("\\.pde$" . processing-mode))
-;(setq processing-location "~/workspace/processing/processing-1.1/")
 
 ;; paredit
 (add-to-list 'load-path "~/opt/paredit")
@@ -287,45 +262,9 @@
     (untabify (point-min) (point-max))
     (message "transmogrified")))
 
-(defun docstrings (&optional buffer)
-  "Changes all doc strings in the buffer (default current) into the correct format."
-  (interactive)
-  (when (not buffer)
-    (setq buffer (current-buffer)))
-  (save-excursion
-    (set-buffer buffer)
-    (goto-char (point-min))
-    (while (re-search-forward "def .*:
-\[^\"]*\"\"\"." 'nil 't)
-      (goto-char (- (point) 1))
-      (newline-and-indent)
-      (re-search-forward "\"\"\"" 'nil 't)
-      (goto-char (- (point) 3))
-      (newline-and-indent))))
-
-(defun clean-sql (start stop)
-  "cleans a region of text stolen from a console - replaing \t and \n"
-  (interactive "r")
-  (defun replace (from to)
-    (goto-char start)
-    (while (search-forward from stop t)
-      (replace-match to nil t)))
-  (save-excursion 
-    (replace "\\n" "\n")
-    (replace "\\t" "\t")))
-
-(defun blankit ()
-  (interactive "")
-  "prints ', blank=True' - using this for the cph project since every freaking field needs it"
-  (insert ", blank=True"))
-; this should really check to see if the last char was (, and if so omit the ","
-; also should check to see if we have a ) at the end, and add it if not
-
 (setq global-show-trailing-whitespace t)
 (setq whitespace-style '(tab-mark))
 (whitespace-mode)
-
-
 
 (require 'w3m-load)
 
@@ -371,6 +310,9 @@
       (delete-region (point) (progn (skip-chars-forward " \t") (point))))
 
 
+(defun run-python2 ()
+  "run a python2 interp"
+  (run-python "python2"))
 
 (require 'uniquify)
 ;;; This was installed by package-install.el.
@@ -378,3 +320,11 @@
 ;;; interfacing with ELPA, the package archive.
 ;;; Move this code earlier if you want to reference
 ;;; packages in your .emacs.
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+
+(require 'tidy)
+(autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
+(autoload 'tidy-parse-config-file "tidy" "Parse the `tidy-config-file'" t)
+(autoload 'tidy-save-settings "tidy" "Save settings to `tidy-config-file'" t)
+(autoload 'tidy-build-menu  "tidy" "Install an options menu for HTML Tidy." t)
