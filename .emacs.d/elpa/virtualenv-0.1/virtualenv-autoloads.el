@@ -4,11 +4,8 @@
 
 
 ;;;### (autoloads (virtualenv-minor-mode virtualenv-workon) "virtualenv"
-<<<<<<< HEAD
 ;;;;;;  "virtualenv.el" (20195 40707))
-=======
 ;;;;;;  "virtualenv.el" (20182 25834))
->>>>>>> 8c92cfe520e02cd9de6bba7ce3df2c9b4d4d8c76
 ;;; Generated autoloads from virtualenv.el
 
 (autoload 'virtualenv-workon "virtualenv" "\
@@ -29,11 +26,8 @@ With zero or negative ARG turn mode off.
 
 ;;;***
 
-<<<<<<< HEAD
 ;;;### (autoloads nil nil ("virtualenv-pkg.el") (20195 40707 560660))
-=======
 ;;;### (autoloads nil nil ("virtualenv-pkg.el") (20182 25834 584143))
->>>>>>> 8c92cfe520e02cd9de6bba7ce3df2c9b4d4d8c76
 
 ;;;***
 

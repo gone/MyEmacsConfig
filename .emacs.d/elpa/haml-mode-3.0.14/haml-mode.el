@@ -73,11 +73,7 @@ a specific level to which the current line could be indented.")
   `(,(concat haml-tag-beg-re "[><]*[ \t]*$")
     "^[ \t]*[&!]?[-=~].*do[ \t]*\\(|.*|[ \t]*\\)?$"
     ,(concat "^[ \t]*[&!]?[-=~][ \t]*\\("
-<<<<<<< HEAD
              (regexp-opt '("if" "unless" "while" "until" "else" "for"
-=======
-             (regexp-opt '("if" "unless" "while" "until" "else"
->>>>>>> 8c92cfe520e02cd9de6bba7ce3df2c9b4d4d8c76
                            "begin" "elsif" "rescue" "ensure" "when"))
              "\\)")
     "^[ \t]*/\\(\\[.*\\]\\)?[ \t]*$"
@@ -170,11 +166,7 @@ This requires that `css-mode' is available.
 (defun haml-highlight-js-filter-block (limit)
   "If a :javascript filter is found within LIMIT, highlight it.
 
-<<<<<<< HEAD
 This requires that Karl Landström's javascript mode be available, either as the
-=======
-This requires that Karl LandstrÃ¶m's javascript mode be available, either as the
->>>>>>> 8c92cfe520e02cd9de6bba7ce3df2c9b4d4d8c76
 \"js.el\" bundled with Emacs 23, or as \"javascript.el\" found in ELPA and
 elsewhere."
   (let ((keywords (or (and (featurep 'js) js--font-lock-keywords-3)

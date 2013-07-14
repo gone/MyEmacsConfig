@@ -14,10 +14,10 @@
 (add-to-list 'load-path "~/.emacs.d/elpa/")
 (require 'package)
 (require 'cedet)
+
 (setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
 			 ("gnu" . "http://elpa.gnu.org/packages/")
 			 ("marmalade" . "http://marmalade-repo.org/packages/")))
-
 
 (package-initialize)
 (remove-hook 'prog-mode-hook 'esk-pretty-lambdas)
@@ -91,13 +91,16 @@
 ;(load-library "multi-mode.el")
 (load-library "twisted.el")
 ;nxml
-(load "~/.emacs.d/nxhtml/autostart.el")
-(require 'nxhtml-mumamo)
-(require 'jinja)
+;(load "~/.emacs.d/nxhtml/autostart.el")
+;(require 'nxhtml-mumamo)
 (setq mumamo-background-colors nil)
 (add-hook 'after-change-major-mode-hook 'linum-on)
 (add-hook 'change-major-mode-hook 'linum-delete-overlays nil t)
-(add-to-list 'auto-mode-alist '("\\.html$" . jinja-html-mumamo))
+(add-to-list 'auto-mode-alist '("\\.html$" . html-mode))
+;(delete '("\\.html?\\'" flymake-xml-init) flymake-allowed-file-name-masks)
+;(delete '("\\.?\\'" flymake-xml-init) flymake-allowed-file-name-masks)
+
+
 
 
                                         ;custom keys
@@ -125,7 +128,7 @@
 (put 'upcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
 
 
 ;custom-modes
@@ -154,17 +157,14 @@
 
 
 (require 'color-theme)
-(color-theme-initialize)
-<<<<<<< HEAD
-;(color-theme-solarized-dark)
-(eval-after-load "color-theme"
-  (color-theme-arjen))
+;(color-theme-initialize)
+(color-theme-solarized-dark)
+;; (eval-after-load "color-theme"
+;;   (color-theme-arjen))
 
 ;git support
 (add-to-list 'load-path "~/.emacs.d/egg/")
 (load-library "egg.el")
-=======
-(color-theme-arjen)
 
 ;haskel
 ;; (load "~/.emacs.d/haskell-mode-2.4/haskell-site-file.el")
@@ -204,6 +204,8 @@
 (add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 ;(load-library "multi-mode.el")
+
+(require 'flymake-node-jshint)
 
 
 ;;buffer move
@@ -442,8 +444,8 @@
 (when
     (load
      (expand-file-name "~/.emacs.d/elpa/package.el"))
-  (package-initialize))
-
+  ;(package-initialize))
+)
 
 (autoload 'autopair-global-mode "autopair" nil t)
 (autopair-global-mode)
@@ -477,3 +479,44 @@
 (setq compilation-exit-message-function 'compilation-exit-autoclose)
 
 
+
+(defun tag-word-or-region (tag)
+    "Surround current word or region with a given tag."
+    (interactive "sEnter tag (without <>): ")
+    (let (pos1 pos2 bds start-tag end-tag)
+        (setq start-tag (concat "<" tag ">"))
+        (setq end-tag (concat "</" tag ">"))
+        (if (and transient-mark-mode mark-active)
+            (progn
+                (goto-char (region-end))
+                (insert end-tag)
+                (goto-char (region-beginning))
+                (insert start-tag))
+            (progn
+                (setq bds (bounds-of-thing-at-point 'symbol))
+                (goto-char (cdr bds))
+                (insert end-tag)
+                 (goto-char (car bds))
+                 (insert start-tag)))))
+
+(global-set-key (kbd "C-x t") 'tag-word-or-region)
+(setq temporary-file-directory "~/.emacs.d/tmp/")
+(require 'sws-mode)
+(require 'jade-mode)
+(add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
+
+
+(defun flymake-jade-init ()
+  (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                 'flymake-create-temp-intemp))
+     (local-file (file-relative-name
+                  temp-file
+                  (file-name-directory buffer-file-name)))
+     (arglist (list local-file)))
+    (list "jade" arglist)))
+(setq flymake-err-line-patterns
+       (cons '("\\(.*\\): \\(.+\\):\\([[:digit:]]+\\)$"
+              2 3 nil 1)
+            flymake-err-line-patterns))
+(add-to-list 'flymake-allowed-file-name-masks
+         '("\\.jade\\'" flymake-jade-init))
