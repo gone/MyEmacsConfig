@@ -1,5 +1,5 @@
 (require 'auto-complete-yasnippet)
-(require 'ipython)
+
 
 (autoload 'pymacs-apply "pymacs")
 (autoload 'pymacs-call "pymacs")
@@ -199,8 +199,9 @@ it)"
   (py-newline-and-indent)
   (insert "import ipdb; ipdb.set_trace()")
   (highlight-lines-matching-regexp "^[ 	]*import ipdb; ipdb.set_trace()"))
-(define-key py-mode-map (kbd "C-c C-t") 'python-add-breakpoint)
-(define-key python-mode-map (kbd "C-c C-t") 'python-add-breakpoint)
+
+;(define-key py-mode-map (kbd "C-c C-t") 'python-add-breakpoint)
+;(define-key python-mode-map (kbd "C-c C-t") 'python-add-breakpoint)
 
 (add-hook 'python-mode-hook '(lambda () (require 'virtualenv)))
 

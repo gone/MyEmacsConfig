@@ -163,8 +163,8 @@
 ;;   (color-theme-arjen))
 
 ;git support
-(add-to-list 'load-path "~/.emacs.d/egg/")
-(load-library "egg.el")
+;; (add-to-list 'load-path "~/.emacs.d/egg/")
+;; (load-library "egg.el")
 
 ;haskel
 ;; (load "~/.emacs.d/haskell-mode-2.4/haskell-site-file.el")

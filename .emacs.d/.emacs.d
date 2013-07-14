@@ -1,1 +1,0 @@
-/home/bbeecher/.emacs.d
