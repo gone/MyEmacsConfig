@@ -1,15 +1,17 @@
 (require 'auto-complete-yasnippet)
 
-
 (autoload 'pymacs-apply "pymacs")
 (autoload 'pymacs-call "pymacs")
 (autoload 'pymacs-eval "pymacs" nil t)
 (autoload 'pymacs-exec "pymacs" nil t)
 (autoload 'pymacs-load "pymacs" nil t)
+
 (eval-after-load "pymacs"
   '(add-to-list 'pymacs-load-path ""))
-(pymacs-load "ropemacs" "rope-")
-(setq ropemacs-enable-autoimport t)
+
+;(pymacs-load "ropemacs" "rope-")
+
+;(setq ropemacs-enable-autoimport t)
 
 
 
@@ -32,13 +34,13 @@
 
 
 
-(add-hook 'python-mode-hook
-          #'(lambda ()
-              (push '(?' . ?')
-                    (getf autopair-extra-pairs :code))
-              (setq autopair-handle-action-fns
-                    (list #'autopair-default-handle-action
-                          #'autopair-python-triple-quote-action))))
+;; (add-hook 'python-mode-hook
+;;           #'(lambda ()
+;;               (push '(?' . ?')
+;;                     (getf autopair-extra-pairs :code))
+;;               (setq autopair-handle-action-fns
+;;                     (list #'autopair-default-handle-action
+;;                           #'autopair-python-triple-quote-action))))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -117,7 +119,7 @@
   (set (make-local-variable 'ac-auto-start) t))
 (defadvice ac-cleanup (after advice-turn-off-auto-start activate)
   (set (make-local-variable 'ac-auto-start) nil))
-;(define-key py-mode-map [tab] 'python-tab)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; End Auto Completion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -130,18 +132,8 @@
 						temp-file
 						(file-name-directory buffer-file-name))))
       (list "pyflakes" (list local-file))))
-  (defun flymake-html-init ()
-	(let* ((temp-file (flymake-init-create-temp-buffer-copy
-					   'flymake-create-temp-inplace))
-		   (local-file (file-relative-name
-						temp-file
-						(file-name-directory buffer-file-name))))
-	  (list "tidy" (list local-file))))
   (add-to-list 'flymake-allowed-file-name-masks
 			   '("\\.py\\'" flymake-pyflakes-init))
-  (add-to-list 'flymake-allowed-file-name-masks
-			   '("\\.html$\\|\\.ctp" flymake-html-init))
-
   (add-to-list 'flymake-err-line-patterns
 			   '("line \\([0-9]+\\) column \\([0-9]+\\) - \\(Warning\\|Error\\): \\(.*\\)"
 				 nil 1 2 4)))
@@ -184,13 +176,14 @@ it)"
 
 
 (add-hook 'find-file-hook 'flymake-find-file-hook)
-(provide 'init_python)
+
 
 
 (defun annotate-pdb ()
   (interactive)
   (highlight-lines-matching-regexp "import pdb")
   (highlight-lines-matching-regexp "pdb.set_trace()"))
+
 (add-hook 'python-mode-hook 'annotate-pdb)
 
 
@@ -201,9 +194,19 @@ it)"
   (highlight-lines-matching-regexp "^[ 	]*import ipdb; ipdb.set_trace()"))
 
 ;(define-key py-mode-map (kbd "C-c C-t") 'python-add-breakpoint)
-;(define-key python-mode-map (kbd "C-c C-t") 'python-add-breakpoint)
+;
+
+
+(add-hook 'python-mode-hook
+	  (lambda ()
+	    (define-key python-mode-map [tab] 'python-tab)
+	    (define-key python-mode-map (kbd "C-c C-t") 'python-add-breakpoint))
+      )
+
 
 (add-hook 'python-mode-hook '(lambda () (require 'virtualenv)))
 
-(setq py-python-command-args '("--pylab"))
-(setq python-command "ipython")
+(setq python-command "ipython"
+      py-python-command-args '("--pylab"))
+
+(provide 'init_python)

@@ -1,47 +1,101 @@
-                                        ; Mumamo is making emacs 23.3 freak out:
-(eval-after-load "bytecomp"
-  '(add-to-list 'byte-compile-not-obsolete-vars
-                'font-lock-beginning-of-syntax-function
-                'font-lock-beginning-of-syntax-function))
-;; tramp-compat.el clobbers this variable!
-(eval-after-load "tramp-compat"
-  '(add-to-list 'byte-compile-not-obsolete-vars
-                'font-lock-beginning-of-syntax-function
-                'font-lock-beginning-of-syntax-function))
-
-
-                                        ;make sure we have access to everything
+;;;Packages
+(add-to-list 'load-path "~/.emacs.d")
 (add-to-list 'load-path "~/.emacs.d/elpa/")
-(require 'package)
-(require 'cedet)
-
-(setq package-archives '(("ELPA" . "http://tromey.com/elpa/")
-			 ("gnu" . "http://elpa.gnu.org/packages/")
-			 ("marmalade" . "http://marmalade-repo.org/packages/")))
-
 (package-initialize)
-(remove-hook 'prog-mode-hook 'esk-pretty-lambdas)
-;(require 'starter-kit-defuns)
-
-
-;; turn off that annoying start up screen - yes I know what gnu is.
-(setq inhibit-startup-echo-area-messagee t)
-(setq inhibit-startup-message t)
-
-(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-(remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function)
-(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-
-;set variables
-(setq inhibit-startup-echo-area-messagee t)
-(setq inhibit-startup-message t)
-(setq tramp-default-method "ssh")
-(setq auto-mode-alist (cons '("\\.tac$" . python-mode) auto-mode-alist))
-(setq display-time-24hr-format t)
 
 ;; Put autosave files (ie #foo#) and backup files (ie foo~) in ~/.emacs.d/.
+;; create the autosave dir if necessary, since emacs won't.
+(make-directory "~/.emacs.d/autosaves/" t)
+
+;;;Load third party libs
+(load-library "twisted.el")
+(load-library "init_python")
+(require 'flymake-node-jshint)
+(require 'buffer-move)
+(require 'pymacs)
+;; (pymacs-load "ropemacs" "rope-")
+;; (setq ropemacs-enable-shortcuts 'nil)
+
+
+(require 'pythoscope)
+(require 'twisted-dev)
+(require 'auto-complete)
+(require 'eldoc)
+(require 'dired-single)
+(require 'server)
+(require 'defuns)
+(require 'uniquify)
+(require 'yaml-mode)
+(require 'tidy)
+(require 'yasnippet)
+(require 'smex)
+(require 'init_ispell)
+(require 'web-mode)
+
+(smex-initialize)
+
+(autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
+(autoload 'tidy-parse-config-file "tidy" "Parse the `tidy-config-file'" t)
+(autoload 'tidy-save-settings "tidy" "Save settings to `tidy-config-file'" t)
+(autoload 'tidy-build-menu  "tidy" "Install an options menu for HTML Tidy." t)
+(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+
+;;;Client setup
+;;client color and font setup
+(defadvice server-create-window-system-frame
+  (after set-window-system-frame-colours ())
+  "Set custom frame colours when creating the first frame on a display"
+  (message "Running after frame-initialize")
+  (set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
+  (load-theme 'zenburn t)
+  (setup-window-system-frame-colours))
+(ad-activate 'server-create-window-system-frame)
+(add-hook 'after-make-frame-functions 'setup-window-system-frame-colours t)
+
+(require 'saveplace)
+(setq-default save-place t)
+
+
+
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;;;Variables
+(setq inhibit-startup-echo-area-messagee t
+      inhibit-startup-message t
+      display-time-24hr-format t
+      scroll-step 1
+      x-select-enable-clipboard t
+      x-select-enable-primary t
+      save-interprogram-paste-before-kill t
+      apropos-do-all t
+      mouse-yank-at-point t
+      save-place-file (concat user-emacs-directory "places")
+      next-line-add-newlines nil
+      search-highlight t
+      indent-tabs-mode 'nil
+      global-show-trailing-whitespace t
+      query-replace-highlight t
+      c-basic-offset 4
+      default-tab-width 4
+      browse-url-generic-program "google-chrome"
+      tramp-default-method "ssh"
+      show-paren-style 'expression
+      temporary-file-directory "~/.emacs.d/tmp/"
+      compilation-exit-message-function 'compilation-exit-autoclose
+      global-show-trailing-whitespace t
+      whitespace-style '(tab-mark)
+      color-theme-is-global t
+
+      browse-url-browser-function '(("file:///usr/local/share/doc/." . w3m-browse-url)
+                                    ("." . browse-url-generic))
+      package-archives '(("ELPA" . "http://tromey.com/elpa/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/"))
+      )
+
+
+
 (custom-set-variables
   ;; custom-set-variables was added by Custom.
   ;; If you edit it by hand, you could mess it up, so be careful.
@@ -49,10 +103,7 @@
   ;; If there is more than one, they won't work right.
  '(auto-save-file-name-transforms (quote ((".*" "~/.emacs.d/autosaves/\\1" t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/backups/"))))
- '(deft-auto-save-interval 0.0)
  '(focus-follows-mouse nil)
- '(nxml-child-indent 4)
- '(nxml-outline-child-indent 4)
  '(py-indent-offset 4)
  '(py-python-command "ipython")
  '(python-indent 4)
@@ -63,255 +114,32 @@
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote reverse) nil (uniquify)))
 
-;; create the autosave dir if necessary, since emacs won't.
-(make-directory "~/.emacs.d/autosaves/" t)
 
-;; scroll line by line, smoothly
-(setq scroll-step 1)
-;; don't add newlines to end of buffer when scrolling
-(setq next-line-add-newlines nil)
-;; make mouse yank at point
-(setq mouse-yank-at-point t)
-(setq search-highlight t)
-(setq query-replace-highlight t)
-(setq c-basic-offset 4)
-(setq-default default-tab-width 4)
-(setq-default indent-tabs-mode 'nil)
-(setq indent-tabs-mode 'nil)
-(setq global-show-trailing-whitespace t)
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "google-chrome")
-;load
-(add-to-list 'load-path "~/.emacs.d")
-(add-to-list 'load-path "~/elisp")
-(load-library "ansi-color.el")
-(load-library "multi-mode.el")
-(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
-;(load-library "multi-mode.el")
-(load-library "twisted.el")
-;nxml
-;(load "~/.emacs.d/nxhtml/autostart.el")
-;(require 'nxhtml-mumamo)
-(setq mumamo-background-colors nil)
+;;;Tramp
+(eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
+
+;;;Hooks
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 (add-hook 'after-change-major-mode-hook 'linum-on)
 (add-hook 'change-major-mode-hook 'linum-delete-overlays nil t)
-(add-to-list 'auto-mode-alist '("\\.html$" . html-mode))
-;(delete '("\\.html?\\'" flymake-xml-init) flymake-allowed-file-name-masks)
-;(delete '("\\.?\\'" flymake-xml-init) flymake-allowed-file-name-masks)
-
-
-
-
-                                        ;custom keys
-(global-set-key (kbd "C-x C-SPC") 'pop-to-mark-command)
-(global-set-key (kbd "M-p") 'align-regexp)
-(global-set-key (kbd "C-'") 'other-frame)
-(global-set-key (kbd "C-;") 'other-window)
-(global-set-key (kbd "s-y") 'clipboard-yank)
-(global-set-key (kbd "<f8>") 'apropos)
-(global-set-key (kbd "s-k") 'clipboard-kill-ring-save)
-(global-set-key (kbd "M-p") 'align-regexp)
-(global-set-key (kbd "C-x C-SPC") 'pop-to-mark-command)
-
-
-(defun back-to-indentation-or-beginning ()
-   (interactive)
-   (if (= (point) (save-excursion (back-to-indentation) (point)))
-       (beginning-of-line)
-     (back-to-indentation)))
-
-(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
-
-
-;disabled
-(put 'upcase-region 'disabled nil)
-(put 'narrow-to-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
-
-
-;custom-modes
-(setq auto-mode-alist
-      (append auto-mode-alist
-          '(("\\.[hg]s$"  . haskell-mode)
-        ("\\.hi$"     . haskell-mode)
-        ("\\.tac$"    . python-mode)
-        ("\\.l[hg]s$" . literate-haskell-mode))))
-(menu-bar-mode nil)
-;;line numbers
-(line-number-mode t)
-(global-linum-mode t)
-(column-number-mode t)
-;; show clock in modeline
-(display-time)
-;; paren matching
-(show-paren-mode t)
-(setq show-paren-style 'expression)
-;; useful highlights
-(transient-mark-mode nil)
-(global-font-lock-mode t)
-
-;font
-(set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
-
-
-(require 'color-theme)
-;(color-theme-initialize)
-(color-theme-solarized-dark)
-;; (eval-after-load "color-theme"
-;;   (color-theme-arjen))
-
-;git support
-;; (add-to-list 'load-path "~/.emacs.d/egg/")
-;; (load-library "egg.el")
-
-;haskel
-;; (load "~/.emacs.d/haskell-mode-2.4/haskell-site-file.el")
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-indent)
-;; (autoload 'haskell-mode "haskell-mode"
-;;   "Major mode for editing Haskell scripts." t)
-;; (autoload 'literate-haskell-mode "haskell-mode"
-;;   "Major mode for editing literate Haskell scripts." t)
-;; (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-
-;cheetah templating library
-;;(load-library "cheetah-mode.el")
-
-;git support
-;(add-to-list 'load-path "~/.emacs.d/egg/")
-;(load-library "egg.elc")
 (add-hook 'after-save-hook
     'executable-make-buffer-file-executable-if-script-p)
 
-
-(add-hook 'python-mode-hook
-          (setq py-smart-indentation nil))
-
-(load-library "ansi-color.el")
-(load-library "multi-mode.el")
-
-;(load-library "python-mode.el")
-;(load-library "python.el")
-;; (add-hook 'python-mode-hook
-;;            (setq py-smart-indentation nil))
-
-(load-library "ansi-color.el")
-;(load-library "espresso.elc")
-;(load-library "js2.elc")
-;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
-(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
-;(load-library "multi-mode.el")
-
-(require 'flymake-node-jshint)
-
-
-;;buffer move
-(require 'buffer-move)
-(global-set-key (kbd "M-<left>") 'buf-move-left)
-(global-set-key (kbd "M-<right>") 'buf-move-right)
-(global-set-key (kbd "M-<up>") 'buf-move-up)
-(global-set-key (kbd "M-<down>") 'buf-move-down)
-
-
-;python
-(require 'pymacs)
-(require 'pythoscope)
-(defun twisted-dev-debug ()
-  (interactive)
-  (twisted-dev-runtests 't))
-
-(require 'twisted-dev)
+(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
 
 (add-hook 'python-mode-hook (lambda ()
+                              (setq py-smart-indentation nil)
                               (define-key python-mode-map (kbd "s-u") 'python-send-buffer)
                               (define-key python-mode-map (kbd "\C-ch") 'pylookup-lookup)
                               (define-key python-mode-map (kbd "<f2>") 'flymake-display-err-menu-for-current-line)
                               (define-key python-mode-map (kbd "<f5>") 'twisted-dev-runtests)
                               (define-key python-mode-map (kbd "<f6>") 'twisted-dev-debug)))
 
-
-(require 'auto-complete)
-(global-auto-complete-mode t)
-(define-key
- ac-complete-mode-map "\C-n" 'ac-next)
-(define-key ac-complete-mode-map "\C-p" 'ac-previous)
-
-(require 'deft)
-
-(load-library "init_python")
-(load-library "init_sproutcore.el")
-
-
-;; paredit
-(add-to-list 'load-path "~/opt/paredit")
-(require 'paredit)
-(autoload 'paredit-mode "paredit"
-  "Minor mode for pseudo-structurally editing Lisp code." t)
-(add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
-(add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
-(add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
-(add-hook 'scheme-mode-hook           (lambda () (paredit-mode +1)))
-(add-hook 'clojure-mode-hook           (lambda () (paredit-mode +1)))
-
-
-
-;(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
-;; Stop SLIME's REPL from grabbing DEL,
-;; which is annoying when backspacing over a '('
-( defun override-slime-repl-bindings-with-paredit ()
-   (define-key slime-repl-mode-map
-       (read-kbd-macro paredit-backward-delete-key) nil))
-(add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
-
-(require 'eldoc) ; if not already loaded
-(eldoc-add-command
- 'paredit-backward-delete
- 'paredit-close-round)
-
-
-;clojure-swank
-;(add-to-list 'load-path "~/workspace/clojure/swank-clojure/src/emacs")
-;(setq swank-clojure-jar-path "~/.clojure/clojure.jar"
-;      swank-clojure-extra-classpaths (list
-;                                     "~/workspace/clojure/swank-clojure/src/main/clojure"
-;                                     "~/.clojure/clojure-contrib-1.2.0-SNAPSHOT.jar"))
-;(require 'swank-clojure-autoload)
-
-;slimep
-;(add-to-list 'load-path "~/.emacs.d/slime/")
-(setq inferior-lisp-program "clj-env-dir")
-
-(defun slime-buffer-name (type)
-  (format "*Slime %s*"
-          (cond
-           ((keywordp type)
-            (substring (symbol-name type) 1))
-           (t (symbol-name type)))))
-
-
-;; (setq slime-backend
-;;        "~/.emacs.d/slime/swank-loader.lisp")
-;;  (load "~/.emacs.d/slime/slime-autoloads.el")
-;;  (eval-after-load "slime"
-;;    '(progn
-;;     (slime-setup '(slime-fancy slime-asdf slime-banner))
-;;     (setq slime-complete-symbol*-fancy t)
-;;     (setq slime-complete-symbol-function 'slime-fuzzy-complete-symbol)))
-;; (require 'slime)
-;; (slime-setup '(slime-repl))
-;; (slime-setup)
-(add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
-;(add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
-
-;dired-single
-(require 'dired-single)
-(defun my-dired-init ())
+(add-hook 'html-mode-hook (lambda ()
+							(define-key html-mode-map (kbd "\C-xt") 'tag-word-or-region)))
 (add-hook 'dired-mode-hook
       '(lambda ()
-        ;; <add other stuff here>
         (define-key dired-mode-map [return] 'dired-single-buffer)
         (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
         (define-key dired-mode-map "^"
@@ -325,198 +153,200 @@
         ;; it's not loaded yet, so add our bindings to the load-hook
         (add-hook 'dired-load-hook 'my-dired-init)))
 
-;functions
-(defun untab-all ()
-  "transmogrify all tabs to spaces"
-  (interactive)
-  (save-excursion
-    (untabify (point-min) (point-max))
-    (message "transmogrified")))
 
+(remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function)
 
-(defun docstrings (&optional buffer)
-  "Changes all doc strings in the buffer (default current) into the correct format."
-  (interactive)
-  (when (not buffer)
-    (setq buffer (current-buffer)))
-  (save-excursion
-    (set-buffer buffer)
-    (goto-char (point-min))
-    (while (re-search-forward "def .*:
-\[^\"]*\"\"\"." 'nil 't)
-      (goto-char (- (point) 1))
-      (newline-and-indent)
-      (re-search-forward "\"\"\"" 'nil 't)
-      (goto-char (- (point) 3))
-      (newline-and-indent))))
+(random t) ;; Seed the random-number generator
 
-(defun clean-sql (start stop)
-  "cleans a region of text stolen from a console - replaing \t and \n"
-  (interactive "r")
-  (defun replace (from to)
-    (goto-char start)
-    (while (search-forward from stop t)
-      (replace-match to nil t)))
-  (save-excursion
-    (replace "\\n" "\n")
-    (replace "\\t" "\t")))
-
-(defun blankit ()
-  (interactive "")
-  "prints ', blank=True' - using this for the cph project since every freaking field needs it"
-  (insert ", blank=True"))
-; this should really check to see if the last char was (, and if so omit the ","
-; also should check to see if we have a ) at the end, and add it if not
-
-(setq global-show-trailing-whitespace t)
-(setq whitespace-style '(tab-mark))
-(whitespace-mode)
-
-(require 'w3m-load)
-
-;(setq slime-path "/usr/share/emacs/site-lisp/slime/")
-
-;; (setq inferior-lisp-program "/usr/bin/sbcl --noinform"
-;;       cltl2-url "file:///usr/local/share/doc/cltl/clm/node1.html"
-;;       hyperspec-prog (concat slime-path "hyperspec")
-;;       hyperspec-path "/usr/local/share/doc/HyperSpec/")
-
-;; (setq lisp-indent-function 'common-lisp-indent-function
-;;       ;slime-complete-symbol-function 'slime-fuzzy-complete-symbol
-;;       slime-startup-animation nil
-;;       common-lisp-hyperspec-root (concat "file://" hyperspec-path)
-;;       common-lisp-hyperspec-symbol-table (concat hyperspec-path "Data/Map_Sym.txt")
-;;       w3m-default-homepage common-lisp-hyperspec-root
-;;       ;browse-url-browser-function 'w3m
-;;       w3m-symbol 'w3m-default-symbol
-;;       w3m-key-binding 'info
-;;       w3m-coding-system 'utf-8
-;;       w3m-default-coding-system 'utf-8
-;;       w3m-file-coding-system 'utf-8
-;;       w3m-file-name-coding-system 'utf-8
-;;       w3m-terminal-coding-system 'utf-8)
-
-;; (add-hook 'lisp-mode-hook 'slime)
-;; (add-hook 'lisp-mode-hook 'slime-mode)
-
-
-(setq browse-url-generic-program "google-chrome"
-      browse-url-browser-function
-      '(("file:///usr/local/share/doc/." . w3m-browse-url)
-        ("." . browse-url-generic)))
-
-(defun browse-django-docs ()
-  (interactive)
-  (w3m-browse-url "file://home/bbeecher/django/docs/_build/html/index.html"))
-
-
-(defun delete-horizontal-space-forward () ; adapted from `delete-horizontal-space'
-      "*Delete all spaces and tabs after point."
-      (interactive "*")
-      (delete-region (point) (progn (skip-chars-forward " \t") (point))))
-
-
-(defun run-python2 ()
-  "run a python2 interp"
-  (run-python "python2"))
-
-(require 'uniquify)
-;;; This was installed by package-install.el.
-;;; This provides support for the package system and
-;;; interfacing with ELPA, the package archive.
-;;; Move this code earlier if you want to reference
-;;; packages in your .emacs.
-(require 'yaml-mode)
+;;;File Extensions
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.tac$" . python-mode))
+(add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
+(add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.hbs$" . handlebars-mode))
 (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
 
-(require 'tidy)
-(autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
-(autoload 'tidy-parse-config-file "tidy" "Parse the `tidy-config-file'" t)
-(autoload 'tidy-save-settings "tidy" "Save settings to `tidy-config-file'" t)
-(autoload 'tidy-build-menu  "tidy" "Install an options menu for HTML Tidy." t)
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+;(delete '("\\.html?\\'" flymake-xml-init) flymake-allowed-file-name-masks)
+;(delete '("\\.?\\'" flymake-xml-init) flymake-allowed-file-name-masks)
 
 
-;;; This was installed by package-install.el.
-;;; This provides support for the package system and
-;;; interfacing with ELPA, the package archive.
-;;; Move this code earlier if you want to reference
-;;; packages in your .emacs.
-(when
-    (load
-     (expand-file-name "~/.emacs.d/elpa/package.el"))
-  ;(package-initialize))
-)
+(ido-mode t)
+(ido-ubiquitous t)
+(setq ido-enable-prefix nil
+      ido-enable-flex-matching t
+      ido-auto-merge-work-directories-length nil
+      ido-create-new-buffer 'always
+      ido-use-filename-at-point 'guess
+      ido-use-virtual-buffers t
+      ido-handle-duplicate-virtual-buffers 2
+      ido-max-prospects 10)
 
-(autoload 'autopair-global-mode "autopair" nil t)
-(autopair-global-mode)
-(add-hook 'lisp-mode-hook
-          #'(lambda () (setq autopair-dont-activate t)))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- )
-
-(defun mongodb ()
-  (interactive)
-  (make-comint "mongo" "mongo")
-  (switch-to-buffer "*mongo*"))
-
-
- ;; Helper for compilation. Close the compilation window if
-  ;; there was no error at all.
-  (defun compilation-exit-autoclose (status code msg)
-    ;; If M-x compile exists with a 0
-    (when (and (eq status 'exit) (zerop code))
-      ;; then bury the *compilation* buffer, so that C-x b doesn't go there
-      (bury-buffer)
-      ;; and delete the *compilation* window
-      (delete-window (get-buffer-window (get-buffer "*compilation*"))))
-    ;; Always return the anticipated result of compilation-exit-message-function
-    (cons msg code))
-  ;; Specify my function (maybe I should have done a lambda function)
-(setq compilation-exit-message-function 'compilation-exit-autoclose)
-
-
-
-(defun tag-word-or-region (tag)
-    "Surround current word or region with a given tag."
-    (interactive "sEnter tag (without <>): ")
-    (let (pos1 pos2 bds start-tag end-tag)
-        (setq start-tag (concat "<" tag ">"))
-        (setq end-tag (concat "</" tag ">"))
-        (if (and transient-mark-mode mark-active)
-            (progn
-                (goto-char (region-end))
-                (insert end-tag)
-                (goto-char (region-beginning))
-                (insert start-tag))
-            (progn
-                (setq bds (bounds-of-thing-at-point 'symbol))
-                (goto-char (cdr bds))
-                (insert end-tag)
-                 (goto-char (car bds))
-                 (insert start-tag)))))
-
-(global-set-key (kbd "C-x t") 'tag-word-or-region)
-(setq temporary-file-directory "~/.emacs.d/tmp/")
-(require 'sws-mode)
-(require 'jade-mode)
-(add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
+;;;Custom Keys
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+(global-set-key (kbd "C-x C-SPC") 'pop-to-mark-command)
+(global-set-key (kbd "M-p") 'align-regexp)
+(global-set-key (kbd "C-'") 'other-frame)
+(global-set-key (kbd "C-;") 'other-window)
+(global-set-key (kbd "<f8>") 'apropos)
+(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
+(global-set-key (kbd "M-<left>") 'buf-move-left)
+(global-set-key (kbd "M-<right>") 'buf-move-right)
+(global-set-key (kbd "M-<up>") 'buf-move-up)
+(global-set-key (kbd "M-<down>") 'buf-move-down)
+(global-set-key (kbd "C-x RET") 'eshell)
+(define-key global-map (kbd "C-+") 'text-scale-increase)
+(define-key global-map (kbd "C--") 'text-scale-decrease)
+(global-set-key (kbd "C-s") 'isearch-forward-regexp)
+(global-set-key (kbd "\C-r") 'isearch-backward-regexp)
+(global-set-key (kbd "M-%") 'query-replace-regexp)
+(global-set-key (kbd "C-M-s") 'isearch-forward)
+(global-set-key (kbd "C-M-r") 'isearch-backward)
+(global-set-key (kbd "C-M-%") 'query-replace)
+(global-set-key (kbd "C-x C-i") 'imenu)
+(global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
+(global-set-key (kbd "C-c y") 'bury-buffer)
+(global-set-key (kbd "C-c m") 'revert-buffer)
+(global-set-key (kbd "C-x C-o") (lambda () (interactive) (other-window 2))) ;; forward two
+(global-set-key (kbd "C-c q") 'join-line)
+(global-set-key (kbd "M-/") 'hippie-expand)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+;;magit
+(global-set-key (kbd "C-c g") 'magit-status)
 
 
-(defun flymake-jade-init ()
-  (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                 'flymake-create-temp-intemp))
-     (local-file (file-relative-name
-                  temp-file
-                  (file-name-directory buffer-file-name)))
-     (arglist (list local-file)))
-    (list "jade" arglist)))
+;;;Disabled
+(put 'upcase-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+
+
+
+
+
+(require 'ffap)
+(defvar ffap-c-commment-regexp "^/\\*+"
+  "Matches an opening C-style comment, like \"/***\".")
+
+(defadvice ffap-file-at-point (after avoid-c-comments activate)
+  "Don't return paths like \"/******\" unless they actually exist.
+
+This fixes the bug where ido would try to suggest a C-style
+comment as a filename."
+  (ignore-errors
+    (when (and ad-return-value
+               (string-match-p ffap-c-commment-regexp
+                               ad-return-value)
+               (not (ffap-file-exists-string ad-return-value)))
+      (setq ad-return-value nil))))
+
+
+; fix for autocomplete
+(set-cursor-color "white")
+;;;Function setup
+(menu-bar-mode nil)
+;;line numbers
+(line-number-mode t)
+(global-linum-mode t)
+(column-number-mode t)
+;; show clock in modeline
+(display-time)
+;; paren matching
+(show-paren-mode t)
+;; useful highlights
+(transient-mark-mode nil)
+(global-font-lock-mode t)
+(whitespace-mode)
+
+;;;Font and Theme
+(set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
+(load-theme 'zenburn t)
+
+
+;;;Auto Complete
+(global-auto-complete-mode t)
+(define-key
+  ac-complete-mode-map "\C-n" 'ac-next)
+(define-key ac-complete-mode-map "\C-p" 'ac-previous)
+
+
+;; (require 'sws-mode)
+;; (require 'jade-mode)
+;; (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
+
 (setq flymake-err-line-patterns
        (cons '("\\(.*\\): \\(.+\\):\\([[:digit:]]+\\)$"
               2 3 nil 1)
             flymake-err-line-patterns))
+
 (add-to-list 'flymake-allowed-file-name-masks
-         '("\\.jade\\'" flymake-jade-init))
+             '("\\.jade\\'" flymake-jade-init))
+
+
+
+;; Hippie expand: at times perhaps too hip
+(eval-after-load 'hippie-exp
+  '(progn
+     (dolist (f '(try-expand-line try-expand-list try-complete-file-name-partially))
+       (delete f hippie-expand-try-functions-list))
+
+     ;; Add this back in at the end of the list.
+     (add-to-list 'hippie-expand-try-functions-list 'try-complete-file-name-partially t)))
+
+(eval-after-load 'grep
+  '(when (boundp 'grep-find-ignored-files)
+     (add-to-list 'grep-find-ignored-files "*.class")))
+
+;; Cosmetics
+
+(eval-after-load 'diff-mode
+  '(progn
+     (set-face-foreground 'diff-added "green4")
+     (set-face-foreground 'diff-removed "red3")))
+
+(eval-after-load 'magit
+  '(progn
+     (set-face-foreground 'magit-diff-add "green4")
+     (set-face-foreground 'magit-diff-del "red3")))
+
+
+
+(global-set-key [(meta x)] (lambda ()
+                             (interactive)
+                             (or (boundp 'smex-cache)
+                                 (smex-initialize))
+                             (global-set-key [(meta x)] 'smex)
+                             (smex)))
+
+(global-set-key [(shift meta x)] (lambda ()
+                                   (interactive)
+                                   (or (boundp 'smex-cache)
+                                       (smex-initialize))
+                                   (global-set-key [(shift meta x)] 'smex-major-mode-commands)
+                                   (smex-major-mode-commands)))
+(defadvice smex (around space-inserts-hyphen activate compile)
+  (let ((ido-cannot-complete-command
+         `(lambda ()
+            (interactive)
+            (if (string= " " (this-command-keys))
+                (insert ?-)
+              (funcall ,ido-cannot-complete-command)))))
+    ad-do-it))
+(defun smex-update-after-load (unused)
+  (when (boundp 'smex-cache)
+    (smex-update)))
+(add-hook 'after-load-functions 'smex-update-after-load)
+(idle-highlight-mode t)
+
+(load "~/.emacs.d/floobits/floobits.el")

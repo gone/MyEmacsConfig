@@ -1,11 +1,11 @@
 ;;; idle-highlight-mode-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-
+(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads (idle-highlight-mode) "idle-highlight-mode" "idle-highlight-mode.el"
-;;;;;;  (20119 21617))
-;;; Generated autoloads from idle-highlight-mode.el
+;;;### (autoloads nil "idle-highlight-mode" "../../../../../.emacs.d/elpa/idle-highlight-mode-1.1.2/idle-highlight-mode.el"
+;;;;;;  "f1982aa6d07ccc0f1d5f8521868f2cfb")
+;;; Generated autoloads from ../../../../../.emacs.d/elpa/idle-highlight-mode-1.1.2/idle-highlight-mode.el
 
 (autoload 'idle-highlight-mode "idle-highlight-mode" "\
 Idle-Highlight Minor Mode
@@ -14,16 +14,15 @@ Idle-Highlight Minor Mode
 
 ;;;***
 
-;;;### (autoloads nil nil ("idle-highlight-mode-pkg.el") (20119 21617
-;;;;;;  230342))
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/idle-highlight-mode-1.1.2/idle-highlight-mode-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/idle-highlight-mode-1.1.2/idle-highlight-mode.el")
+;;;;;;  (21005 23447 678485 962000))
 
 ;;;***
 
-(provide 'idle-highlight-mode-autoloads)
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
-;; coding: utf-8
 ;; End:
 ;;; idle-highlight-mode-autoloads.el ends here

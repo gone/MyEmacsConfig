@@ -1,10 +1,11 @@
 ;;; sass-mode-autoloads.el --- automatically extracted autoloads
 ;;
 ;;; Code:
-
+(add-to-list 'load-path (or (file-name-directory #$) (car load-path)))
 
-;;;### (autoloads (sass-mode) "sass-mode" "sass-mode.el" (20422 58202))
-;;; Generated autoloads from sass-mode.el
+;;;### (autoloads nil "sass-mode" "../../../../../.emacs.d/elpa/sass-mode-3.0.14/sass-mode.el"
+;;;;;;  "0bfc3a3fa2351081b0659b848cc7330f")
+;;; Generated autoloads from ../../../../../.emacs.d/elpa/sass-mode-3.0.14/sass-mode.el
 
 (autoload 'sass-mode "sass-mode" "\
 Major mode for editing Sass files.
@@ -15,15 +16,15 @@ Major mode for editing Sass files.
 
 ;;;***
 
-;;;### (autoloads nil nil ("sass-mode-pkg.el") (20190 25273 315670))
+;;;### (autoloads nil nil ("../../../../../.emacs.d/elpa/sass-mode-3.0.14/sass-mode-autoloads.el"
+;;;;;;  "../../../../../.emacs.d/elpa/sass-mode-3.0.14/sass-mode.el")
+;;;;;;  (21039 51033 163302 584000))
 
 ;;;***
 
-(provide 'sass-mode-autoloads)
 ;; Local Variables:
 ;; version-control: never
 ;; no-byte-compile: t
 ;; no-update-autoloads: t
-;; coding: utf-8
 ;; End:
 ;;; sass-mode-autoloads.el ends here
