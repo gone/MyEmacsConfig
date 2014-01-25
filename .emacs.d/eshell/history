@@ -74,3 +74,35 @@ cd ../
 ls
 cd zombies/
 ls
+ls
+ls
+ls
+cd prestige_brands_core/
+ls
+cd ../../
+ls
+cd prestige-brands-platform-api/
+ls
+./manage.py runserver
+wget http://code.jquery.com/jquery-1.10.2.min.js
+ll
+git status
+git pull
+ls
+rm os
+find . -name "route" *
+find . -name "route" 
+find . -name "*route*" 
+find . -name "*bank*" 
+exit
+grep -ir fail *
+ack
+aack
+ack
+cd ../../../
+ls
+lein new braveclojure 
+lein new app braveclojure 
+rm -rf braveclojure/
+lein new app braveclojure 
+cd ~/workspace/unlockable/

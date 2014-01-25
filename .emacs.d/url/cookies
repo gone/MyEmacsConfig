@@ -2,12 +2,12 @@
 ;; Automatically generated file!!! DO NOT EDIT!!!
 
 (setq url-cookie-storage
- '(("marmalade-repo.org"
-  [url-cookie "httpOnly" nil "Tue, 15 Oct 2013 21:06:52 GMT" "/" "marmalade-repo.org" nil]
-  [url-cookie "connect.sid" "VgJH5M3rLGxFDa1uhatPMRRB.YiSh2uMxn961ptZAS8sfnF9r%2FXAM6fG8RdmXV0e%2FhBU" "Tue, 15 Oct 2013 21:06:52 GMT" "/" "marmalade-repo.org" nil]))
-)
-(setq url-cookie-secure-storage
  'nil)
+(setq url-cookie-secure-storage
+ '(("accounts.google.com"
+  [url-cookie "GAPS" "1:BmWE58uL7aEcticX7xg8ikNNEmg1Hg:MEMarPllboFgrZfK" "23-Jan-2016 04:38:00.00 GMT" "/" "accounts.google.com" t]
+  [url-cookie "HttpOnly" nil "23-Jan-2016 04:38:00.00 GMT" "/" "accounts.google.com" t]))
+)
 
 ;; Local Variables:
 ;; version-control: never

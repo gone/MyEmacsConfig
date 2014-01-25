@@ -1,5 +1,6 @@
 ;;;Packages
-(add-to-list 'load-path "~/.emacs.d")
+
+(add-to-list 'load-path "~/.emacs.d/lisp")
 (add-to-list 'load-path "~/.emacs.d/elpa/")
 (package-initialize)
 
@@ -10,7 +11,7 @@
 ;;;Load third party libs
 (load-library "twisted.el")
 (load-library "init_python")
-(require 'flymake-node-jshint)
+;(require 'flymake-node-jshint)
 (require 'buffer-move)
 (require 'pymacs)
 ;; (pymacs-load "ropemacs" "rope-")
@@ -28,11 +29,13 @@
 (require 'yaml-mode)
 (require 'tidy)
 (require 'yasnippet)
-(require 'smex)
 (require 'init_ispell)
 (require 'web-mode)
-
-(smex-initialize)
+(require 'rainbow-delimiters)
+(require 'flycheck)
+(require 'saveplace)
+(require 'helm-config)
+(require 'ido)
 
 (autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
 (autoload 'tidy-parse-config-file "tidy" "Parse the `tidy-config-file'" t)
@@ -46,15 +49,19 @@
   (after set-window-system-frame-colours ())
   "Set custom frame colours when creating the first frame on a display"
   (message "Running after frame-initialize")
-  (set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
+  ;(set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
   (load-theme 'zenburn t)
   (setup-window-system-frame-colours))
 (ad-activate 'server-create-window-system-frame)
 (add-hook 'after-make-frame-functions 'setup-window-system-frame-colours t)
 
-(require 'saveplace)
+
 (setq-default save-place t)
 
+(helm-mode 1)
+(ido-mode t)
+(scroll-bar-mode 0)
+(tool-bar-mode 0)
 
 
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -72,11 +79,12 @@
       save-place-file (concat user-emacs-directory "places")
       next-line-add-newlines nil
       search-highlight t
-      indent-tabs-mode 'nil
+      indent-tabs-mode nil
       global-show-trailing-whitespace t
       query-replace-highlight t
       c-basic-offset 4
       default-tab-width 4
+      flycheck-display-errors-delay .3
       browse-url-generic-program "google-chrome"
       tramp-default-method "ssh"
       show-paren-style 'expression
@@ -93,6 +101,8 @@
                          ("melpa" . "http://melpa.milkbox.net/packages/")
                          ("marmalade" . "http://marmalade-repo.org/packages/"))
       )
+
+
 
 
 
@@ -119,9 +129,11 @@
 (eval-after-load 'tramp '(setenv "SHELL" "/bin/bash"))
 
 ;;;Hooks
+(add-hook 'after-init-hook #'global-flycheck-mode)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-(add-hook 'after-change-major-mode-hook 'linum-on)
+;(add-hook 'after-change-major-mode-hook 'linum-on)
 (add-hook 'change-major-mode-hook 'linum-delete-overlays nil t)
 (add-hook 'after-save-hook
     'executable-make-buffer-file-executable-if-script-p)
@@ -132,12 +144,11 @@
                               (setq py-smart-indentation nil)
                               (define-key python-mode-map (kbd "s-u") 'python-send-buffer)
                               (define-key python-mode-map (kbd "\C-ch") 'pylookup-lookup)
-                              (define-key python-mode-map (kbd "<f2>") 'flymake-display-err-menu-for-current-line)
                               (define-key python-mode-map (kbd "<f5>") 'twisted-dev-runtests)
                               (define-key python-mode-map (kbd "<f6>") 'twisted-dev-debug)))
 
 (add-hook 'html-mode-hook (lambda ()
-							(define-key html-mode-map (kbd "\C-xt") 'tag-word-or-region)))
+                            (define-key html-mode-map (kbd "\C-xt") 'tag-word-or-region)))
 (add-hook 'dired-mode-hook
       '(lambda ()
         (define-key dired-mode-map [return] 'dired-single-buffer)
@@ -153,7 +164,9 @@
         ;; it's not loaded yet, so add our bindings to the load-hook
         (add-hook 'dired-load-hook 'my-dired-init)))
 
-
+(add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+(setq nrepl-hide-special-buffers t)
+(setq cider-repl-use-clojure-font-lock t)
 (remove-hook 'kill-buffer-query-functions 'server-kill-buffer-query-function)
 
 (random t) ;; Seed the random-number generator
@@ -174,30 +187,17 @@
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-;(delete '("\\.html?\\'" flymake-xml-init) flymake-allowed-file-name-masks)
-;(delete '("\\.?\\'" flymake-xml-init) flymake-allowed-file-name-masks)
-
-
-(ido-mode t)
-(ido-ubiquitous t)
-(setq ido-enable-prefix nil
-      ido-enable-flex-matching t
-      ido-auto-merge-work-directories-length nil
-      ido-create-new-buffer 'always
-      ido-use-filename-at-point 'guess
-      ido-use-virtual-buffers t
-      ido-handle-duplicate-virtual-buffers 2
-      ido-max-prospects 10)
+(add-to-list 'auto-mode-alist '("\\.txt\\'" . rst-mode))
+(add-to-list 'auto-mode-alist '("\\.rst\\'" . rst-mode))
+(add-to-list 'auto-mode-alist '("\\.rest\\'" . rst-mode))
 
 ;;;Custom Keys
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
+
 (global-set-key (kbd "C-x C-SPC") 'pop-to-mark-command)
 (global-set-key (kbd "M-p") 'align-regexp)
 (global-set-key (kbd "C-'") 'other-frame)
-(global-set-key (kbd "C-;") 'other-window)
+(global-set-key (kbd "C-;") 'other-windowes)
 (global-set-key (kbd "<f8>") 'apropos)
 (global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
 (global-set-key (kbd "M-<left>") 'buf-move-left)
@@ -214,7 +214,6 @@
 (global-set-key (kbd "C-M-r") 'isearch-backward)
 (global-set-key (kbd "C-M-%") 'query-replace)
 (global-set-key (kbd "C-x C-i") 'imenu)
-(global-set-key (kbd "C-x M-f") 'ido-find-file-other-window)
 (global-set-key (kbd "C-c y") 'bury-buffer)
 (global-set-key (kbd "C-c m") 'revert-buffer)
 (global-set-key (kbd "C-x C-o") (lambda () (interactive) (other-window 2))) ;; forward two
@@ -225,24 +224,57 @@
 (global-set-key (kbd "C-c g") 'magit-status)
 
 
-;;;Disabled
+;;smex
+(require 'smex)
+(global-set-key [(meta x)] (lambda ()
+                             (interactive)
+                             (or (boundp 'smex-cache)
+                                 (smex-initialize))
+                             (global-set-key [(meta x)] 'smex)
+                             (smex)))
+
+(global-set-key [(shift meta x)] (lambda ()
+                                   (interactive)
+                                   (or (boundp 'smex-cache)
+                                       (smex-initialize))
+                                   (global-set-key [(shift meta x)] 'smex-major-mode-commands)
+                                   (smex-major-mode-commands)))
+
+
+
+(defadvice smex (around space-inserts-hyphen activate compile)
+  (let ((ido-cannot-complete-command
+         `(lambda ()
+            (interactive)
+            (if (string= " " (this-command-keys))
+                (insert ?-)
+              (funcall ,ido-cannot-complete-command)))))
+    ad-do-it))
+
+(defun smex-update-after-load (unused)
+      (when (boundp 'smex-cache)
+        (smex-update)))
+    (add-hook 'after-load-functions 'smex-update-after-load)
+
+(global-set-key (kbd "M-x") 'smex)
+(global-set-key (kbd "M-X") 'smex-major-mode-commands)
+;; This is your old M-x.
+(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
+
+;;;disabled
 (put 'upcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-
-
-
-
 (require 'ffap)
 (defvar ffap-c-commment-regexp "^/\\*+"
-  "Matches an opening C-style comment, like \"/***\".")
+  "matches an opening c-style comment, like \"/***\".")
 
 (defadvice ffap-file-at-point (after avoid-c-comments activate)
-  "Don't return paths like \"/******\" unless they actually exist.
+  "don't return paths like \"/******\" unless they actually exist.
 
-This fixes the bug where ido would try to suggest a C-style
+this fixes the bug where ido would try to suggest a c-style
 comment as a filename."
   (ignore-errors
     (when (and ad-return-value
@@ -254,7 +286,7 @@ comment as a filename."
 
 ; fix for autocomplete
 (set-cursor-color "white")
-;;;Function setup
+;;;function setup
 (menu-bar-mode nil)
 ;;line numbers
 (line-number-mode t)
@@ -269,40 +301,35 @@ comment as a filename."
 (global-font-lock-mode t)
 (whitespace-mode)
 
-;;;Font and Theme
+;;;font and theme
 (set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
 (load-theme 'zenburn t)
 
 
-;;;Auto Complete
+;;;auto complete
 (global-auto-complete-mode t)
 (define-key
-  ac-complete-mode-map "\C-n" 'ac-next)
-(define-key ac-complete-mode-map "\C-p" 'ac-previous)
+  ac-complete-mode-map "\c-n" 'ac-next)
+(define-key ac-complete-mode-map "\c-p" 'ac-previous)
 
 
 ;; (require 'sws-mode)
 ;; (require 'jade-mode)
 ;; (add-to-list 'auto-mode-alist '("\\.jade$" . jade-mode))
 
-(setq flymake-err-line-patterns
-       (cons '("\\(.*\\): \\(.+\\):\\([[:digit:]]+\\)$"
-              2 3 nil 1)
-            flymake-err-line-patterns))
-
-(add-to-list 'flymake-allowed-file-name-masks
-             '("\\.jade\\'" flymake-jade-init))
 
 
-
-;; Hippie expand: at times perhaps too hip
+;; hippie expand: at times perhaps too hip
 (eval-after-load 'hippie-exp
   '(progn
      (dolist (f '(try-expand-line try-expand-list try-complete-file-name-partially))
        (delete f hippie-expand-try-functions-list))
 
-     ;; Add this back in at the end of the list.
+     ;; add this back in at the end of the list.
      (add-to-list 'hippie-expand-try-functions-list 'try-complete-file-name-partially t)))
+
+
+
 
 (eval-after-load 'grep
   '(when (boundp 'grep-find-ignored-files)
@@ -320,33 +347,5 @@ comment as a filename."
      (set-face-foreground 'magit-diff-add "green4")
      (set-face-foreground 'magit-diff-del "red3")))
 
-
-
-(global-set-key [(meta x)] (lambda ()
-                             (interactive)
-                             (or (boundp 'smex-cache)
-                                 (smex-initialize))
-                             (global-set-key [(meta x)] 'smex)
-                             (smex)))
-
-(global-set-key [(shift meta x)] (lambda ()
-                                   (interactive)
-                                   (or (boundp 'smex-cache)
-                                       (smex-initialize))
-                                   (global-set-key [(shift meta x)] 'smex-major-mode-commands)
-                                   (smex-major-mode-commands)))
-(defadvice smex (around space-inserts-hyphen activate compile)
-  (let ((ido-cannot-complete-command
-         `(lambda ()
-            (interactive)
-            (if (string= " " (this-command-keys))
-                (insert ?-)
-              (funcall ,ido-cannot-complete-command)))))
-    ad-do-it))
-(defun smex-update-after-load (unused)
-  (when (boundp 'smex-cache)
-    (smex-update)))
-(add-hook 'after-load-functions 'smex-update-after-load)
 (idle-highlight-mode t)
-
-(load "~/.emacs.d/floobits/floobits.el")
+;;;  .emacs ends here

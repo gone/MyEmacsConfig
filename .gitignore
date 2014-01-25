@@ -13,3 +13,8 @@
 %*
 .smex*
 tramp
+*auto-save-list*
+*tmp*
+*url/cookies
+*recentf*
+places
