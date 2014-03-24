@@ -34,7 +34,7 @@
 (require 'rainbow-delimiters)
 (require 'flycheck)
 (require 'saveplace)
-(require 'helm-config)
+;(require 'helm-config)
 (require 'ido)
 
 (autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
@@ -58,7 +58,7 @@
 
 (setq-default save-place t)
 
-(helm-mode 1)
+;(helm-mode 1)
 (ido-mode t)
 (scroll-bar-mode 0)
 (tool-bar-mode 0)
@@ -67,6 +67,7 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;;;Variables
+(setq ring-bell-function 'ignore)
 (setq inhibit-startup-echo-area-messagee t
       inhibit-startup-message t
       display-time-24hr-format t
@@ -104,6 +105,7 @@
 
 
 
+(setq-default indent-tabs-mode nil)
 
 
 (custom-set-variables
@@ -133,7 +135,6 @@
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-;(add-hook 'after-change-major-mode-hook 'linum-on)
 (add-hook 'change-major-mode-hook 'linum-delete-overlays nil t)
 (add-hook 'after-save-hook
     'executable-make-buffer-file-executable-if-script-p)
@@ -190,6 +191,11 @@
 (add-to-list 'auto-mode-alist '("\\.txt\\'" . rst-mode))
 (add-to-list 'auto-mode-alist '("\\.rst\\'" . rst-mode))
 (add-to-list 'auto-mode-alist '("\\.rest\\'" . rst-mode))
+(setq web-mode-engines-alist
+      '(("php"    . "\\.phtml\\'")
+        ("django"  . "\\.html\\."))
+)
+
 
 ;;;Custom Keys
 
