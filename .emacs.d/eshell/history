@@ -1,7 +1,3 @@
-diff adapter.js adapter-old.js 
-mv adapter.js adapter-new.js 
-mv adapter-old.js  adapter.js 
-wget http://builds.erikbryn.com/ember-model/ember-model-latest.js
 ls
 ls
 wc *.sass
@@ -126,3 +122,7 @@ source /etc/bash_completion.d/virtualenvwrapper
 find . -name "*paste*"
 find . -iname "*paste*"
 find . -iname "*conf*"
+find . -name "settings" 
+find . -iname "*settings*"
+./tmk/local_settings.py
+find . -name "*footer*"

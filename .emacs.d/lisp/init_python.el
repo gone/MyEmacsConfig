@@ -1,6 +1,6 @@
 ;;; package --- Summary
 ;;; Commentary:
-(require 'auto-complete-yasnippet)
+;;(require 'auto-complete-yasnippet)
 
 ;;; Code:
 (autoload 'pymacs-apply "pymacs")
@@ -213,11 +213,6 @@
 (setq python-command "ipython"
       py-python-command-args '("--pylab"))
 
-(add-to-list 'load-path "~/.emacs.d/django-mode")
-(require 'django-html-mode)
-(require 'django-mode)
-(yas/load-directory "~/.emacs.d/django-mode/snippets")
-(add-to-list 'auto-mode-alist '("\\.djhtml$" . django-html-mode))
 
 (provide 'init_python)
 ;;; init_python.el ends here

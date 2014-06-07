@@ -24,6 +24,7 @@
 (require 'eldoc)
 (require 'dired-single)
 (require 'server)
+(require 'edit-server)
 (require 'defuns)
 (require 'uniquify)
 (require 'yaml-mode)
@@ -36,6 +37,8 @@
 (require 'saveplace)
 ;(require 'helm-config)
 (require 'ido)
+
+(edit-server-start)
 
 (autoload 'tidy-buffer "tidy" "Run Tidy HTML parser on current buffer" t)
 (autoload 'tidy-parse-config-file "tidy" "Parse the `tidy-config-file'" t)
@@ -57,6 +60,8 @@
 
 
 (setq-default save-place t)
+
+
 
 ;(helm-mode 1)
 (ido-mode t)
@@ -193,8 +198,14 @@
 (add-to-list 'auto-mode-alist '("\\.rest\\'" . rst-mode))
 (setq web-mode-engines-alist
       '(("php"    . "\\.phtml\\'")
-        ("django"  . "\\.html\\."))
+        ("django"  . "\\.html"))
 )
+(defun my-web-mode-hook ()
+  "Hooks for Web mode."
+  (local-set-key (kbd "RET") 'newline-and-indent)
+)
+(add-hook 'web-mode-hook  'my-web-mode-hook)
+
 
 
 ;;;Custom Keys
@@ -211,6 +222,8 @@
 (global-set-key (kbd "M-<up>") 'buf-move-up)
 (global-set-key (kbd "M-<down>") 'buf-move-down)
 (global-set-key (kbd "C-x RET") 'eshell)
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
 (define-key global-map (kbd "C-+") 'text-scale-increase)
 (define-key global-map (kbd "C--") 'text-scale-decrease)
 (global-set-key (kbd "C-s") 'isearch-forward-regexp)

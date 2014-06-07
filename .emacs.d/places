@@ -1,5 +1,227 @@
 ;;; -*- coding: utf-8 -*-
-(("/home/bbeecher/workspace/partyology/static_source/sass/style.scss" . 1003)
+(("/home/bbeecher/.ido.last" . 46729)
+ ("/home/bbeecher/workspace/partyology/app/"
+  (dired-filename . "/home/bbeecher/workspace/partyology/app/views.py"))
+ ("/home/bbeecher/workspace/partyology/static_source/js/vendor/"
+  (dired-filename . "/home/bbeecher/workspace/partyology/static_source/js/vendor/jquery.infinitescroll.js"))
+ ("/home/bbeecher/workspace/partyology/partyology/settings/app/pipeline.py" . 804)
+ ("/home/bbeecher/workspace/tmk-redesign/tmk_site/static/css/layout.css" . 8059)
+ ("/home/bbeecher/workspace/partyology/templates/search_results.html" . 3058)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/templates/modadmin/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/templates/modadmin/control_panel.html"))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/modadmin/views.py" . 4292)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/account/models.py" . 44)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/models.py" . 677)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/requirements.txt" . 154)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/profiles/factories.py" . 590)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/factories.py" . 1593)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/views.py" . 6609)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/account/views.py" . 11579)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/modadmin/tests.py" . 7055)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/account/urls.py" . 1754)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/urls.py" . 469)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/kills/urls.py" . 150)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/messages/urls.py" . 762)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/modadmin/urls.py" . 2386)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/notification/urls.py" . 119)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/payments/urls.py" . 230)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/profiles/urls.py" . 1449)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/squads/urls.py" . 766)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/forms.py" . 9682)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/modadmin/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/modadmin/forms.py"))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/modadmin/forms.py" . 9761)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/account/forms.py" . 15293)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/games/tests.py"))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/tests.py" . 10445)
+ ("/home/bbeecher/workspace/rippple/rippple/settings/"
+  (dired-filename . "/home/bbeecher/workspace/rippple/rippple/settings/heroku-staging.py"))
+ ("/home/bbeecher/workspace/MyEmacsConfig/.emacs" . 2488)
+ ("/home/bbeecher/workspace/votera/static_source/sass/"
+  (dired-filename . "/home/bbeecher/workspace/votera/static_source/sass/style.scss"))
+ ("/home/bbeecher/workspace/patronage/templates/index.html" . 4007)
+ ("/home/bbeecher/workspace/patronage/templates/snippets/artist_holder.html" . 606)
+ ("/home/bbeecher/workspace/patronage/app/urls.py" . 1222)
+ ("/home/bbeecher/workspace/patronage/templates/"
+  (dired-filename . "/home/bbeecher/workspace/patronage/templates/index.html"))
+ ("/home/bbeecher/workspace/partyology/static_source/sass/style.scss" . 486)
+ ("/home/bbeecher/workspace/partyology/static_source/sass/"
+  (dired-filename . "/home/bbeecher/workspace/partyology/static_source/sass/_search_results.scss"))
+ ("/home/bbeecher/workspace/votera/votera/urls.py" . 1069)
+ ("/home/bbeecher/workspace/votera/app/storage.py" . 1868)
+ ("/home/bbeecher/workspace/votera/votera/settings/heroku-staging.py" . 1539)
+ ("/home/bbeecher/workspace/votera/votera/settings/heroku.py" . 1559)
+ ("/home/bbeecher/workspace/generic-django-conf/app/storage.py" . 1759)
+ ("/home/bbeecher/Dropbox/JohnsonAve/coned/"
+  (dired-filename . "/home/bbeecher/Dropbox/JohnsonAve/coned/coned.txt"))
+ ("/home/bbeecher/workspace/partyology/templates/product_detail.html" . 5288)
+ ("/home/bbeecher/workspace/partyology/static_source/sass/_party_item.scss" . 360)
+ ("/home/bbeecher/workspace/partyology/app/views.py" . 21640)
+ ("/home/bbeecher/workspace/partyology/templates/snippets/"
+  (dired-filename . "/home/bbeecher/workspace/partyology/templates/snippets/image_holder.html"))
+ ("/home/bbeecher/workspace/partyology/templates/snippets/image_holder.html" . 1599)
+ ("/home/bbeecher/workspace/partyology/templates/party_view.html" . 2303)
+ ("/home/bbeecher/workspace/partyology/app/models.py" . 13038)
+ ("/home/bbeecher/workspace/django/django/db/models/fields/"
+  (dired-filename . "/home/bbeecher/workspace/django/django/db/models/fields/files.py"))
+ ("/home/bbeecher/workspace/django/django/db/models/fields/files.py" . 16038)
+ ("/home/bbeecher/workspace/generic-django-conf/.gitignore" . 589)
+ ("/home/bbeecher/workspace/generic-django-conf/.git/"
+  (dired-filename . "/home/bbeecher/workspace/generic-django-conf/.git/config"))
+ ("/home/bbeecher/workspace/generic-django-conf/.git/config" . 468)
+ ("/home/bbeecher/workspace/generic-django-conf/app/forms.py" . 405)
+ ("/home/bbeecher/workspace/generic-django-conf/start.sh" . 273)
+ ("/home/bbeecher/workspace/votera/votera/settings/local.py" . 404)
+ ("/home/bbeecher/workspace/rippple/rippple/settings/heroku-staging.py" . 1330)
+ ("/home/bbeecher/workspace/rippple/rippple/settings/local.py" . 35)
+ ("/home/bbeecher/workspace/generic-django-conf/project_name/settings/"
+  (dired-filename . "/home/bbeecher/workspace/generic-django-conf/project_name/settings/local.py"))
+ ("/home/bbeecher/workspace/generic-django-conf/project_name/settings/local.py" . 440)
+ ("/home/bbeecher/workspace/votera/static_source/sass/style.scss" . 12610)
+ ("/home/bbeecher/workspace/votera/templates/base.html" . 1129)
+ ("/home/bbeecher/workspace/votera/templates/includes/nav.html" . 715)
+ ("/home/bbeecher/workspace/votera/donations/"
+  (dired-filename . "/home/bbeecher/workspace/votera/donations/__init__.pyc"))
+ ("/home/bbeecher/workspace/votera/account/views.py" . 1718)
+ ("/home/bbeecher/workspace/votera/app/forms.py" . 712)
+ ("/home/bbeecher/workspace/votera/account/models.py" . 1752)
+ ("/home/bbeecher/workspace/votera/templates/donation_registration.html" . 1392)
+ ("/home/bbeecher/workspace/votera/donations/views.py" . 423)
+ ("/home/bbeecher/workspace/votera/app/admin.py" . 606)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/settings/base.py" . 8860)
+ ("/home/bbeecher/workspace/prestige/prestige-brands-site-core/prestige_brands_core/fixtures/"
+  (dired-filename . "/home/bbeecher/workspace/prestige/prestige-brands-site-core/prestige_brands_core/fixtures/brand-data.json"))
+ ("/home/bbeecher/workspace/plumprint/"
+  (dired-filename . "/home/bbeecher/workspace/plumprint/products"))
+ ("/home/bbeecher/workspace/lightmatter/"
+  (dired-filename . "/home/bbeecher/workspace/lightmatter/earnings.py"))
+ ("/home/bbeecher/workspace/lightmatter/earnings.py" . 1514)
+ ("/home/bbeecher/workspace/prestige/prestige-brands-site-core/prestige_brands_core/fixtures/brand-data.json" . 2230)
+ ("/home/bbeecher/workspace/prestige/prestige-brands-site-core/prestige_brands_core/"
+  (dired-filename . "/home/bbeecher/workspace/prestige/prestige-brands-site-core/prestige_brands_core/fixtures"))
+ ("/home/bbeecher/workspace/prestige/prestige-brands-site-core/"
+  (dired-filename . "/home/bbeecher/workspace/prestige/prestige-brands-site-core/prestige_brands_core"))
+ ("/home/bbeecher/workspace/prestige/"
+  (dired-filename . "/home/bbeecher/workspace/prestige/prestige-brands-site-core"))
+ ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/"
+  (dired-filename . "/home/bbeecher/workspace/prestige/prestige-brands-platform-api/.."))
+ ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/"
+  (dired-filename . "/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/.."))
+ ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/api/"
+  (dired-filename . "/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/api/.."))
+ ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/prestige_brands_platform_api/"
+  (dired-filename . "/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/prestige_brands_platform_api/.."))
+ ("/home/bbeecher/workspace/votera/"
+  (dired-filename . "/home/bbeecher/workspace/votera/donations"))
+ ("/home/bbeecher/workspace/votera/templates/"
+  (dired-filename . "/home/bbeecher/workspace/votera/templates/.."))
+ ("/home/bbeecher/workspace/votera/templates/registration/"
+  (dired-filename . "/home/bbeecher/workspace/votera/templates/registration/.."))
+ ("/home/bbeecher/workspace/votera/templates/includes/"
+  (dired-filename . "/home/bbeecher/workspace/votera/templates/includes/.."))
+ ("/home/bbeecher/workspace/votera/app/"
+  (dired-filename . "/home/bbeecher/workspace/votera/app/.."))
+ ("/home/bbeecher/workspace/generic-django-conf/project_name/"
+  (dired-filename . "/home/bbeecher/workspace/generic-django-conf/project_name/settings"))
+ ("/home/bbeecher/workspace/generic-django-conf/"
+  (dired-filename . "/home/bbeecher/workspace/generic-django-conf/project_name"))
+ ("/home/bbeecher/workspace/"
+  (dired-filename . "/home/bbeecher/workspace/votera"))
+ ("/home/bbeecher/workspace/generic-django-conf/project_name/settings/heroku.py" . 1558)
+ ("/home/bbeecher/workspace/generic-django-conf/project_name/settings/heroku-staging.py" . 1618)
+ ("/home/bbeecher/workspace/patronage/account/models.py" . 802)
+ ("/home/bbeecher/workspace/patronage/patronage/settings/heroku-staging.py" . 1752)
+ ("/home/bbeecher/workspace/patronage/patronage/settings/heroku.py" . 1690)
+ ("/home/bbeecher/Dropbox/JohnsonAve/nationalgrid/"
+  (dired-filename . "/home/bbeecher/Dropbox/JohnsonAve/nationalgrid/nationalgrid.txt"))
+ ("/home/bbeecher/Dropbox/JohnsonAve/nationalgrid/nationalgrid.txt" . 30)
+ ("/home/bbeecher/Dropbox/JohnsonAve/coned/coned.txt" . 229)
+ ("/home/bbeecher/workspace/votera/votera/"
+  (dired-filename . "/home/bbeecher/workspace/votera/votera/.."))
+ ("/home/bbeecher/Dropbox/JohnsonAve/"
+  (dired-filename . "/home/bbeecher/Dropbox/JohnsonAve/nationalgrid"))
+ ("/home/bbeecher/Dropbox/"
+  (dired-filename . "/home/bbeecher/Dropbox/JohnsonAve"))
+ ("/home/bbeecher/workspace/partyology/static_source/"
+  (dired-filename . "/home/bbeecher/workspace/partyology/static_source/sass"))
+ ("/home/bbeecher/workspace/partyology/"
+  (dired-filename . "/home/bbeecher/workspace/partyology/static_source"))
+ ("/home/bbeecher/workspace/patronage/templates/snippets/"
+  (dired-filename . "/home/bbeecher/workspace/patronage/templates/snippets/.."))
+ ("/home/bbeecher/workspace/patronage/"
+  (dired-filename . "/home/bbeecher/workspace/patronage/templates"))
+ ("/home/bbeecher/workspace/votera/bin/"
+  (dired-filename . "/home/bbeecher/workspace/votera/bin/.."))
+ ("/home/bbeecher/workspace/votera/bin/post_compile" . 55)
+ ("/home/bbeecher/workspace/votera/static_source/"
+  (dired-filename . "/home/bbeecher/workspace/votera/static_source/sass"))
+ ("/home/bbeecher/workspace/votera/static_source/img/"
+  (dired-filename . "/home/bbeecher/workspace/votera/static_source/img/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/account/factories.py" . 679)
+ ("/home/bbeecher/workspace/rippple/rippple/"
+  (dired-filename . "/home/bbeecher/workspace/rippple/rippple/settings"))
+ ("/home/bbeecher/workspace/rippple/"
+  (dired-filename . "/home/bbeecher/workspace/rippple/rippple"))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/games"))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/endless_pagination/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/endless_pagination/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/avatar/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/avatar/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/api/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/api/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/actstream/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/actstream/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/account/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/account/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/squads/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/squads/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/squads/forms.py" . 407)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/sel/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/sel/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/profiles/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/profiles/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/payments/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/payments/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/messages/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/messages/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/messages/forms.py" . 1834)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/mailer/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/mailer/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/kills/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/kills/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/kills/forms.py" . 2215)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/util/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/util/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/squads/tests.py" . 5)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/shoutbox/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/shoutbox/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/notification/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/notification/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/notification/views.py" . 3752)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/home/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/home/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/home/views.py" . 161)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/groups/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/groups/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/dataviz/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/dataviz/.."))
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/avatar/urls.py" . 54)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/apps/actstream/urls.py" . 1108)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/urls.py" . 665)
+ ("/home/bbeecher/workspace/HvZPlus/zombies/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps"))
+ ("/home/bbeecher/workspace/HvZPlus/"
+  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies"))
+ ("/home/bbeecher/workspace/tmk-redesign/tmk_site/static/js/mk_main.js" . 1477)
+ ("/home/bbeecher/workspace/rippple/account/migrations/"
+  (dired-filename . "/home/bbeecher/workspace/rippple/account/migrations/0004_auto__del_field_user_city__del_field_user_state__add_field_user_locati.py"))
+ ("/home/bbeecher/workspace/rippple/account/migrations/0004_auto__del_field_user_city__del_field_user_state__add_field_user_locati.py" . 439)
+ ("/home/bbeecher/workspace/generic-django-conf/app/migrations/0001_initial.py" . 203)
+ ("/home/bbeecher/workspace/generic-django-conf/account/migrations/0001_initial.py" . 268)
+ ("/home/bbeecher/Dropbox/laywer.txt" . 42)
+ ("/home/bbeecher/workspace/rippple/account/migrations/0001_initial.py" . 490)
  ("/home/bbeecher/workspace/partyology/requirements.txt" . 751)
  ("/home/bbeecher/workspace/partyology/templates/"
   (dired-filename . "/home/bbeecher/workspace/partyology/templates/index.html"))
@@ -40,15 +262,7 @@
  ("/home/bbeecher/workspace/generic-django-conf/app/templatetags/"
   (dired-filename . "/home/bbeecher/workspace/generic-django-conf/app/templatetags/range.py"))
  ("/home/bbeecher/workspace/generic-django-conf/app/templatetags/range.py" . 363)
- ("/home/bbeecher/workspace/generic-django-conf/project_name/settings/heroku-staging.py" . 2237)
- ("/home/bbeecher/workspace/generic-django-conf/project_name/settings/"
-  (dired-filename . "/home/bbeecher/workspace/generic-django-conf/project_name/settings/base.py"))
  ("/home/bbeecher/workspace/generic-django-conf/project_name/settings/base.py" . 202)
- ("/home/bbeecher/.ido.last" . 51752)
- ("/home/bbeecher/workspace/generic-django-conf/project_name/"
-  (dired-filename . "/home/bbeecher/workspace/generic-django-conf/project_name/settings"))
- ("/home/bbeecher/workspace/generic-django-conf/"
-  (dired-filename . "/home/bbeecher/workspace/generic-django-conf/project_name"))
  ("/home/bbeecher/workspace/generic-django-conf/app/"
   (dired-filename . "/home/bbeecher/workspace/generic-django-conf/app/templatetags"))
  ("/home/bbeecher/workspace/generic-django-conf/app/management/"
@@ -68,13 +282,10 @@
  ("/home/bbeecher/workspace/generic-django-conf/project_name/settings/app/"
   (dired-filename . "/home/bbeecher/workspace/generic-django-conf/project_name/settings/app/.."))
  ("/home/bbeecher/workspace/plumprint/wsgi.py" . 139)
- ("/home/bbeecher/workspace/generic-django-conf/start.sh" . 1006)
  ("/home/bbeecher/workspace/generic-django-conf/bin/"
   (dired-filename . "/home/bbeecher/workspace/generic-django-conf/bin/.."))
  ("/home/bbeecher/workspace/generic-django-conf/design/"
   (dired-filename . "/home/bbeecher/workspace/generic-django-conf/design/.."))
- ("/home/bbeecher/workspace/plumprint/"
-  (dired-filename . "/home/bbeecher/workspace/plumprint/products"))
  ("/home/bbeecher/workspace/plumprint/static_source/"
   (dired-filename . "/home/bbeecher/workspace/plumprint/static_source/.."))
  ("/home/bbeecher/workspace/plumprint/products/migrations/"
@@ -95,10 +306,6 @@
  ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/main.coffee" . 227)
  ("/home/bbeecher/workspace/unlockable/client/scripts/puzzle/"
   (dired-filename . "/home/bbeecher/workspace/unlockable/client/scripts/puzzle/.."))
- ("/home/bbeecher/workspace/"
-  (dired-filename . "/home/bbeecher/workspace/unlockable"))
- ("/home/bbeecher/workspace/partyology/"
-  (dired-filename . "/home/bbeecher/workspace/partyology/templates"))
  ("/home/bbeecher/workspace/10gen/" . 5750)
  ("/home/bbeecher/workspace/patronage/requirements.txt" . 866)
  ("/home/bbeecher/workspace/brubeck/brubeck/connections.py" . 7662)
@@ -129,41 +336,24 @@
  ("/home/bbeecher/workspace/django-registration/registration/backends/simple/views.py" . 1601)
  ("/home/bbeecher/workspace/partyology/templates/registration/login.html" . 1185)
  ("/home/bbeecher/workspace/partyology/templates/registration/registration_form.html" . 971)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/squads/"
-  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/apps/squads/views.py"))
  ("/home/bbeecher/workspace/HvZPlus/zombies/static_source/js/base.js" . 2583)
  ("/home/bbeecher/workspace/HvZPlus/zombies/apps/squads/views.py" . 3267)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/views.py" . 9742)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/account/views.py" . 8490)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/account/forms.py" . 3803)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/forms.py" . 10740)
  ("/home/bbeecher/.ssh/"
   (dired-filename . "/home/bbeecher/.ssh/config"))
  ("/home/bbeecher/.ssh/config" . 2393)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/models.py" . 8448)
  ("/home/bbeecher/workspace/HvZPlus/fabfile.py" . 1151)
  ("/home/bbeecher/workspace/HvZPlus/zombies/apps/squads/models.py" . 3167)
- ("/home/bbeecher/workspace/HvZPlus/zombies/templates/modadmin/"
-  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/templates/modadmin/control_panel.html"))
  ("/home/bbeecher/workspace/HvZPlus/zombies/templates/modadmin/control_panel.html" . 1344)
  ("/home/bbeecher/workspace/patronage/app/"
   (dired-filename . "/home/bbeecher/workspace/patronage/app/views.py"))
- ("/home/bbeecher/workspace/patronage/app/views.py" . 12649)
- ("/home/bbeecher/workspace/patronage/app/urls.py" . 1161)
  ("/home/bbeecher/workspace/patronage/patronage/urls.py" . 723)
  ("/home/bbeecher/workspace/patronage/patronage/settings/base.py" . 167)
  ("/home/bbeecher/workspace/patronage/app/templatetags/"
   (dired-filename . "/home/bbeecher/workspace/patronage/app/templatetags/.."))
- ("/home/bbeecher/workspace/patronage/"
-  (dired-filename . "/home/bbeecher/workspace/patronage/app"))
  ("/home/bbeecher/workspace/patronage/patronage/"
   (dired-filename . "/home/bbeecher/workspace/patronage/patronage/.."))
  ("/home/bbeecher/workspace/HvZPlus/zombies/templates/"
   (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/templates/modadmin"))
- ("/home/bbeecher/workspace/HvZPlus/zombies/"
-  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies/templates"))
- ("/home/bbeecher/workspace/HvZPlus/"
-  (dired-filename . "/home/bbeecher/workspace/HvZPlus/zombies"))
  ("/home/bbeecher/workspace/generic-django-conf/templates/registration/activate.html" . 4)
  ("/home/bbeecher/workspace/paste/"
   (dired-filename . "/home/bbeecher/workspace/paste/paste"))
@@ -203,13 +393,9 @@
   (dired-filename . "/home/bbeecher/workspace/10gen/commonweb/commonweb/flask/.."))
  ("/home/bbeecher/workspace/10gen/commonweb/commonweb/flask/auth/"
   (dired-filename . "/home/bbeecher/workspace/10gen/commonweb/commonweb/flask/auth/.."))
- ("/home/bbeecher/workspace/partyology/partyology/settings/app/pipeline.py" . 773)
  ("/home/bbeecher/workspace/partyology/.gitignore" . 67)
  ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/unlockable.coffee" . 2118)
- ("/home/bbeecher/workspace/partyology/app/models.py" . 4908)
- ("/home/bbeecher/workspace/partyology/app/views.py" . 2547)
  ("/home/bbeecher/workspace/patronage/patronage/settings/gondor.py" . 1210)
- ("/home/bbeecher/workspace/generic-django-conf/.gitignore" . 589)
  ("/home/bbeecher/workspace/escaperouter/requirements.txt" . 391)
  ("/home/bbeecher/workspace/escaperouter/"
   (dired-filename . "/home/bbeecher/workspace/escaperouter/escaperouter"))
@@ -220,7 +406,6 @@
  ("/home/bbeecher/workspace/patronage/app/admin.py" . 413)
  ("/home/bbeecher/workspace/patronage/.gitignore" . 327)
  ("/home/bbeecher/workspace/patronage/patronage/storage.py" . 40)
- ("/home/bbeecher/workspace/patronage/templates/index.html" . 3876)
  ("/home/bbeecher/workspace/patronage/patronage/settings/local.py" . 2036)
  ("/home/bbeecher/workspace/patronage/templates/snippets/artists_liked.html" . 624)
  ("/home/bbeecher/workspace/patronage/templates/patron_detail.html" . 152)
@@ -230,14 +415,11 @@
  ("/home/bbeecher/workspace/patronage/static_source/img/"
   (dired-filename . "/home/bbeecher/workspace/patronage/static_source/img/logo_left.png"))
  ("/home/bbeecher/workspace/patronage/static_source/js/" . 328)
- ("/home/bbeecher/workspace/patronage/account/models.py" . 693)
  ("/home/bbeecher/workspace/patronage/patronage/settings/"
   (dired-filename . "/home/bbeecher/workspace/patronage/patronage/settings/base.py"))
  ("/home/bbeecher/workspace/patronage/app/models.py" . 2315)
  ("/home/bbeecher/workspace/patronage/templates/snippets/artist_desc.html" . 923)
  ("/home/bbeecher/workspace/patronage/templates/artist_detail.html" . 398)
- ("/home/bbeecher/workspace/patronage/templates/snippets/"
-  (dired-filename . "/home/bbeecher/workspace/patronage/templates/snippets/artist_images.html"))
  ("/home/bbeecher/workspace/patronage/templates/snippets/support_num.html" . 983)
  ("/home/bbeecher/workspace/patronage/static_source/sass/artist_preview.scss" . 342)
  ("/home/bbeecher/workspace/patronage/static_source/sass/_artist_detail.scss" . 1077)
@@ -249,13 +431,9 @@
  ("/home/bbeecher/workspace/patronage/patronage/settings/app/pipeline.py" . 1160)
  ("/home/bbeecher/workspace/patronage/static_source/"
   (dired-filename . "/home/bbeecher/workspace/patronage/static_source/sass"))
- ("/home/bbeecher/workspace/patronage/templates/"
-  (dired-filename . "/home/bbeecher/workspace/patronage/templates/.."))
- ("/home/bbeecher/workspace/patronage/templates/snippets/artist_holder.html" . 1090)
  ("/home/bbeecher/workspace/django-stripe-payments/"
   (dired-filename . "/home/bbeecher/workspace/django-stripe-payments/payments"))
  ("/home/bbeecher/.zshrc" . 3496)
- ("/home/bbeecher/workspace/patronage/patronage/settings/heroku.py" . 1756)
  ("/home/bbeecher/workspace/generic-django-conf/requirements.txt" . 275)
  ("/home/bbeecher/workspace/patronage/patronage/settings/app/"
   (dired-filename . "/home/bbeecher/workspace/patronage/patronage/settings/app/.."))
@@ -265,8 +443,6 @@
   (dired-filename . "/home/bbeecher/workspace/escaperouter/escaperouter/.."))
  ("/home/bbeecher/workspace/patronage/.git/"
   (dired-filename . "/home/bbeecher/workspace/patronage/.git/.."))
- ("/home/bbeecher/workspace/patronage/static/"
-  (dired-filename . "/home/bbeecher/workspace/patronage/static/.."))
  ("/home/bbeecher/workspace/escaperouter/escaperouter/settings/"
   (dired-filename . "/home/bbeecher/workspace/escaperouter/escaperouter/settings/.."))
  ("/home/bbeecher/workspace/escaperouter/media/"
@@ -351,13 +527,8 @@
   (dired-filename . "/home/bbeecher/workspace/stickies/stickies/static_source/css/main.scss"))
  ("/home/bbeecher/workspace/stickies/stickies/static_source/js/main.js" . 650)
  ("/home/bbeecher/workspace/stickies/stickies/static_source/css/main.scss" . 259)
- ("/home/bbeecher/workspace/unlockable/client/build/almond.js" . 370)
- ("/home/bbeecher/workspace/unlockable/client/build/build.sh" . 173)
- ("/home/bbeecher/workspace/unlockable/client/scripts/app.build.demo.js" . 748)
  ("/home/bbeecher/workspace/unlockable/client/scripts/lib/"
   (dired-filename . "/home/bbeecher/workspace/unlockable/client/scripts/lib/pow.js"))
- ("/home/bbeecher/workspace/unlockable/client/scripts/puzzle/views.coffee" . 1158)
- ("/home/bbeecher/workspace/unlockable/client/scripts/app.build.dev.js" . 554)
  ("/home/bbeecher/workspace/unlockable/client/scripts/main.js" . 474)
  ("/home/bbeecher/workspace/unlockable/client/build/"
   (dired-filename . "/home/bbeecher/workspace/unlockable/client/build/.."))
@@ -406,162 +577,6 @@
   (dired-filename . "/home/bbeecher/workspace/django-registration/registration/backends"))
  ("/home/bbeecher/workspace/django-registration/"
   (dired-filename . "/home/bbeecher/workspace/django-registration/registration"))
- ("/home/bbeecher/workspace/MyEmacsConfig/.emacs" . 14)
- ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/settings-local.js" . 477)
- ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/settings-dev.js" . 202)
  ("/home/bbeecher/workspace/HvZPlus/zombies/apps/games/utils.py" . 270)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/app/middleware.py" . 1575)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/templates/search/search.hbs" . 1381)
  ("/home/bbeecher/workspace/homegoods/homegoods-the-goods-dashboard/dashboard/app/views/login.html" . 274)
- ("/home/bbeecher/" . 2210)
- ("/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/" . 268)
- ("/home/bbeecher/workspace/MyEmacsConfig/" . 433)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/controllers.coffee" . 25757)
- ("/home/bbeecher/workspace/homegoods/homegoods-the-goods-dashboard/app/" . 178)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/sitterfied/" . 539)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/" . 874)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/templates/" . 980)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/" . 1370)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/" . 462)
- ("/home/bbeecher/workspace/sitterfied/" . 1228)
- ("/home/bbeecher/.steampath" . 2)
- ("/home/bbeecher/.emacs.d/url/cookies" . 474)
- ("/home/bbeecher/workspace/HvZPlus/zombies/templates/games/default_rules.html" . 2)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/" . 923)
- ("/home/bbeecher/workspace/HvZPlus/zombies/templates/games/rules.html" . 33)
- ("/home/bbeecher/workspace/HvZPlus/zombies/static_source/" . 164)
- ("/home/bbeecher/workspace/HvZPlus/zombies/static_source/images/" . 174)
- ("/home/bbeecher/workspace/HvZPlus/zombies/static/" . 696)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/account/" . 165)
- ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/settings-demo.js" . 209)
- ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/templates/welcome" . 186)
- ("/home/bbeecher/workspace/homegoods/homegoods-the-goods-dashboard/dashboard/app/styles/main.scss" . 613)
- ("/home/bbeecher/workspace/homegoods/homegoods-the-goods-dashboard/dashboard/app/styles/scss/layouts/_posts.scss" . 2539)
- ("/home/bbeecher/workspace/kik/baz/templates/page.html" . 731)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/sitterfied/settings/production.py" . 575)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/app/views.py" . 17380)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/app/api.py" . 18725)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/nginx.conf" . 172)
- ("/home/bbeecher/workspace/mapsite/ecl_vow/vow.py" . 2654)
- ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/views.coffee" . 2387)
- ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/sound.coffee" . 876)
- ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/preloader.coffee" . 145)
- ("/home/bbeecher/workspace/brubeck/tests/test_request_handling.py" . 1067)
- ("/home/bbeecher/workspace/brubeck/" . 747)
- ("/home/bbeecher/workspace/mapsite/" . 1035)
- ("/home/bbeecher/Dropbox/JohnsonAve/" . 198)
- ("/home/bbeecher/Dropbox/" . 1711)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/sitterfied/settings/pipeline.py" . 367)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/app/authentication.py" . 805)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/wsgi.py" . 827)
- ("/home/bbeecher/workspace/homegoods/homegoods-the-goods-dashboard/dashboard/app/styles/scss/layouts/.sass-cache/" . 219)
- ("/home/bbeecher/workspace/MyEmacsConfig/zevv/" . 153)
- ("/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/elpa/helm-20140119.59/helm.el" . 8152)
- ("/home/bbeecher/workspace/MyEmacsConfig/.emacs.d/elpa/" . 4071)
- ("/home/bbeecher/.emacs.d/recentf" . 1742)
- ("/home/bbeecher/.emacs.d/elpa/helm-ack-20131102.155/helm-ack-autoloads.el" . 400)
- ("/home/bbeecher/.emacs.d/elpa/helm-c-yasnippet-20140117.2255/helm-c-yasnippet-autoloads.el" . 686)
- ("/home/bbeecher/.emacs.d/elpa/helm-flycheck-20131226.427/helm-flycheck-autoloads.el" . 398)
- ("/home/bbeecher/.emacs.d/elpa/ac-helm-20131224.647/ac-helm-autoloads.el" . 421)
- ("/home/bbeecher/.emacs.d/elpa/helm-20140119.59/helm-autoloads.el" . 40697)
- ("/home/bbeecher/.emacs.d/elpa/archives/marmalade/archive-contents" . 82742)
- ("/home/bbeecher/.emacs.d/elpa/archives/melpa/archive-contents" . 144489)
- ("/home/bbeecher/.emacs.d/elpa/archives/gnu/archive-contents" . 12379)
- ("/home/bbeecher/.emacs.d/elpa/archives/ELPA/archive-contents" . 11669)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/templates/onboarding1.html" . 74)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/templates/onboarding3.html" . 3251)
- ("/home/bbeecher/.emacs.d/elpa/web-mode-20140111.1600/web-mode-autoloads.el" . 527)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/app.build.js" . 53)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/sitterfied.js" . 3035132)
- ("/home/bbeecher/.emacs.d/elpa/flycheck-20140118.944/flycheck-autoloads.el" . 4152)
- ("/home/bbeecher/.emacs.d/elpa/f-20131225.721/f-autoloads.el" . 216)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/manage.py" . 45)
- ("/home/bbeecher/.emacs.d/" . 136)
- ("/home/bbeecher/.emacs.d/elpa/jedi-20130714.1228/jedi-autoloads.el" . 2076)
- ("/home/bbeecher/.emacs.d/elpa/epc-20130803.2228/epc-autoloads.el" . 251)
- ("/home/bbeecher/.emacs.d/elpa/concurrent-20130914.536/concurrent-autoloads.el" . 234)
- ("/home/bbeecher/.emacs.d/elpa/deferred-20130930.607/deferred-autoloads.el" . 230)
- ("/home/bbeecher/.emacs.d/elpa/ctable-20131202.2114/ctable-autoloads.el" . 226)
- ("/home/bbeecher/.emacs.d/elpa/clojure-snippets-20130403.1146/clojure-snippets-autoloads.el" . 557)
- ("/home/bbeecher/.emacs.d/elpa/buster-snippets-20130714.540/buster-snippets-autoloads.el" . 578)
- ("/home/bbeecher/.emacs.d/elpa/smex-20140111.126/smex-autoloads.el" . 357)
- ("/home/bbeecher/.emacs.d/elpa/smart-operator-4.0/smart-operator-autoloads.el" . 681)
- ("/etc/default/grub" . 329)
- (#("/sudo:root@falstaff:/etc/default/grub" 6 10
-    (tramp-default t))
-  . 288)
- ("/sudo:root@falstaff:/etc/apt/sources.list" . 539)
- ("/home/bbeecher/.emacs.d/elpa/floobits-20131206.1416/floobits-autoloads.el" . 1769)
- ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/api/urls.py" . 507)
- ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/api/views.py" . 2075)
- ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/api/tests.py" . 4878)
- ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/prestige_brands_platform_api/settings.py" . 5938)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/templates/sitter/sitter.top.hbs" . 1661)
- ("/home/bbeecher/workspace/floobits/" . 145)
- ("/home/bbeecher/workspace/prestige/prestige-brands-site-core/prestige_brands_core/models.py" . 2931)
- ("/home/bbeecher/workspace/django-rest-framework/rest_framework/mixins.py" . 4693)
- ("/home/bbeecher/workspace/django-rest-framework/rest_framework/generics.py" . 17985)
- ("/home/bbeecher/workspace/django-rest-framework/rest_framework/" . 728)
- ("/home/bbeecher/workspace/django-rest-framework/" . 722)
- ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/" . 446)
- ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/prestige_brands_platform_api/api/serializers.py" . 4316)
- ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/settings-qa.js" . 260)
- ("/home/bbeecher/workspace/unlockable/client/demo.html" . 785)
- ("/home/bbeecher/workspace/unlockable/client/scripts/unlockable/settings-prod.js" . 197)
- ("/home/bbeecher/workspace/ayudamia/ayudamia/ayudamia/settings/base.py" . 3688)
- ("/home/bbeecher/workspace/ayudamia/ayudamia/ayudamia/settings/" . 276)
- ("/home/bbeecher/workspace/ayudamia/ayudamia/ayudamia/settings/production.py" . 1602)
- ("/home/bbeecher/workspace/ayudamia/ayudamia/ayudamia/" . 406)
- ("/home/bbeecher/workspace/ayudamia/ayudamia/" . 317)
- ("/home/bbeecher/workspace/ayudamia/" . 201)
- ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/" . 603)
- ("/home/bbeecher/workspace/prestige/" . 560)
- ("/home/bbeecher/.floorc" . 94)
- ("/home/bbeecher/workspace/unlockable/client/scripts/lib/rsvp.js" . 1670)
- ("/home/bbeecher/workspace/unlockable/client/index.html" . 439)
- ("/home/bbeecher/workspace/unlockable/.git/config" . 493)
- ("/home/bbeecher/workspace/unlockable/.git/" . 154)
- ("/home/bbeecher/workspace/unlockable/.gitignore" . 120)
- ("/home/bbeecher/workspace/django-registration/registration/backends/default/urls.py" . 1746)
- ("/home/bbeecher/workspace/django-registration/registration/backends/default/views.py" . 217)
- ("/home/bbeecher/workspace/django-registration/registration/forms.py" . 426)
- ("/home/bbeecher/workspace/haiti/static/sass/style.scss" . 141)
- ("/home/bbeecher/workspace/haiti/templates/base.html" . 1543)
- ("/home/bbeecher/workspace/haiti/templates/footer.html" . 282)
- ("/home/bbeecher/workspace/generictest/generictest/generictest/settings/app/pipeline.py" . 552)
- ("/home/bbeecher/workspace/generictest/generictest/static_source/sass/style.scss" . 140)
- ("/home/bbeecher/workspace/prestige/prestige-brands-platform-api/docs/API_ENDPOINTS.md" . 16573)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/templates/edit/network.hbs" . 1956)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/lib/PhoneFormat.js" . 1284)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/main.js" . 163)
- ("/home/bbeecher/workspace/sitterfied/dotcloud.yml" . 341)
- ("/home/bbeecher/workspace/gaggyl/app/backends.py" . 1127)
- ("/home/bbeecher/workspace/gaggyl/app/models.py" . 2229)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/lib/select2.js" . 110305)
- ("/home/bbeecher/.emacs.d/floobits/floobits.el" . 24233)
- ("/home/bbeecher/floobits/" . 134)
- ("/home/bbeecher/floobits/share/" . 139)
- ("/home/bbeecher/.emacs.d/elpa/floobits-20131117.2003/floobits-autoloads.el" . 1769)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/css/style.css" . 167843)
- ("/home/bbeecher/workspace/shareswell/shareswell/app/" . 266)
- ("/home/bbeecher/workspace/gaggyl/" . 197)
- ("/home/bbeecher/workspace/shareswell/shareswell/" . 212)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/static_source/js/sitterfied.coffee" . 1134)
- ("/home/bbeecher/workspace/unlockable/client/css/" . 158)
- ("/home/bbeecher/workspace/unlockable/common/alembic/" . 160)
- ("/home/bbeecher/workspace/generictest/generictest/" . 606)
- ("/home/bbeecher/workspace/generictest/generictest/generictest/settings/" . 233)
- ("/home/bbeecher/workspace/generictest/generictest/generictest/settings/app/" . 183)
- ("/home/bbeecher/workspace/generictest/generictest/generictest/" . 415)
- ("/home/bbeecher/workspace/sitterfied/sitterfied/templates/base.html" . 448)
- ("/home/bbeecher/workspace/HvZPlus/zombies/settings/base.py" . 8710)
- ("/home/bbeecher/workspace/generictest/generictest/account/urls.py" . 145)
- ("/home/bbeecher/workspace/shareswell/shareswell/static_source/js/" . 305)
- ("/home/bbeecher/workspace/unlockable/client/scripts/dropblocks/" . 276)
- ("/home/bbeecher/workspace/django/django/contrib/auth/templates/registration/password_reset_subject.txt" . 125)
- ("/home/bbeecher/workspace/HvZPlus/zombies/templates/500.html" . 49)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/util/testing.py" . 582)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/profiles/models.py" . 11123)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/avatar/migrations/0005_auto__add_squadavatar.py" . 221)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/caches.py" . 558)
- ("/home/bbeecher/workspace/HvZPlus/zombies/apps/context_processors.py" . 3478))
+ ("/home/bbeecher/" . 2210))
