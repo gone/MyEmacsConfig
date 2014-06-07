@@ -1,9 +1,0 @@
-def __FFAP_get_module_path(module):
-    try:
-        import os
-        path = __import__(module).__file__
-        if path[-4:] == '.pyc' and os.path.exists(path[0:-1]):
-            path = path[:-1]
-        return path
-    except:
-        return ''

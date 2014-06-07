@@ -20,3 +20,4 @@ tramp
 places
 eshell/*
 eshell/
+tmp*
