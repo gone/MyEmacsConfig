@@ -22,3 +22,4 @@ eshell/*
 eshell/
 tmp*
 url/
+ac-comphist.dat
