@@ -13,7 +13,7 @@
 		   (car frame)
 		 (selected-frame))))
 	(progn
-	  (set-frame-font "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
+      (set-frame-font 	  (set-face-attribute 'default nil :font  "-zevv-peep-medium-r-normal--20-175-75-75-c-100-iso8859-1"))
       (load-theme 'zenburn t)
 
       ))))

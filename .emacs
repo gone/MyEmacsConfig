@@ -52,7 +52,7 @@
   (after set-window-system-frame-colours ())
   "Set custom frame colours when creating the first frame on a display"
   (message "Running after frame-initialize")
-  ;(set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
+  (set-face-attribute 'default nil :font  "-zevv-peep-medium-r-normal--20-175-75-75-c-100-iso8859-1")
   (load-theme 'zenburn t)
   (setup-window-system-frame-colours))
 (ad-activate 'server-create-window-system-frame)
@@ -99,7 +99,7 @@
       global-show-trailing-whitespace t
       whitespace-style '(tab-mark)
       color-theme-is-global t
-
+      create-lockfiles nil
       browse-url-browser-function '(("file:///usr/local/share/doc/." . w3m-browse-url)
                                     ("." . browse-url-generic))
       package-archives '(("ELPA" . "http://tromey.com/elpa/")
@@ -109,22 +109,39 @@
       )
 
 
-
 (setq-default indent-tabs-mode nil)
 
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(auto-save-file-name-transforms (quote ((".*" "~/.emacs.d/autosaves/\\1" t))))
  '(backup-directory-alist (quote ((".*" . "~/.emacs.d/backups/"))))
  '(focus-follows-mouse nil)
+ '(package-check-signature nil)
  '(py-indent-offset 4)
  '(py-python-command "ipython")
  '(python-indent 4)
- '(safe-local-variable-values (quote ((test-case-name . slader\.test\.test_common) (test-case-name . "slader.test.test_common") (test-case-name . "slader.test.test_common.py") (test-case-name . solutions\.tests) (folded-file . t) (test-case-name . twisted\.test\.test_abstract) (test-case-name . twisted\.test\.test_process) (test-case-name . twisted\.test\.test_factories) (test-case-name . twisted\.test\.test_newcred) (test-case-name . twisted\.test\.test_defer) (test-case-name . twisted\.test\.test_protocols) (test-case-name . twisted\.test\.test_banana) (test-case-name . twisted\.test\.test_pb) (test-case-name . twisted\.test\.test_reflect) (test-case-name . twisted\.test\.test_persisted) (test-case-name . twisted\.test\.test_jelly))))
+ '(safe-local-variable-values
+   (quote
+    ((test-case-name . slader\.test\.test_common)
+     (test-case-name . "slader.test.test_common")
+     (test-case-name . "slader.test.test_common.py")
+     (test-case-name . solutions\.tests)
+     (folded-file . t)
+     (test-case-name . twisted\.test\.test_abstract)
+     (test-case-name . twisted\.test\.test_process)
+     (test-case-name . twisted\.test\.test_factories)
+     (test-case-name . twisted\.test\.test_newcred)
+     (test-case-name . twisted\.test\.test_defer)
+     (test-case-name . twisted\.test\.test_protocols)
+     (test-case-name . twisted\.test\.test_banana)
+     (test-case-name . twisted\.test\.test_pb)
+     (test-case-name . twisted\.test\.test_reflect)
+     (test-case-name . twisted\.test\.test_persisted)
+     (test-case-name . twisted\.test\.test_jelly))))
  '(scss-compile-at-save nil)
  '(slime-complete-symbol-function (quote slime-fuzzy-complete-symbol))
  '(tab-width 4)
@@ -321,15 +338,15 @@ comment as a filename."
 (whitespace-mode)
 
 ;;;font and theme
-(set-face-attribute 'default nil :font  "-zevv-peep-normal-normal-normal-*-16-*-*-*-c-80-iso10646-1")
+;(set-face-attribute 'default nil :font  "-zevv-peep-medium-r-normal--20-175-75-75-c-100-iso8859-1")
 (load-theme 'zenburn t)
 
 
 ;;;auto complete
 (global-auto-complete-mode t)
 (define-key
-  ac-complete-mode-map "\c-n" 'ac-next)
-(define-key ac-complete-mode-map "\c-p" 'ac-previous)
+  ac-complete-mode-map "\C-n" 'ac-next)
+(define-key ac-complete-mode-map "\C-p" 'ac-previous)
 
 
 ;; (require 'sws-mode)
@@ -368,3 +385,11 @@ comment as a filename."
 
 (idle-highlight-mode t)
 ;;;  .emacs ends here
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+(load "editorconfig")
+(require 'vlf-setup)
