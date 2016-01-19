@@ -24,3 +24,5 @@ tmp*
 url/
 ac-comphist.dat
 recentf
+.emacs.d/private/*
+.cask

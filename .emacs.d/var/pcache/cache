@@ -1,0 +1,7 @@
+;; Object cache
+;; EIEIO PERSISTENT OBJECT
+(gh-cache "cache"
+  :file "cache"
+  :version "0.3/gh-3"
+  :entries #s(hash-table size 65 test equal rehash-size 1.5 rehash-threshold 0.8 data (("/repos/Lightmatter/theRoomRing/pulls" "GET" "722fae479e2c7b3b46f63bdb57a80034e628c752") [object gh-cache-entry "gh-cache-entry" 1440107852.7535002 nil nil "\"f19ca9b1ecb932521a48eeaa12ea334f\"" nil]))
+  :timestamp 1444415068.7865326)

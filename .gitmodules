@@ -1,9 +1,0 @@
-[submodule ".emacs.d/pylookup"]
-	path = .emacs.d/pylookup
-	url = http://github.com/tsgates/pylookup.git
-[submodule "django-mode"]
-	path = django-mode
-	url = https://github.com/myfreeweb/django-mode.git
-[submodule ".emacs.d/django-mode"]
-	path = .emacs.d/django-mode
-	url = https://github.com/myfreeweb/django-mode.git
