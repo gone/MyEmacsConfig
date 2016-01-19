@@ -1,18 +1,37 @@
-;;;Packages
+;;turn off autosave first, which is super annoying
+;;load packages
 (require 'cask "/usr/share/emacs/site-lisp/cask/cask.el")
 (cask-initialize)
 (require 'pallet)
 (pallet-mode t)
 (require 'use-package)
+
+;; display
 (setq initial-frame-alist (quote ((fullscreen . maximized))))
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (load-theme 'zenburn t)
+(scroll-bar-mode -1)
+(tool-bar-mode 0)
+(blink-cursor-mode 0)
+; fix for autocomplete
+(set-cursor-color "white")
+;;;function setup
+(menu-bar-mode -1)
+;;line numbers
+(line-number-mode t)
+(global-linum-mode t)
+(column-number-mode t)
+;; paren matching
+(show-paren-mode t)
+;; useful highlights
+(transient-mark-mode nil)
+(global-font-lock-mode t)
+(whitespace-mode)
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;;configure emacs
+(make-directory "~/.emacs.d/private/tmp/" t)
 (add-to-list 'load-path "~/.emacs.d/lisp")
-
-(make-directory "~/.emacs.d/private/autosaves/" t)
-(setq auto-save-file-name-transforms
-      `((".*" ,"~/.emacs.d/private/autosaves/" t)))
-
 
 (use-package recentf
   :config
@@ -27,6 +46,11 @@
 (load-library "init_javascript")
 ;(load-library "init_clojure")
 
+(use-package pcache
+  :init
+  (make-directory "~/.emacs.d/private/var/pcache/" t)
+  (setq pcache-directory "~/.emacs.d/private/var/pcache/"))
+
 (use-package ffap)
 (use-package editorconfig)
 (use-package pymacs)
@@ -35,7 +59,13 @@
   :config
   (spaceline-emacs-theme))
 
-
+(use-package auto-save
+  :init
+  (make-directory "~/.emacs.d/private/autosaves/" t)
+  (setq auto-save-list-file-prefix
+        "/.emacs.d/private/autosaves/")
+  (setq auto-save-file-name-transforms
+        `((".*" ,"~/.emacs.d/private/autosaves/" t))))
 
 (use-package backup
   :config
@@ -86,22 +116,28 @@
   (add-hook 'web-mode-hook  'my-web-mode-hook))
 
 
+(use-package flycheck
+  :config
+  (setq flycheck-display-errors-delay .3)
+  (setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages)
+  (flycheck-define-checker scss
+    "A SCSS syntax checker using the SCSS compiler.
+See URL `http://sass-lang.com'."
+    :command ("scss-lint" source)
+    :error-patterns
+    ((error line-start (file-name) ":" line " [E] Syntax error: " (message))
+     (warning line-start (file-name) ":" line " [W] " (message)))
+    :modes scss-mode)
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 
-(use-package flycheck)
 (use-package saveplace
   :config
   (setq save-place-file "~/.emacs.d/private/places")
   (setq-default save-place t))
 
-;(set-face-attribute 'default nil :font "DejaVesu Sans Mono-11")
-;(set-frame-font "DejaVu Sans Mono-10" t t)
 
 ;(helm-mode 1)
-(scroll-bar-mode -1)
-(tool-bar-mode 0)
-(blink-cursor-mode 0)
-
-(defalias 'yes-or-no-p 'y-or-n-p)
 
 ;;;Variables
 (setq ring-bell-function 'ignore)
@@ -122,9 +158,7 @@
       c-basic-offset 4
       default-tab-width 4
       global-hl-line-mode 1
-      flycheck-display-errors-delay .3
       browse-url-generic-program "google-chrome-unstable"
-      tramp-default-method "ssh"
       show-paren-style 'expression
       temporary-file-directory "~/.emacs.d/private/tmp/"
       compilation-exit-message-function 'compilation-exit-autoclose
@@ -133,6 +167,7 @@
       color-theme-is-global t
       create-lockfiles nil
       frame-title-format "%b (%f)"
+      url-cookie-file "~/emacs.d/private/url/cookies"
       )
 
 (setq-default indent-tabs-mode nil)
@@ -177,10 +212,11 @@
 ;;;Tramp
 (use-package tramp
   :config
+  (setq tramp-default-method "ssh")
+  (setq tramp-persistency-file-name "~/.emacs.d/private/tramp")
   (setenv "SHELL" "/bin/bash"))
 
 ;;;Hooks
-(add-hook 'after-init-hook #'global-flycheck-mode)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 (add-hook 'scss-mode-hook #'rainbow-delimiters-mode)
 
@@ -191,7 +227,7 @@
 (add-hook 'after-save-hook
     'executable-make-buffer-file-executable-if-script-p)
 
-(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode)
+
 
 (add-hook 'python-mode-hook (lambda ()
                               (setq py-smart-indentation nil)
@@ -228,103 +264,70 @@
 (add-to-list 'auto-mode-alist '("\\.rst\\'" . rst-mode))
 (add-to-list 'auto-mode-alist '("\\.rest\\'" . rst-mode))
 
-
-
 ;;;Custom Keys
-
-
-(global-set-key (kbd "C-x C-SPC") 'pop-to-mark-command)
-(global-set-key (kbd "M-p") 'align-regexp)
-(global-set-key (kbd "C-'") 'other-frame)
-(global-set-key (kbd "C-;") 'other-windowes)
-(global-set-key (kbd "<f8>") 'apropos)
-(global-set-key (kbd "C-a") 'back-to-indentation-or-beginning)
-(global-set-key (kbd "M-<left>") 'buf-move-left)
-(global-set-key (kbd "M-<right>") 'buf-move-right)
-(global-set-key (kbd "M-<up>") 'buf-move-up)
-(global-set-key (kbd "M-<down>") 'buf-move-down)
-(global-set-key (kbd "C-x RET") 'eshell)
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(define-key global-map (kbd "C-+") 'text-scale-increase)
-(define-key global-map (kbd "C--") 'text-scale-decrease)
-(global-set-key (kbd "C-s") 'isearch-forward-regexp)
-(global-set-key (kbd "\C-r") 'isearch-backward-regexp)
-(global-set-key (kbd "M-%") 'query-replace-regexp)
-(global-set-key (kbd "C-M-s") 'isearch-forward)
-(global-set-key (kbd "C-M-r") 'isearch-backward)
-(global-set-key (kbd "C-M-%") 'query-replace)
-(global-set-key (kbd "C-x C-i") 'imenu)
-(global-set-key (kbd "C-c y") 'bury-buffer)
-(global-set-key (kbd "C-c m") 'revert-buffer)
-(global-set-key (kbd "C-x C-o") (lambda () (interactive) (other-window 2))) ;; forward two
-(global-set-key (kbd "C-c q") 'join-line)
-(global-set-key (kbd "M-/") 'hippie-expand)
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-;;magit
-(global-set-key (kbd "C-c g") 'magit-status)
-
+(use-package bind-key
+  :config
+  (bind-key (kbd "C-x C-SPC") 'pop-to-mark-command)
+  (bind-key "M-p" 'align-regexp)
+  (bind-key "C-'" 'other-frame)
+  (bind-key "C-;" 'other-windowes)
+  (bind-key "<f8>" 'apropos)
+  (bind-key "C-a" 'back-to-indentation-or-beginning)
+  (bind-key "M-<left>" 'buf-move-left)
+  (bind-key "M-<right>" 'buf-move-right)
+  (bind-key "M-<up>" 'buf-move-up)
+  (bind-key "M-<down>" 'buf-move-down)
+  (bind-key "C-x RET" 'eshell)
+  (bind-key "\C-cl" 'org-store-link)
+  (bind-key "\C-ca" 'org-agenda)
+  (bind-key "C-+" 'text-scale-increase)
+  (bind-key "C--" 'text-scale-decrease)
+  (bind-key "C-s" 'isearch-forward-regexp)
+  (bind-key "\C-r" 'isearch-backward-regexp)
+  (bind-key "M-%" 'query-replace-regexp)
+  (bind-key "C-M-s" 'isearch-forward)
+  (bind-key "C-M-r" 'isearch-backward)
+  (bind-key "C-M-%" 'query-replace)
+  (bind-key "C-x C-i" 'imenu)
+  (bind-key "C-c y" 'bury-buffer)
+  (bind-key "C-c m" 'revert-buffer)
+  (bind-key "C-x C-o" (lambda () (interactive) (other-window 2)))
+  (bind-key "C-c q" 'join-line)
+  (bind-key "M-/" 'hippie-expand)
+  (bind-key "C-x C-b" 'ibuffer)
+  (bind-key "C-c g" 'magit-status))
 
 ;;smex
-(use-package smex)
-(global-set-key [(meta x)] (lambda ()
-                             (interactive)
-                             (or (boundp 'smex-cache)
-                                 (smex-initialize))
-                             (global-set-key [(meta x)] 'smex)
-                             (smex)))
+(use-package smex
+  :config
+  (setq smex-save-file "~/.emacs.d/private/.smex-items")
+  (bind-key "M-x" (lambda ()
+                    (interactive)
+                    (or (boundp 'smex-cache)
+                        (smex-initialize))
+                    (global-set-key [(meta x)] 'smex)
+                    (smex)))
+  (bind-key [(shift meta x)] (lambda ()
+                      (interactive)
+                      (or (boundp 'smex-cache)
+                          (smex-initialize))
+                      (global-set-key [(shift meta x)] 'smex-major-mode-commands)
+                      (smex-major-mode-commands)))
 
-(global-set-key [(shift meta x)] (lambda ()
-                                   (interactive)
-                                   (or (boundp 'smex-cache)
-                                       (smex-initialize))
-                                   (global-set-key [(shift meta x)] 'smex-major-mode-commands)
-                                   (smex-major-mode-commands)))
+  (defadvice smex (around space-inserts-hyphen activate compile)
+    (let ((ido-cannot-complete-command
+           `(lambda ()
+              (interactive)
+              (if (string= " " (this-command-keys))
+                  (insert ?-)
+                (funcall ,ido-cannot-complete-command)))))
+      ad-do-it))
 
+  (defun smex-update-after-load (unused)
+    (when (boundp 'smex-cache)
+      (smex-update)))
+  (add-hook 'after-load-functions 'smex-update-after-load))
 
-
-(defadvice smex (around space-inserts-hyphen activate compile)
-  (let ((ido-cannot-complete-command
-         `(lambda ()
-            (interactive)
-            (if (string= " " (this-command-keys))
-                (insert ?-)
-              (funcall ,ido-cannot-complete-command)))))
-    ad-do-it))
-
-
-(defun smex-update-after-load (unused)
-      (when (boundp 'smex-cache)
-        (smex-update)))
-    (add-hook 'after-load-functions 'smex-update-after-load)
-
-(global-set-key (kbd "M-x") 'smex)
-(global-set-key (kbd "M-X") 'smex-major-mode-commands)
-;; This is your old M-x.
-(global-set-key (kbd "C-c C-c M-x") 'execute-extended-command)
-
-
-
-
-; fix for autocomplete
-(set-cursor-color "white")
-;;;function setup
-(menu-bar-mode -1)
-;;line numbers
-(line-number-mode t)
-(global-linum-mode t)
-(column-number-mode t)
-;; show clock in modeline
-(display-time)
-;; paren matching
-(show-paren-mode t)
-;; useful highlights
-(transient-mark-mode nil)
-(global-font-lock-mode t)
-(whitespace-mode)
-
-;;;font and theme
-;(set-face-attribute 'default nil :font "DejaVu Sans Mono-11")
 
 
 
@@ -356,9 +359,6 @@
      (add-to-list 'hippie-expand-try-functions-list 'try-complete-file-name-partially t)))
 
 
-(eval-after-load 'flycheck
-  '(custom-set-variables
-   '(flycheck-display-errors-function #'flycheck-pos-tip-error-messages)))
 
 (eval-after-load 'grep
   '(when (boundp 'grep-find-ignored-files)
@@ -383,14 +383,7 @@
 (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
 (setq explicit-shell-file-name "/bin/zsh")
 
-(flycheck-define-checker scss
-  "A SCSS syntax checker using the SCSS compiler.
-See URL `http://sass-lang.com'."
-  :command ("scss-lint" source)
-  :error-patterns
-  ((error line-start (file-name) ":" line " [E] Syntax error: " (message))
-   (warning line-start (file-name) ":" line " [W] " (message)))
-   :modes scss-mode)
+
 
 
 (defadvice save-buffer (around save-buffer-as-root-around activate)
