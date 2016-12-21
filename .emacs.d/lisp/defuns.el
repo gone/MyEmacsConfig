@@ -19,11 +19,6 @@
       ))))
 
 
-(defun twisted-dev-debug ()
-  (interactive)
-  (twisted-dev-runtests 't))
-
-(defun my-dired-init ())
 
 (defun untab-all ()
   "transmogrify all tabs to spaces"
@@ -66,12 +61,6 @@
   (insert ", blank=True"))
 ; this should really check to see if the last char was (, and if so omit the ","
 ; also should check to see if we have a ) at the end, and add it if not
-
-
-
-(defun browse-django-docs ()
-  (interactive)
-  (w3m-browse-url "file://home/bbeecher/django/docs/_build/html/index.html"))
 
 
 (defun delete-horizontal-space-forward () ; adapted from `delete-horizontal-space'

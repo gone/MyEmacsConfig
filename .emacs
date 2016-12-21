@@ -1,5 +1,11 @@
-;;turn off autosave first, which is super annoying
 ;;load packages
+
+;; Added by Package.el.  This must come before configurations of
+;; installed packages.  Don't delete this line.  If you don't want it,
+;; just comment it out by adding a semicolon to the start of the line.
+;; You may delete these explanatory comments.
+(package-initialize)
+
 (require 'cask "/usr/share/emacs/site-lisp/cask/cask.el")
 (cask-initialize)
 (require 'pallet)
@@ -7,8 +13,10 @@
 (require 'use-package)
 
 ;; display
-(setq initial-frame-alist (quote ((fullscreen . maximized))))
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;;TODO: figure out how to keep this and keep new ediff windows small
+;; (setq initial-frame-alist (quote ((fullscreen . maximized))))
+(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+(set-face-attribute 'default nil :height 100)
 (load-theme 'zenburn t)
 (scroll-bar-mode -1)
 (tool-bar-mode 0)
@@ -28,120 +36,10 @@
 (global-font-lock-mode t)
 (whitespace-mode)
 (defalias 'yes-or-no-p 'y-or-n-p)
-
-;;configure emacs
-(make-directory "~/.emacs.d/private/tmp/" t)
-(add-to-list 'load-path "~/.emacs.d/lisp")
-
-(use-package recentf
-  :config
-  (setq recentf-save-file "~/.emacs.d/private/recentf")
-  (recentf-mode 1)
-  (setq recentf-max-menu-items 25))
-
-
-;;;Load third party libs
-(load-library "twisted.el")
-(load-library "init_python")
-(load-library "init_javascript")
-;(load-library "init_clojure")
-
-(use-package pcache
-  :init
-  (make-directory "~/.emacs.d/private/var/pcache/" t)
-  (setq pcache-directory "~/.emacs.d/private/var/pcache/"))
-
-(use-package ffap)
-(use-package editorconfig)
-(use-package pymacs)
-(use-package dired-single)
-(use-package spaceline-config
-  :config
-  (spaceline-emacs-theme))
-
-(use-package auto-save
-  :init
-  (make-directory "~/.emacs.d/private/autosaves/" t)
-  (setq auto-save-list-file-prefix
-        "/.emacs.d/private/autosaves/")
-  (setq auto-save-file-name-transforms
-        `((".*" ,"~/.emacs.d/private/autosaves/" t))))
-
-(use-package backup
-  :config
-  (make-directory "~/.emacs.d/private/backups/" t)
-  (setq backup-directory-alist (quote ((".*" . "~/.emacs.d/private/backups/")))))
-
-(use-package yaml-mode
-  :config
-  (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode)))
-
-(use-package ido
-  :config
-  (setq ido-save-directory-list-file "~/.emacs.d/private/ido.last")
-  (ido-mode t)
-  (setq ido-everywhere t)
-  (ido-ubiquitous-mode 1)
-  (setq ido-create-new-buffer 'always)
-  (setq ido-enable-flex-matching t))
-
-(use-package rainbow-delimiters)
-(use-package twisted-dev)
-;(use-package auto-complete)
-(use-package eldoc)
-(use-package defuns)
-
-
-(use-package yasnippet)
-(use-package init_ispell)
-
-(use-package web-mode
-  :config
-  (setq web-mode-markup-indent-offset 2)
-  (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.hbs$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.jsp\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-  (setq web-mode-engines-alist
-      '(("php"    . "\\.phtml\\'")
-        ("django"  . "\\.html")))
-  (defun my-web-mode-hook ()
-    "Hooks for Web mode."
-    (local-set-key (kbd "RET") 'newline-and-indent))
-  (add-hook 'web-mode-hook  'my-web-mode-hook))
-
-
-(use-package flycheck
-  :config
-  (setq flycheck-display-errors-delay .3)
-  (setq flycheck-display-errors-function #'flycheck-pos-tip-error-messages)
-  (flycheck-define-checker scss
-    "A SCSS syntax checker using the SCSS compiler.
-See URL `http://sass-lang.com'."
-    :command ("scss-lint" source)
-    :error-patterns
-    ((error line-start (file-name) ":" line " [E] Syntax error: " (message))
-     (warning line-start (file-name) ":" line " [W] " (message)))
-    :modes scss-mode)
-  (add-hook 'after-init-hook #'global-flycheck-mode)
-  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
-
-(use-package saveplace
-  :config
-  (setq save-place-file "~/.emacs.d/private/places")
-  (setq-default save-place t))
-
-
-;(helm-mode 1)
-
 ;;;Variables
 (setq ring-bell-function 'ignore)
 (setq inhibit-startup-echo-area-messagee t
+      explicit-shell-file-name "/bin/zsh"
       inhibit-startup-message t
       display-time-24hr-format t
       scroll-step 1
@@ -169,9 +67,12 @@ See URL `http://sass-lang.com'."
       frame-title-format "%b (%f)"
       url-cookie-file "~/emacs.d/private/url/cookies"
       )
-
+(put 'upcase-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+(idle-highlight-mode t)
 (setq-default indent-tabs-mode nil)
-
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -179,7 +80,15 @@ See URL `http://sass-lang.com'."
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(focus-follows-mouse nil)
+ '(magit-push-arguments nil)
+ '(org-export-backends (quote (ascii html icalendar latex md)))
+ '(org-todo-keywords
+   (quote
+    ((sequence "TODO(t)" "SOMEDAY(s)" "WAITING(w)" "DONE(d)"))))
  '(package-check-signature nil)
+ '(package-selected-packages
+   (quote
+    (babel-repl yaml-mode flymake-yaml pytest web-mode handlebars-mode ztree magit-gitflow magit rainbow-delimiters sunrise-commander sunrise-x-loop sunrise-x-mirror sunrise-x-modeline sunrise-x-tree dired+ zenburn-theme virtualenvwrapper use-package pyvirtualenv pyvenv pallet ido-ubiquitous idle-highlight-mode idle-highlight)))
  '(py-indent-offset 4)
  '(py-python-command "ipython")
  '(python-indent 4)
@@ -208,18 +117,8 @@ See URL `http://sass-lang.com'."
  '(tool-bar-mode nil)
  '(uniquify-buffer-name-style (quote reverse) nil (uniquify)))
 
-
-;;;Tramp
-(use-package tramp
-  :config
-  (setq tramp-default-method "ssh")
-  (setq tramp-persistency-file-name "~/.emacs.d/private/tramp")
-  (setenv "SHELL" "/bin/bash"))
-
 ;;;Hooks
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
-(add-hook 'scss-mode-hook #'rainbow-delimiters-mode)
-
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -228,41 +127,95 @@ See URL `http://sass-lang.com'."
     'executable-make-buffer-file-executable-if-script-p)
 
 
-
-(add-hook 'python-mode-hook (lambda ()
-                              (setq py-smart-indentation nil)
-                              (define-key python-mode-map (kbd "s-u") 'python-send-buffer)
-                              (define-key python-mode-map (kbd "<f5>") 'twisted-dev-runtests)
-                              (define-key python-mode-map (kbd "<f6>") 'twisted-dev-debug)))
-
-(add-hook 'html-mode-hook (lambda ()
-                            (define-key html-mode-map (kbd "\C-xt") 'tag-word-or-region)))
-(add-hook 'dired-mode-hook
-      '(lambda ()
-        (define-key dired-mode-map [return] 'dired-single-buffer)
-        (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
-        (define-key dired-mode-map "^"
-        (function
-         (lambda nil (interactive) (dired-single-buffer "..")))))
-
-      ;; if dired's already loaded, then the keymap will be bound
-      (if (boundp 'dired-mode-map)
-        ;; we're good to go; just add our bindings
-        (my-dired-init)
-        ;; it's not loaded yet, so add our bindings to the load-hook
-        (add-hook 'dired-load-hook 'my-dired-init)))
-
-
 (random t) ;; Seed the random-number generator
 
 ;;;File Extensions
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
-(add-to-list 'auto-mode-alist '("\\.tac$" . python-mode))
 (add-to-list 'auto-mode-alist '("\\.js$" . js-mode))
 (add-to-list 'auto-mode-alist '("\\.json$" . js-mode))
 (add-to-list 'auto-mode-alist '("\\.txt\\'" . rst-mode))
 (add-to-list 'auto-mode-alist '("\\.rst\\'" . rst-mode))
 (add-to-list 'auto-mode-alist '("\\.rest\\'" . rst-mode))
+
+
+;;configure emacs
+(add-to-list 'load-path "~/.emacs.d/lisp")
+
+;;;Load third party libs
+(load-library "twisted.el")
+(load-library "init_python")
+(load-library "init_javascript")
+;(load-library "init_clojure")
+
+
+(use-package whitespace)
+(use-package ffap)
+(use-package editorconfig)
+(use-package pymacs)
+;(use-package dired-single)
+(use-package rainbow-delimiters)
+(use-package twisted-dev)
+(use-package eldoc)
+(use-package defuns)
+(use-package yasnippet)
+(use-package init_ispell)
+
+(use-package spaceline-config
+  :config
+  (spaceline-emacs-theme))
+
+(use-package yaml-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode)))
+
+
+(use-package web-mode
+  :config
+  (setq web-mode-markup-indent-offset 2)
+  (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.hbs$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+  (setq web-mode-engines-alist
+      '(("php"    . "\\.phtml\\'")
+        ("django"  . "\\.html")))
+  (defun my-web-mode-hook ()
+    "Hooks for Web mode."
+    (local-set-key (kbd "RET") 'newline-and-indent))
+  (add-hook 'web-mode-hook  'my-web-mode-hook))
+
+
+(use-package flycheck
+  :config
+  (setq flycheck-display-errors-delay .2)
+  (flycheck-define-checker scss
+    "A SCSS syntax checker using the SCSS compiler.
+See URL `http://sass-lang.com'."
+    :command ("scss-lint" source)
+    :error-patterns
+    ((error line-start (file-name) ":" line " [E] Syntax error: " (message))
+     (warning line-start (file-name) ":" line " [W] " (message)))
+    :modes scss-mode)
+  (add-hook 'after-init-hook #'global-flycheck-mode)
+  (add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
+
+(setq diredp-hide-details-initially-flag nil)
+(require 'dired+)
+(toggle-diredp-find-file-reuse-dir 1)
+
+;; (add-hook 'dired-mode-hook
+;;       '(lambda ()
+;;         (define-key dired-mode-map [return] 'dired-single-buffer)
+;;         (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
+;;         (define-key dired-mode-map "^"
+;;         (function
+;;          (lambda nil (interactive) (dired-single-buffer ".."))))))
 
 ;;;Custom Keys
 (use-package bind-key
@@ -270,7 +223,7 @@ See URL `http://sass-lang.com'."
   (bind-key (kbd "C-x C-SPC") 'pop-to-mark-command)
   (bind-key "M-p" 'align-regexp)
   (bind-key "C-'" 'other-frame)
-  (bind-key "C-;" 'other-windowes)
+  (bind-key "C-;" 'other-window)
   (bind-key "<f8>" 'apropos)
   (bind-key "C-a" 'back-to-indentation-or-beginning)
   (bind-key "M-<left>" 'buf-move-left)
@@ -330,17 +283,6 @@ See URL `http://sass-lang.com'."
 
 
 
-
-
-;;;auto complete
-;(global-auto-complete-mode t)
-;; (define-key
-;;   ac-complete-mode-map "\C-n" 'ac-next)
-;; (define-key ac-complete-mode-map "\C-p" 'ac-previous)
-
-
-
-
 ;; Lisp-friendly hippie expand
 (setq hippie-expand-try-functions-list
       '(try-expand-dabbrev
@@ -360,31 +302,19 @@ See URL `http://sass-lang.com'."
 
 
 
-(eval-after-load 'grep
-  '(when (boundp 'grep-find-ignored-files)
-     (add-to-list 'grep-find-ignored-files "*.class")))
-
 ;; Cosmetics
-
-(eval-after-load 'diff-mode
-  '(progn
-     (set-face-foreground 'diff-added "green4")
-     (set-face-foreground 'diff-removed "red3")))
+;; (eval-after-load 'diff-mode
+;;   '(progn
+;;      (set-face-foreground 'diff-added "green4")
+;;      (set-face-foreground 'diff-removed "red3")))
 
 ;; (eval-after-load 'magit
 ;;   '(progn
 ;;      (set-face-foreground 'magit-diff-added "green4")
 ;;      (set-face-foreground 'magit-diff-del "red3")))
 
-(idle-highlight-mode t)
-
 
 (use-package vlf-setup)
-(add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls)
-(setq explicit-shell-file-name "/bin/zsh")
-
-
-
 
 (defadvice save-buffer (around save-buffer-as-root-around activate)
   "Use sudo to save the current buffer."
@@ -394,7 +324,6 @@ See URL `http://sass-lang.com'."
     ad-do-it)
     ad-do-it))
 
-
 (use-package ag
   :commands ag
   :init
@@ -403,8 +332,71 @@ See URL `http://sass-lang.com'."
   :config
   (add-hook 'ag-search-finished-hook (lambda () (pop-to-buffer next-error-last-buffer))))
 
+(use-package magit-gitflow
+  :init
+  (add-hook 'magit-mode-hook 'turn-on-magit-gitflow))
 
-(put 'upcase-region 'disabled nil)
-(put 'narrow-to-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
+
+;(autoload 'whitespace-mode           "whitespace" "Toggle whitespace visualization."        t)
+
+
+(make-directory "~/.emacs.d/private/tmp/" t)
+
+(use-package recentf
+  :init
+  (setq recentf-save-file "~/.emacs.d/private/recentf")
+  (recentf-mode 1)
+  (setq recentf-max-menu-items 25))
+
+(use-package pcache
+  :init
+  (make-directory "~/.emacs.d/private/var/pcache/" t)
+  (setq pcache-directory "~/.emacs.d/private/var/pcache/"))
+
+(use-package auto-save
+  :demand t
+  :init
+  (make-directory "~/.emacs.d/private/autosaves/" t)
+  (setq auto-save-list-file-prefix
+        "/.emacs.d/private/autosaves/")
+  (setq auto-save-file-name-transforms
+        `((".*" ,"~/.emacs.d/private/autosaves/" t))))
+
+(use-package backup
+  :demand t
+  :init
+  (make-directory "~/.emacs.d/private/backups/" t)
+  (setq backup-directory-alist (quote ((".*" . "~/.emacs.d/private/backups/")))))
+
+
+(use-package ido
+  :init
+  (setq ido-save-directory-list-file "~/.emacs.d/private/ido.last")
+  :config
+  (setq ido-save-directory-list-file "~/.emacs.d/private/ido.last")
+  (ido-mode t)
+  (setq ido-everywhere t)
+  (ido-ubiquitous-mode 1)
+  (setq ido-create-new-buffer 'always)
+  (setq ido-enable-flex-matching t))
+
+(use-package saveplace
+  :init
+  (setq save-place-file "~/.emacs.d/private/places")
+  (setq-default save-place t))
+
+(use-package tramp
+  :init
+  (setq tramp-default-method "ssh")
+  (setq tramp-persistency-file-name "~/.emacs.d/private/tramp")
+  (setenv "SHELL" "/bin/bash"))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+
+(find-file "~/org/todo.org")
+(provide '.emacs)
+;;; .emacs ends here

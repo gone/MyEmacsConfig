@@ -1,5 +1,9 @@
 (provide 'twisted-dev)
 
+(defun twisted-dev-debug ()
+  (interactive)
+  (twisted-dev-runtests 't))
+
 (defun better-pdb (&optional command-line)
   (interactive)
   (let ((result (if command-line
@@ -8,10 +12,6 @@
 	(gud-def gud-break "break %d%f:%l"     "\C-b" "Set breakpoint at current line.")
     (gud-def gud-remove "clear %d%f:%l"     "\C-d" "Remove breakpoint at current line")
 	result))
-
-(defun pyflakes-this-file ()
-  (interactive)
-  (compile (format "pyflakes %s" (buffer-file-name))))
 
 (defvar test-case-name nil "name of current test case")
 (make-variable-buffer-local 'test-case-name)
@@ -45,7 +45,7 @@
 				  (full-trial-command-line (format "trial --rterrors --reporter=bwverbose --tbformat=emacs %s --testmodule=%s" (if debug "--debug" "") bfn)))
 			 (if bfn
 				 (funcall (if debug 'better-pdb 'compile)
-						  (progn (shell-command 
+						  (progn (shell-command
 								  (format "mkdir -p %s; echo '%s/bin/%s' > %s"
 								  twisted-dev-scratch-directory
 								  twisted-dev-directory
@@ -53,6 +53,3 @@
 								  shell-script-name))
 								 (format "sh %s" shell-script-name)))
 			   full-command-line))))
-				  
-				  
-  
